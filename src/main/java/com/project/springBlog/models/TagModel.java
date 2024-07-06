@@ -18,7 +18,7 @@ public class TagModel {
             cascade = {CascadeType.MERGE, CascadeType.PERSIST},
             mappedBy = "tagList"
     )
-    private Set<PostModel> modelList;
+    private Set<PostModel> postsList;
 
     //Constructor getters and setters
 
@@ -44,12 +44,12 @@ public class TagModel {
         this.nombre = nombre;
     }
 
-    public Set<PostModel> getModelList() {
-        return modelList;
+    public Set<PostModel> getPostsList() {
+        return postsList;
     }
 
-    public void setModelList(Set<PostModel> modelList) {
-        this.modelList = modelList;
+    public void setPostsList(Set<PostModel> modelList) {
+        this.postsList = modelList;
     }
 
     @Override

@@ -30,7 +30,7 @@ public class PostModel {
      */
     public void addTag(TagModel tag){
         this.tagList.add(tag);
-        tag.getModelList().add(this);
+        tag.getPostsList().add(this);
     }
 
     /**
@@ -39,7 +39,7 @@ public class PostModel {
      */
     public void deteleTag(TagModel tag){
         this.tagList.remove(tag);
-        tag.getModelList().remove(this);
+        tag.getPostsList().remove(this);
     }
 
     //Getters and setters
