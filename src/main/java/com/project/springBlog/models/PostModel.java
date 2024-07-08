@@ -1,5 +1,6 @@
 package com.project.springBlog.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -22,6 +23,7 @@ public class PostModel {
             joinColumns = {@JoinColumn(name="post_id")},
             inverseJoinColumns = {@JoinColumn(name="tag_id")}
     )
+    @JsonManagedReference
     private Set<TagModel> tagList = new HashSet<>();
 
     /**
@@ -81,5 +83,14 @@ public class PostModel {
 
     public void setTagList(Set<TagModel> tagList) {
         this.tagList = tagList;
+    }
+
+    @Override
+    public String toString() {
+        return "PostModel{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", contenido='" + contenido + '\'' +
+                '}';
     }
 }

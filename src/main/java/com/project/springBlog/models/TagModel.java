@@ -1,5 +1,6 @@
 package com.project.springBlog.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -18,6 +19,7 @@ public class TagModel {
             cascade = {CascadeType.MERGE, CascadeType.PERSIST},
             mappedBy = "tagList"
     )
+    @JsonBackReference
     private Set<PostModel> postsList;
 
     //Constructor getters and setters
