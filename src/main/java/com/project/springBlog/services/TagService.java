@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class TagService {
@@ -18,5 +19,9 @@ public class TagService {
 
     public TagModel addTag(TagModel tag){
         return tagRepository.save(tag);
+    }
+
+    public Optional<TagModel> getTag(long id){
+        return tagRepository.findById(id);
     }
 }
