@@ -1,6 +1,7 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.dtos.Publicacion;
+import com.project.springBlog.dtos.PublicacionDetails;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
 import com.project.springBlog.models.TagModel;
@@ -32,9 +33,12 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public PostModel addPublicacion(Publicacion publicacion){
+    public PublicacionDetails addPublicacion(Publicacion publicacion){
+        PostModel post = null;
+        PostDetailsModel details = null;
+
         //Se crea el contenido del post
-        PostModel post = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
+        post = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
 
         //Se añaden las tags:
         List<Integer> etiquetas = publicacion.getTags();
@@ -43,14 +47,14 @@ public class PostService {
             TagModel tag = tagService.getTag(tagId);
             post.addTag(tag);
         }
-        post = addPost(post);
+        post = addPost(post); //Se añade el post a la base de datos empleando el servicio de Posts
 
         //Se crean los postDetails
-        PostDetailsModel details = new PostDetailsModel(new Date(), publicacion.getCreador());
+        details = new PostDetailsModel(new Date(), publicacion.getCreador());
         details.setPost(post);
-        detailsService.addPostDetails(details);
+        details = detailsService.addPostDetails(details); //Se añaden los postDetails a la Base de Datos.
 
-        return post;
+        return new PublicacionDetails(post, details);
     }
 
 

@@ -9,28 +9,29 @@ import java.util.Date;
 import java.util.List;
 
 public class PublicacionDetails {
-    private long postId;
-    private String titulo;
-    private String contenido;
-    private String creador;
-    private Date fechaPublicacion;
-    private List<TagModel> tags;
+
+    private PostModel post;
+    private PostDetailsModel details;
 
     public PublicacionDetails(PostModel post, PostDetailsModel details) {
-        this.postId = post.getId();
-        this.titulo = post.getTitulo();
-        this.contenido = post.getContenido();
-        this.creador = details.getCreador();
-        this.fechaPublicacion = details.getFechaCreacion();
-
-        this.tags = new ArrayList<>();
-        for (TagModel tag : post.getTagList()) {
-            TagModel tagDTO = new TagModel();
-            tagDTO.setId(tag.getId());
-            tagDTO.setNombre(tag.getNombre());
-            this.tags.add(tagDTO);
-        }
+        this.post = post;
+        this.details = details;
     }
 
+    public PostModel getPost() {
+        return post;
+    }
+
+    public PostDetailsModel getDetails() {
+        return details;
+    }
+
+    @Override
+    public String toString() {
+        return "PublicacionDetails{" +
+                "post=" + post +
+                ", details=" + details +
+                '}';
+    }
 }
 
