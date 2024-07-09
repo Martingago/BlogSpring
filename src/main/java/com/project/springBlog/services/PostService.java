@@ -50,7 +50,6 @@ public class PostService {
         details.setPost(post);
         detailsService.addPostDetails(details);
 
-
         return post;
     }
 

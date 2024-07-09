@@ -27,7 +27,7 @@ public class TagService {
         if(tagModel.isPresent()){
             return tagModel.get();
         }else{
-            throw new NoSuchElementException("No se ha encontrado un tag con uid " + id);
+            return null;
         }
     }
 }

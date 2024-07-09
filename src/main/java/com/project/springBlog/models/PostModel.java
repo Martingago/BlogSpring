@@ -1,13 +1,19 @@
 package com.project.springBlog.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
 @Table(name="posts")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class PostModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +29,21 @@ public class PostModel {
             joinColumns = {@JoinColumn(name="post_id")},
             inverseJoinColumns = {@JoinColumn(name="tag_id")}
     )
-    @JsonManagedReference
+    @JsonIgnoreProperties("postsList")
     private Set<TagModel> tagList = new HashSet<>();
+
+
+    @JsonGetter("tagList")
+    public Set<Object> serializedTagList() {
+        Set<Object> serializedTags = new HashSet<>();
+        for (TagModel tag : tagList) {
+            Map<String, Object> tagInfo = new HashMap<>();
+            tagInfo.put("id", tag.getId());
+            tagInfo.put("nombre", tag.getNombre());
+            serializedTags.add(tagInfo);
+        }
+        return serializedTags;
+    }
 
     /**
      * Añade una tag al post y tambien añade un post al tag referenciado
