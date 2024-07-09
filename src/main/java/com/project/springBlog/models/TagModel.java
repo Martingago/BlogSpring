@@ -18,7 +18,7 @@ public class TagModel {
 
     @ManyToMany(
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST},
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE},
             mappedBy = "tagList"
     )
     @JsonIgnoreProperties("tagList")
@@ -31,6 +31,14 @@ public class TagModel {
             serializedPosts.add(post.getId());
         }
         return serializedPosts;
+    }
+
+    @PreRemove
+    private void preRemove() {
+        Set<PostModel> posts = new HashSet<>(postsList); // Crear una copia de la colección
+        for (PostModel post : posts) {
+            post.deteleTag(this); // Actualiza la lista de tags en PostModel
+        }
     }
 
     //Constructor getters and setters
