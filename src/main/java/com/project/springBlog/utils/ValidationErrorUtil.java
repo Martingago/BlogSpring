@@ -11,9 +11,9 @@ public class ValidationErrorUtil {
      * @param result
      * @return ResponseEntity con los errores encontrados
      */
-    public static ResponseEntity<String> processValidationErrors(BindingResult result){
+    public static String processValidationErrors(BindingResult result){
         StringBuilder errorMesagge = new StringBuilder();
         result.getAllErrors().forEach(error -> errorMesagge.append(error.getDefaultMessage()).append("\n"));
-        return new ResponseEntity<>(errorMesagge.toString(), HttpStatus.BAD_REQUEST);
+        return errorMesagge.toString();
     }
 }

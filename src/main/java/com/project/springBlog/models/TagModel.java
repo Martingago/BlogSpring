@@ -16,8 +16,8 @@ public class TagModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull(message = "Name tag cannot be null")
-    @NotBlank(message = "Name tag cannot be blank")
+    @NotNull(message = "Error name tag cannot be null")
+    @NotBlank(message = "Error name tag cannot be blank")
     private String nombre;
 
     @ManyToMany(

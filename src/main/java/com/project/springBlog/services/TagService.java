@@ -60,19 +60,18 @@ public class TagService {
     }
 
     @Transactional
-    public ResponseEntity<TagResponseDTO> updateTag(long id, TagModel tagUpdated){
+    public TagModel updateTag(long id, TagModel tagUpdated) {
         Optional<TagModel> opTag = tagRepository.findById(id);
         if(opTag.isEmpty()){
-            return new ResponseEntity<>(new TagResponseDTO(false, "Tag was not founded", null), HttpStatus.NOT_FOUND);
+            throw new EntityNotFoundException("Tag was not found");
         }
         try {
             //Se actualizan los atributos del tag
             TagModel oldTag = opTag.get();
             oldTag.setNombre(tagUpdated.getNombre());
-            tagRepository.save(oldTag);
-            return new ResponseEntity<>(new TagResponseDTO(true, "Tag successfully updated", oldTag), HttpStatus.OK);
+            return tagRepository.save(oldTag);
         }catch (Exception e){
-            return new ResponseEntity<>(new TagResponseDTO(false, "An error occurred while the tag was being updated", null), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RuntimeException("An error occurred while data was being updated");
         }
     }
 }

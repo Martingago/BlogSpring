@@ -38,9 +38,10 @@ public class TagController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addTag(@Valid @RequestBody TagModel tag, BindingResult result){
+    public ResponseEntity<TagResponseDTO> addTag(@Valid @RequestBody TagModel tag, BindingResult result){
         if((result.hasErrors())){
-            return ValidationErrorUtil.processValidationErrors(result);
+            String err = ValidationErrorUtil.processValidationErrors(result);
+            return new ResponseEntity<>(new TagResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         return tagService.addTag(tag);
     }
@@ -51,11 +52,19 @@ public class TagController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTag(@PathVariable("id") long id, @Valid @RequestBody TagModel tag, BindingResult result) {
+    public ResponseEntity<TagResponseDTO> updateTag(@PathVariable("id") long id, @Valid @RequestBody TagModel tag, BindingResult result) {
         if (result.hasErrors()) { //Valida la integridad del objeto recibido. Si result tiene errores devuelve los errores existentes
-            return ValidationErrorUtil.processValidationErrors(result);
+            String err = ValidationErrorUtil.processValidationErrors(result);
+            return new ResponseEntity<>(new TagResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
+        }try {
+            TagModel updatedTag = tagService.updateTag(id, tag);
+            return new ResponseEntity<>(new TagResponseDTO(true, "Tag was succesfully updated", updatedTag), HttpStatus.OK);
+        }catch (EntityNotFoundException ex){
+            return new ResponseEntity<>(new TagResponseDTO(false, ex.getMessage(), null) ,HttpStatus.NOT_FOUND);
+        }catch (Exception ex){
+            return new ResponseEntity<>(new TagResponseDTO(false, ex.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return tagService.updateTag(id, tag);
+
     }
 
     }
