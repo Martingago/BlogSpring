@@ -45,6 +45,14 @@ public class PostModel {
         return serializedTags;
     }
 
+    @PreRemove
+    private void preRemove(){
+        Set<TagModel> tags = new HashSet<>(tagList);
+        for(TagModel tag :tags){
+            deteleTag(tag);
+        }
+    }
+
     /**
      * Añade una tag al post y tambien añade un post al tag referenciado
      * @param tag

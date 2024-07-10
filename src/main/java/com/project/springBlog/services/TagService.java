@@ -2,6 +2,7 @@ package com.project.springBlog.services;
 
 import com.project.springBlog.models.TagModel;
 import com.project.springBlog.repositories.TagRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -28,17 +29,18 @@ public class TagService {
         return tagModel.orElse(null);
     }
 
+    @Transactional
     public boolean deleteTag(long id) {
+        //Comprueba que el elemento exista en la base de datos.
+        if(!tagRepository.existsById(id)){
+            return false;
+        }
         try {
             tagRepository.deleteById(id);
             return true;
-        } catch (EmptyResultDataAccessException e) {
+        }  catch (Exception e) {
             e.printStackTrace();
-            return false; // El tag no existe
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Loguear o manejar de otra manera la excepción
-            return false; // Otro error al intentar eliminar el tag
+            return false;
         }
     }
 }

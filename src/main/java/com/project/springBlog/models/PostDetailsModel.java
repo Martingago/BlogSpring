@@ -24,6 +24,7 @@ public class PostDetailsModel {
         this.fechaCreacion = fechaCreacion;
         this.creador = creador;
     }
+    public PostDetailsModel(){}
 
     public long getId() {
         return id;
