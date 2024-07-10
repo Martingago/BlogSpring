@@ -43,4 +43,16 @@ public class TagService {
             return false;
         }
     }
+
+    public boolean updateTag(long id, TagModel tagUpdated){
+        Optional<TagModel> opTag = tagRepository.findById(id);
+        if(!opTag.isPresent()){
+            return false;
+        }
+        //Se actualizan los atributos del tag
+        TagModel oldTag = opTag.get();
+        oldTag.setNombre(tagUpdated.getNombre());
+        tagRepository.save(oldTag);
+        return true;
+    }
 }
