@@ -1,9 +1,12 @@
 package com.project.springBlog.services;
 
+import com.project.springBlog.dtos.TagResponseDTO;
 import com.project.springBlog.models.TagModel;
 import com.project.springBlog.repositories.TagRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -25,43 +28,51 @@ public class TagService {
     }
 
     public TagModel getTag(long id){
-        Optional<TagModel> tagModel = tagRepository.findById(id);
-        return tagModel.orElse(null);
+        try {
+            Optional<TagModel> tagModel = tagRepository.findById(id);
+            return tagModel.orElseThrow(() -> new EntityNotFoundException("Tag was not found"));
+        }catch (Exception e){
+            throw new RuntimeException("Exeption during getting tag " + e);
+    }
     }
 
-    public TagModel addTag(TagModel tag){
-        return tagRepository.save(tag);
+    public ResponseEntity<TagResponseDTO> addTag(TagModel tag){
+        TagModel addedTag = tagRepository.save(tag);
+        if(addedTag == null){
+            return new ResponseEntity<>(new TagResponseDTO(false, "Error adding tag", addedTag), HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(new TagResponseDTO(true,"Tag successfully added", addedTag), HttpStatus.OK);
+        }
     }
 
     @Transactional
-    public boolean deleteTag(long id) {
+    public ResponseEntity<TagResponseDTO> deleteTag(long id) {
         //Comprueba que el elemento exista en la base de datos.
         if(!tagRepository.existsById(id)){
-            return false;
+            return new ResponseEntity<>(new TagResponseDTO(false, "Tag to be removed was not found", null), HttpStatus.NOT_FOUND);
         }
         try {
             tagRepository.deleteById(id);
-            return true;
+            return new ResponseEntity<>(new TagResponseDTO(true, "Tag was successfully removed", null), HttpStatus.OK);
         }  catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(new TagResponseDTO(false, "An error occurred while the tag was being removed", null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Transactional
-    public ResponseEntity<String> updateTag(long id, TagModel tagUpdated){
+    public ResponseEntity<TagResponseDTO> updateTag(long id, TagModel tagUpdated){
         Optional<TagModel> opTag = tagRepository.findById(id);
-        if(!opTag.isPresent()){
-            return new ResponseEntity<>("Tag not found" , HttpStatus.NOT_FOUND);
+        if(opTag.isEmpty()){
+            return new ResponseEntity<>(new TagResponseDTO(false, "Tag was not founded", null), HttpStatus.NOT_FOUND);
         }
         try {
             //Se actualizan los atributos del tag
             TagModel oldTag = opTag.get();
             oldTag.setNombre(tagUpdated.getNombre());
             tagRepository.save(oldTag);
-            return new ResponseEntity<>("Tag succesfully updated", HttpStatus.OK);
+            return new ResponseEntity<>(new TagResponseDTO(true, "Tag successfully updated", oldTag), HttpStatus.OK);
         }catch (Exception e){
-            return new ResponseEntity<>("An error ocurred while tag was updated", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new TagResponseDTO(false, "An error occurred while the tag was being updated", null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
