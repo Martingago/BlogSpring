@@ -1,5 +1,6 @@
 package com.project.springBlog.services;
 
+import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
 import jakarta.transaction.Transactional;
@@ -14,12 +15,22 @@ public class PostDetailsService {
     PostDetailsRepository postDetailsRepository;
 
     public PostDetailsModel addPostDetails(PostDetailsModel postDetails){
-        return postDetailsRepository.save(postDetails);
+        try {
+            return postDetailsRepository.save(postDetails);
+        }catch (Exception ex){
+            throw new EntityException("Exception during adding post details", ex);
+        }
+
     }
 
     public PostDetailsModel getPostDetails(long id){
-        Optional<PostDetailsModel> details = postDetailsRepository.findById(id);
-        return details.orElse(null);
+        try {
+            Optional<PostDetailsModel> details = postDetailsRepository.findById(id);
+            return details.orElse(null);
+        }catch (Exception ex){
+            throw new EntityException("Exception during getting post details", ex);
+        }
+
     }
 
     @Transactional
@@ -30,8 +41,8 @@ public class PostDetailsService {
         try {
             postDetailsRepository.deleteById(id);
             return true;
-        }catch (Exception e){
-            return false;
+        }catch (Exception ex){
+            throw  new EntityException("Error during deleting post details", ex);
         }
     }
 
