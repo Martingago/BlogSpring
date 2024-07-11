@@ -1,17 +1,15 @@
 package com.project.springBlog.controllers;
 
-import com.project.springBlog.dtos.TagResponseDTO;
+import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.models.TagModel;
 import com.project.springBlog.services.TagService;
 import com.project.springBlog.utils.ValidationErrorUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -23,51 +21,45 @@ public class TagController {
     TagService tagService;
 
     @GetMapping
-    public ArrayList<TagModel> getTags(){
+    public ArrayList<TagModel> getTags() {
         return tagService.getTags();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TagResponseDTO> getTagById(@PathVariable("id")  long id){
-        try {
-            TagModel tag = tagService.getTag(id);
-            return new ResponseEntity<>(new TagResponseDTO(true, "Tag succesfully founded", tag), HttpStatus.OK);
-        }catch (EntityNotFoundException e){
-            return new ResponseEntity<>(new TagResponseDTO(false,"Tag was not founded", null), HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ResponseDTO> getTagById(@PathVariable("id") long id) {
+        TagModel tag = tagService.getTag(id);
+        return new ResponseEntity<>(new ResponseDTO(true, "Tag succesfully founded", tag), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<TagResponseDTO> addTag(@Valid @RequestBody TagModel tag, BindingResult result){
-        if((result.hasErrors())){
+    public ResponseEntity<ResponseDTO> addTag(@Valid @RequestBody TagModel tag, BindingResult result) {
+        if ((result.hasErrors())) {
             String err = ValidationErrorUtil.processValidationErrors(result);
-            return new ResponseEntity<>(new TagResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
-        return tagService.addTag(tag);
+        TagModel newTag = tagService.addTag(tag);
+        return new ResponseEntity<>(new ResponseDTO(true, "Tag successfully added", newTag), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTag(@PathVariable("id") long id){
-        return tagService.deleteTag(id);
+    public ResponseEntity<?> deleteTag(@PathVariable("id") long id) {
+        tagService.deleteTag(id);
+        return new ResponseEntity<>(new ResponseDTO(true, "Tag was succesfully removed", null), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TagResponseDTO> updateTag(@PathVariable("id") long id, @Valid @RequestBody TagModel tag, BindingResult result) {
-        if (result.hasErrors()) { //Valida la integridad del objeto recibido. Si result tiene errores devuelve los errores existentes
+    public ResponseEntity<ResponseDTO> updateTag(@Valid @PathVariable("id") long id, @Valid @RequestBody TagModel tag, BindingResult result) {
+        if (result.hasErrors()) {
             String err = ValidationErrorUtil.processValidationErrors(result);
-            return new ResponseEntity<>(new TagResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
-        }try {
-            TagModel updatedTag = tagService.updateTag(id, tag);
-            return new ResponseEntity<>(new TagResponseDTO(true, "Tag was succesfully updated", updatedTag), HttpStatus.OK);
-        }catch (EntityNotFoundException ex){
-            return new ResponseEntity<>(new TagResponseDTO(false, ex.getMessage(), null) ,HttpStatus.NOT_FOUND);
-        }catch (Exception ex){
-            return new ResponseEntity<>(new TagResponseDTO(false, ex.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
-
+        TagModel updatedTag = tagService.updateTag(id, tag);
+        return new ResponseEntity<>(new ResponseDTO(true, "Tag was succesfully updated", updatedTag), HttpStatus.OK);
     }
 
-    }
+}
+
+
 
 
 

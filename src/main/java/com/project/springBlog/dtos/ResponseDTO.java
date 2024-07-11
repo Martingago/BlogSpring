@@ -2,15 +2,15 @@ package com.project.springBlog.dtos;
 
 import com.project.springBlog.models.TagModel;
 
-public class TagResponseDTO {
+public class ResponseDTO {
     private final boolean success;
     private final String statusMessage;
-    private final TagModel tagResponse;
+    private final Object objectResponse;
 
-    public TagResponseDTO(boolean success, String statusMessage, TagModel tagResponse) {
+    public ResponseDTO(boolean success, String statusMessage, Object objectResponse) {
         this.success = success;
         this.statusMessage = statusMessage;
-        this.tagResponse = tagResponse;
+        this.objectResponse = objectResponse;
     }
 
     public boolean isSuccess() {
@@ -21,7 +21,7 @@ public class TagResponseDTO {
         return statusMessage;
     }
 
-    public TagModel getTagResponse() {
-        return tagResponse;
+    public Object getObjectResponse() {
+        return objectResponse;
     }
 }
