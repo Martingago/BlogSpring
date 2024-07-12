@@ -55,12 +55,35 @@ public class PostService {
         }
     }
 
+    /**
+     * Inserta tags en un post determinado
+     * @param post sobre el que van a insertar las etiquetas
+     * @param etiquetas list de ids con las etiquetas a insertar
+     */
     public void insertTagsList(PostModel post, List<Integer> etiquetas){
         if(etiquetas != null && !etiquetas.isEmpty()){
             for(Integer id : etiquetas){
                 try {
                     TagModel tag = tagService.getTag(id);
                     post.addTag(tag);
+                }catch (EntityNotFoundException ex){
+                    System.out.println("Tag with id:" + id + " was not found, skipping that one");
+                }
+            }
+        }
+    }
+
+    /**
+     * Elimina tags de un post determinado
+     * @param post sobre el que se van a eliminar las etiquetas
+     * @param etiquetas list de las ids con las etiquetas a eliminar
+     */
+    public void deleteTagsList(PostModel post, List<Integer> etiquetas){
+        if(etiquetas != null && !etiquetas.isEmpty()){
+            for(Integer id : etiquetas){
+                try{
+                    TagModel tag = tagService.getTag(id);
+                    post.deteleTag(tag);
                 }catch (EntityNotFoundException ex){
                     System.out.println("Tag with id:" + id + " was not found, skipping that one");
                 }
