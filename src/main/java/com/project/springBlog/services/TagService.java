@@ -25,12 +25,12 @@ public class TagService {
     }
 
     public TagModel getTag(long id) {
-        try {
             Optional<TagModel> tagModel = tagRepository.findById(id);
-            return tagModel.orElseThrow(() -> new EntityNotFoundException("Tag was not found"));
-        } catch (Exception e) {
-            throw new RuntimeException("Exeption during getting tag " + e);
-        }
+            if(tagModel.isPresent()){
+                return tagModel.get();
+            }else{
+                throw new EntityNotFoundException("Tag was not founded");
+            }
     }
 
     public TagModel addTag(TagModel tag) {

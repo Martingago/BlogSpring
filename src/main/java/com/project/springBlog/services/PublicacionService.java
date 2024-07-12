@@ -7,6 +7,7 @@ import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
 import com.project.springBlog.models.TagModel;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,47 +33,42 @@ public class PublicacionService {
      * @return PublicacionDetails => DTO que contiene Post + PostDetails
      */
     public PublicacionDetails getPublicacionDetails(long id) {
-        try {
-            PostModel post = postService.getPost(id); //Se busca el post
-            if(post ==null){
-                throw new EntityNotFoundException("Publicacion was not found");
-            }
-                PostDetailsModel details = detailsService.getPostDetails(id);
-                return new PublicacionDetails(post, details);
-
-        } catch (Exception ex) {
-            throw new EntityException("Error during getting publicacion", ex);
-        }
+            PostModel post = postService.getPost(id);
+            PostDetailsModel details = detailsService.getPostDetails(id);
+            return new PublicacionDetails(post, details);
     }
 
+    @Transactional
     public PublicacionDetails addPublicacion(Publicacion publicacion) {
-        PostModel post = null;
-        PostDetailsModel details = null;
+        try {
+            PostModel post = null;
+            PostDetailsModel details = null;
 
-        //Se crea el contenido del post
-        post = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
+            //Se crea el contenido del post
+            post = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
 
-        //Se añaden las tags:
-        List<Integer> etiquetas = publicacion.getTags();
+            //Se añaden las tags:
+            List<Integer> etiquetas = publicacion.getTags();
+            if (etiquetas != null) {
+                postService.insertTagsList(post, etiquetas);
+            }
+            //Se añade el post a la base de datos empleando el servicio de Posts
+            post = postService.addPost(post);
+            //Se crean los postDetails
+            details = new PostDetailsModel(new Date(), publicacion.getCreador());
+            details.setPost(post);
+            details = detailsService.addPostDetails(details); //Se añaden los postDetails a la Base de Datos.
 
-        for (Integer tagId : etiquetas) {
-            TagModel tag = tagService.getTag(tagId);
-            post.addTag(tag);
+            return new PublicacionDetails(post, details);
+        }catch (EntityException ex){
+            throw  new EntityException("Error during updating publication: ", ex);
         }
-        post = postService.addPost(post); //Se añade el post a la base de datos empleando el servicio de Posts
-
-        //Se crean los postDetails
-        details = new PostDetailsModel(new Date(), publicacion.getCreador());
-        details.setPost(post);
-        details = detailsService.addPostDetails(details); //Se añaden los postDetails a la Base de Datos.
-
-        return new PublicacionDetails(post, details);
     }
 
+    @Transactional
     public boolean deletePublicacion(long id) {
         detailsService.deletePostDetails(id); //Se eliminan los details de un post
-        Boolean delete = postService.deletePost(id); //Se elimina un post
-        return delete;
+        return postService.deletePost(id); //Se elimina un post
     }
 
 }

@@ -33,7 +33,6 @@ public class PostDetailsService {
 
     }
 
-    @Transactional
     public boolean deletePostDetails(long id){
         if(!postDetailsRepository.existsById(id)){
             return false;
