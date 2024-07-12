@@ -55,6 +55,17 @@ public class PostService {
         }
     }
 
+    public void updatePost(long id, PostModel newPost){
+        PostModel oldPost = getPost(id);
+        oldPost.setTitulo(newPost.getTitulo());
+        oldPost.setContenido(newPost.getContenido());
+        //Se obtiene la lista actualizada de tags para gestionarla:
+        newPost.getTagList();
+        //Se eliminan las tags de oldPost que ya no sean necesarias:
+
+        //Se añaden las tags de oldPost que se introduzcan:
+    }
+
     /**
      * Inserta tags en un post determinado
      * @param post sobre el que van a insertar las etiquetas

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PublicacionService {
@@ -69,6 +70,15 @@ public class PublicacionService {
     public boolean deletePublicacion(long id) {
         detailsService.deletePostDetails(id); //Se eliminan los details de un post
         return postService.deletePost(id); //Se elimina un post
+    }
+
+    @Transactional
+    public void updatePublicacion(long id, Publicacion publicacion){
+        PublicacionDetails pub = getPublicacionDetails(id); //Se obtiene una publicacion
+
+
+
+
     }
 
 }
