@@ -33,6 +33,15 @@ public class PostDetailsService {
 
     }
 
+    public PostDetailsModel updatePostDetails(long id, PostDetailsModel newDetails){
+            PostDetailsModel oldDetails  = getPostDetails(id);
+            oldDetails.setCreador(newDetails.getCreador());
+            if(newDetails.getFechaCreacion() != null){
+                oldDetails.setFechaCreacion(newDetails.getFechaCreacion());
+            }
+            return postDetailsRepository.save(oldDetails);
+    }
+
     public boolean deletePostDetails(long id){
         if(!postDetailsRepository.existsById(id)){
             return false;

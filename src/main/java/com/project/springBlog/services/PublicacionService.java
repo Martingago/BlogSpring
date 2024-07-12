@@ -5,15 +5,13 @@ import com.project.springBlog.dtos.PublicacionDetails;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
-import com.project.springBlog.models.TagModel;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PublicacionService {
@@ -49,9 +47,9 @@ public class PublicacionService {
             post = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
 
             //Se añaden las tags:
-            List<Integer> etiquetas = publicacion.getTags();
+            List<Long> etiquetas = publicacion.getTags();
             if (etiquetas != null) {
-                postService.insertTagsList(post, etiquetas);
+                postService.insertTagsToList(post, etiquetas);
             }
             //Se añade el post a la base de datos empleando el servicio de Posts
             post = postService.addPost(post);
@@ -73,12 +71,29 @@ public class PublicacionService {
     }
 
     @Transactional
-    public void updatePublicacion(long id, Publicacion publicacion){
-        PublicacionDetails pub = getPublicacionDetails(id); //Se obtiene una publicacion
+    public PublicacionDetails updatePublicacion(long id, Publicacion publicacion) {
+        PostModel dataPost = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
+        PostModel updatedPost = postService.updatePost(id, dataPost); //Datos del post actualizados
 
+        //Actualizar las tags del post:
+        List<Long> oldTagsList = postService.getPostTagsList(updatedPost); //Se obtienen las tags registradas que se deben actualizar
+        List<Long> updatedtagsList = publicacion.getTags(); //Se obtienen las tags con las que se va a actualizar el post
 
+        //Se crean 2 nuevas listas con los valores a añadir, y los valores a eliminar:
+        List<Long> addedTags = new ArrayList<>(updatedtagsList); //Listado con los ID a añadir
+        addedTags.removeAll(oldTagsList);
 
+        List<Long> removedTags = new ArrayList<>(oldTagsList); //Listado con los ID a eliminar
+        removedTags.removeAll(updatedtagsList);
 
+        postService.insertTagsToList(updatedPost, addedTags);
+        postService.removeTagsFromList(updatedPost, removedTags);
+
+        //Actualizar los post details
+        PostDetailsModel details = new PostDetailsModel(null, publicacion.getCreador());
+        PostDetailsModel updatedDetails = detailsService.updatePostDetails(id, details);
+
+        return new PublicacionDetails(updatedPost, updatedDetails);
     }
 
 }

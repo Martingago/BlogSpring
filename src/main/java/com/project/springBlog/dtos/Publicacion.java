@@ -20,9 +20,9 @@ public class Publicacion {
     private String creador;
     
     @NotNull(message = "List tags cannot be null")
-    private List<Integer> tags = new ArrayList<>();
+    private List<Long> tags = new ArrayList<>();
 
-    public Publicacion(String titulo, String contenido, String creador, List<Integer> tags) {
+    public Publicacion(String titulo, String contenido, String creador, List<Long> tags) {
         this.titulo = titulo;
         this.contenido = contenido;
         this.creador = creador;
@@ -41,11 +41,11 @@ public class Publicacion {
         return creador;
     }
 
-    public List<Integer> getTags() {
+    public List<Long> getTags() {
         return tags;
     }
 
-    public void setTags(List<Integer> tags) {
+    public void setTags(List<Long> tags) {
         this.tags = tags;
     }
 

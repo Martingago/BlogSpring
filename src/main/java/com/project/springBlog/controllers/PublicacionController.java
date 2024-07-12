@@ -53,4 +53,13 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "Post was successfully deleted", null), HttpStatus.OK);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDTO> updatePublicacion(@PathVariable("id") long id, @Valid @RequestBody Publicacion publicacion, BindingResult result){
+        if(result.hasErrors()){
+            return new ResponseEntity<>(new ResponseDTO(false, result.toString(), null), HttpStatus.BAD_REQUEST);
+        }
+        PublicacionDetails pub = publicacionService.updatePublicacion(id, publicacion);
+        return new ResponseEntity<>(new ResponseDTO(true, "Publicacion was successfully updated", pub), HttpStatus.OK);
+    }
+
 }

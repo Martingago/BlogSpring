@@ -1,9 +1,6 @@
 package com.project.springBlog.services;
 
-import com.project.springBlog.dtos.Publicacion;
-import com.project.springBlog.dtos.PublicacionDetails;
 import com.project.springBlog.exceptions.EntityException;
-import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
 import com.project.springBlog.models.TagModel;
 import com.project.springBlog.repositories.PostRepository;
@@ -11,10 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -55,15 +49,31 @@ public class PostService {
         }
     }
 
-    public void updatePost(long id, PostModel newPost){
-        PostModel oldPost = getPost(id);
-        oldPost.setTitulo(newPost.getTitulo());
-        oldPost.setContenido(newPost.getContenido());
-        //Se obtiene la lista actualizada de tags para gestionarla:
-        newPost.getTagList();
-        //Se eliminan las tags de oldPost que ya no sean necesarias:
+    public PostModel updatePost(long id, PostModel postUpdated){
+        Optional<PostModel> entPost = postRepository.findById(id);
+        if(entPost.isEmpty()){
+            throw  new EntityNotFoundException("Error, the post to updated was not founded");
+        }
+        PostModel oldPost = entPost.get();
+        oldPost.setTitulo(postUpdated.getTitulo());
+        oldPost.setContenido(postUpdated.getContenido());
 
-        //Se añaden las tags de oldPost que se introduzcan:
+        return postRepository.save(oldPost);
+    }
+
+    /**
+     * Obtiene un listado con las ID de los tags existentes en un post.
+     * @param post sobre el que se quieren obtener las tagsID
+     * @return List con los ID de las tags asociados al post
+     */
+    public List<Long> getPostTagsList(PostModel post){
+        List<Long> listTagsId = new ArrayList<>();
+
+        Set<TagModel> listTags =  post.getTagList();
+        for(TagModel tag : listTags){
+            listTagsId.add(tag.getId());
+        }
+        return listTagsId;
     }
 
     /**
@@ -71,9 +81,9 @@ public class PostService {
      * @param post sobre el que van a insertar las etiquetas
      * @param etiquetas list de ids con las etiquetas a insertar
      */
-    public void insertTagsList(PostModel post, List<Integer> etiquetas){
+    public void insertTagsToList(PostModel post, List<Long> etiquetas){
         if(etiquetas != null && !etiquetas.isEmpty()){
-            for(Integer id : etiquetas){
+            for(Long id : etiquetas){
                 try {
                     TagModel tag = tagService.getTag(id);
                     post.addTag(tag);
@@ -81,6 +91,7 @@ public class PostService {
                     System.out.println("Tag with id:" + id + " was not found, skipping that one");
                 }
             }
+            postRepository.save(post);
         }
     }
 
@@ -89,9 +100,9 @@ public class PostService {
      * @param post sobre el que se van a eliminar las etiquetas
      * @param etiquetas list de las ids con las etiquetas a eliminar
      */
-    public void deleteTagsList(PostModel post, List<Integer> etiquetas){
+    public void removeTagsFromList(PostModel post, List<Long> etiquetas){
         if(etiquetas != null && !etiquetas.isEmpty()){
-            for(Integer id : etiquetas){
+            for(Long id : etiquetas){
                 try{
                     TagModel tag = tagService.getTag(id);
                     post.deteleTag(tag);
@@ -99,6 +110,7 @@ public class PostService {
                     System.out.println("Tag with id:" + id + " was not found, skipping that one");
                 }
             }
+            postRepository.save(post);
         }
     }
 

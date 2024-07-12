@@ -67,7 +67,7 @@ public class TagService {
             oldTag.setNombre(tagUpdated.getNombre());
             return tagRepository.save(oldTag);
         } catch (Exception ex) {
-            throw new EntityException("An error occurred while data was being updated: \n", ex);
+            throw new EntityException("An error occurred while data was being updated: ", ex);
         }
     }
 }
