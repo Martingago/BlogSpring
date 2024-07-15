@@ -5,12 +5,16 @@ import com.project.springBlog.dtos.PublicacionDetails;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
+import com.project.springBlog.repositories.PostRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -22,8 +26,40 @@ public class PublicacionService {
     @Autowired
     PostDetailsService detailsService;
 
-    @Autowired
-    TagService tagService;
+    /**
+     * Obtiene la informacion de todas las publicaciones existentes en la base de datos
+     * @return
+     */
+    public List<PublicacionDetails> getPublicacionesDetails(){
+        List<PostModel> posts = postService.getPosts();
+        List<PublicacionDetails> listPublicaciones = new ArrayList<>();
+
+        for(PostModel post : posts){
+            PostDetailsModel details = detailsService.getPostDetails(post.getId());
+            PublicacionDetails publicacion = new PublicacionDetails(post, details);
+            listPublicaciones.add(publicacion);
+        }
+        return listPublicaciones;
+    }
+
+    public List<PublicacionDetails> getPublicacionesDetails(int from, int to){
+        List<PublicacionDetails> listPublicaciones = new ArrayList<>();
+
+        return listPublicaciones;
+    }
+
+    public List<PublicacionDetails> getPublicacionesDetails(String field){
+        List<PublicacionDetails> listPublicaciones = new ArrayList<>();
+        List<PostModel> posts = postService.getPostSorting(field);
+        for(PostModel post  : posts){
+            PostDetailsModel details = detailsService.getPostDetails(post.getId());
+            PublicacionDetails publicacion = new PublicacionDetails(post, details);
+            listPublicaciones.add(publicacion);
+        }
+
+        return listPublicaciones;
+    }
+
 
     /**
      * Obtiene la informacion de una publicación en especifico

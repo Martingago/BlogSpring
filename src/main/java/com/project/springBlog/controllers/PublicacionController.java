@@ -8,12 +8,14 @@ import com.project.springBlog.services.PostService;
 import com.project.springBlog.services.PublicacionService;
 import com.project.springBlog.utils.ValidationErrorUtil;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/post")
@@ -21,15 +23,18 @@ public class PublicacionController {
     @Autowired
     PublicacionService publicacionService;
 
-    //Código provisional, voy a necesitar obtener los Publicaciones
-    @Autowired
-    PostService postService;
-    //Código provisional, voy a necesitar obtener los Publicaciones
+
     @GetMapping
-    public ArrayList<PostModel> getPublicaciones(){
-        return postService.getPosts();
+    public ResponseEntity<ResponseDTO> getPublicaciones(){
+        List<PublicacionDetails> listPublicacion =  publicacionService.getPublicacionesDetails();
+        return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
+    @GetMapping ("/sorted")
+    public ResponseEntity<ResponseDTO> getPublicacionesSorted(@RequestParam String field){
+        List<PublicacionDetails> listPublicacion = publicacionService.getPublicacionesDetails(field);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of sorted publicaciones founded", listPublicacion), HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO> getPublicacion(@PathVariable("id") long id){

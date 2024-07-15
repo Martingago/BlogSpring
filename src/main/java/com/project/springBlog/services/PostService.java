@@ -6,6 +6,7 @@ import com.project.springBlog.models.TagModel;
 import com.project.springBlog.repositories.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,6 +21,10 @@ public class PostService {
 
     public ArrayList<PostModel> getPosts(){
         return (ArrayList<PostModel>) postRepository.findAll();
+    }
+
+    public List<PostModel> getPostSorting(String field){
+        return postRepository.findAll(Sort.by(Sort.Direction.DESC, field));
     }
 
     public PostModel getPost(long id){
@@ -88,7 +93,7 @@ public class PostService {
                     TagModel tag = tagService.getTag(id);
                     post.addTag(tag);
                 }catch (EntityNotFoundException ex){
-                    System.out.println("Tag with id:" + id + " was not found, skipping that one");
+                    System.out.println("Tag with id: " + id + " was not found, skipping that one");
                 }
             }
             postRepository.save(post);
