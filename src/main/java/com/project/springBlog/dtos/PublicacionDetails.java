@@ -13,6 +13,7 @@ public class PublicacionDetails {
     private PostModel post;
     private PostDetailsModel details;
 
+
     public PublicacionDetails(PostModel post, PostDetailsModel details) {
         this.post = post;
         this.details = details;

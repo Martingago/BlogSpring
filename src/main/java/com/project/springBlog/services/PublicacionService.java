@@ -76,6 +76,11 @@ public class PublicacionService {
             return new PublicacionDetails(post, details);
     }
 
+    public PublicacionDetails getPublicaiconDetails(PostDetailsModel details){
+        PostModel post = postService.getPost(details.getId());
+        return new PublicacionDetails(post, details);
+    }
+
     @Transactional
     public PublicacionDetails addPublicacion(Publicacion publicacion) {
         try {
