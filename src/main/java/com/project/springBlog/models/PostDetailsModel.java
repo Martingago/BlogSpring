@@ -1,11 +1,13 @@
 package com.project.springBlog.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
 @Table(name="post_details")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PostDetailsModel {
     @Id
     private long id;
@@ -18,6 +20,7 @@ public class PostDetailsModel {
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private PostModel post;
 
     public PostDetailsModel(Date fechaCreacion, String creador) {

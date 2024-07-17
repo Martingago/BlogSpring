@@ -14,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name="posts")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PostModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

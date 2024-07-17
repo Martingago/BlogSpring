@@ -5,6 +5,7 @@ import com.project.springBlog.dtos.PublicacionDetails;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
+import com.project.springBlog.utils.ReflectionUtils;
 import com.project.springBlog.utils.SortUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,14 +45,23 @@ public class PublicacionService {
 
         //Se crea un objeto con la página a mostrar:
         PageRequest pageRequest = PageRequest.of(page,limitSize, Sort.by(sortOrder, sortField)); //Nº pagina, tamaño, y orden
-
         try {
-            //Se obtiene una pagina de PostModels ordenada.
-            Page<PostModel> postsPage = postService.getPostSorting(sortField, sortOrder, pageRequest);
-            //Se convierte en postDetails:
-            for(PostModel post : postsPage){
-                listPublicacionOrdered.add(getPublicacionDetails(post));
+        if(ReflectionUtils.hasField(PostModel.class, field)){
+
+                //Se obtiene una pagina de PostModels ordenada.
+                Page<PostModel> postsPage = postService.getPostSorting(sortField, sortOrder, pageRequest);
+                //Se convierte en postDetails:
+                for(PostModel post : postsPage){
+                    listPublicacionOrdered.add(getPublicacionDetails(post));
+                }
             }
+        else if(ReflectionUtils.hasField(PostDetailsModel.class, field)){
+               Page<PostDetailsModel> detailsPage = detailsService.getPostSorting(sortField, sortOrder, pageRequest);
+               //Se convierte en postDetails:
+                for(PostDetailsModel details : detailsPage){
+                    listPublicacionOrdered.add(getPublicacionDetails(details));
+                }
+        }
         }catch (Exception e){
             throw  new RuntimeException("An error occurred while fetching sorted posts " +e.getMessage());
         }
@@ -76,7 +86,7 @@ public class PublicacionService {
             return new PublicacionDetails(post, details);
     }
 
-    public PublicacionDetails getPublicaiconDetails(PostDetailsModel details){
+    public PublicacionDetails getPublicacionDetails(PostDetailsModel details){
         PostModel post = postService.getPost(details.getId());
         return new PublicacionDetails(post, details);
     }
