@@ -48,9 +48,9 @@ public class PublicacionService {
         return listPublicaciones;
     }
 
-    public List<PublicacionDetails> getPublicacionesDetails(String field){
+    public List<PublicacionDetails> getPublicacionesDetails(String field, String direction){
         List<PublicacionDetails> listPublicaciones = new ArrayList<>();
-        List<PostModel> posts = postService.getPostSorting(field);
+        List<PostModel> posts = postService.getPostSorting(field, direction);
         for(PostModel post  : posts){
             PostDetailsModel details = detailsService.getPostDetails(post.getId());
             PublicacionDetails publicacion = new PublicacionDetails(post, details);

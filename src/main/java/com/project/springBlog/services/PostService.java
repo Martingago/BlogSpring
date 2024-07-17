@@ -23,8 +23,15 @@ public class PostService {
         return (ArrayList<PostModel>) postRepository.findAll();
     }
 
-    public List<PostModel> getPostSorting(String field){
-        return postRepository.findAll(Sort.by(Sort.Direction.DESC, field));
+    public List<PostModel> getPostSorting(String field, String direction){
+        Sort.Direction dir;
+        if(direction != null && direction.equals("asc")){
+            dir = Sort.Direction.ASC;
+        }else{
+            dir = Sort.Direction.DESC;
+        }
+        field = (field != null) ? field : "id";
+        return postRepository.findAll(Sort.by(dir, field));
     }
 
     public PostModel getPost(long id){

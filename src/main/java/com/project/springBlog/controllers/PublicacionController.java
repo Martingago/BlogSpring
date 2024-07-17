@@ -31,8 +31,8 @@ public class PublicacionController {
     }
 
     @GetMapping ("/sorted")
-    public ResponseEntity<ResponseDTO> getPublicacionesSorted(@RequestParam String field){
-        List<PublicacionDetails> listPublicacion = publicacionService.getPublicacionesDetails(field);
+    public ResponseEntity<ResponseDTO> getPublicacionesSorted(@RequestParam(required = false) String field, @RequestParam(required = false) String order){
+        List<PublicacionDetails> listPublicacion = publicacionService.getPublicacionesDetails(field, order);
         return new ResponseEntity<>(new ResponseDTO(true, "List of sorted publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
