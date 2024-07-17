@@ -3,18 +3,15 @@ package com.project.springBlog.controllers;
 import com.project.springBlog.dtos.Publicacion;
 import com.project.springBlog.dtos.PublicacionDetails;
 import com.project.springBlog.dtos.ResponseDTO;
-import com.project.springBlog.models.PostModel;
-import com.project.springBlog.services.PostService;
 import com.project.springBlog.services.PublicacionService;
 import com.project.springBlog.utils.ValidationErrorUtil;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @RestController
@@ -25,14 +22,22 @@ public class PublicacionController {
 
 
     @GetMapping
-    public ResponseEntity<ResponseDTO> getPublicaciones(){
-        List<PublicacionDetails> listPublicacion =  publicacionService.getPublicacionesDetails();
+    public ResponseEntity<ResponseDTO> getPublicaciones(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "12") int size
+    ){
+        List<PublicacionDetails> listPublicacion =  publicacionService.getPublicacionesDetails(null, null, page, size);
         return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
     @GetMapping ("/sorted")
-    public ResponseEntity<ResponseDTO> getPublicacionesSorted(@RequestParam(required = false) String field, @RequestParam(required = false) String order){
-        List<PublicacionDetails> listPublicacion = publicacionService.getPublicacionesDetails(field, order);
+    public ResponseEntity<ResponseDTO> getPublicacionesSorted(
+            @RequestParam(required = false) String field,
+            @RequestParam(required = false) String order,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "12") int size){
+
+        List<PublicacionDetails> listPublicacion = publicacionService.getPublicacionesDetails(field, order, page, size);
         return new ResponseEntity<>(new ResponseDTO(true, "List of sorted publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 

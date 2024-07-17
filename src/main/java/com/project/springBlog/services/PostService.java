@@ -6,6 +6,9 @@ import com.project.springBlog.models.TagModel;
 import com.project.springBlog.repositories.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +26,8 @@ public class PostService {
         return (ArrayList<PostModel>) postRepository.findAll();
     }
 
-    public List<PostModel> getPostSorting(String field, String direction){
-        Sort.Direction dir;
-        if(direction != null && direction.equals("asc")){
-            dir = Sort.Direction.ASC;
-        }else{
-            dir = Sort.Direction.DESC;
-        }
-        field = (field != null) ? field : "id";
-        return postRepository.findAll(Sort.by(dir, field));
+    public Page<PostModel> getPostSorting(String field, Sort.Direction direction, Pageable pageable){
+        return postRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, field)));
     }
 
     public PostModel getPost(long id){

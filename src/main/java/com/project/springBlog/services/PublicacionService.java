@@ -5,16 +5,15 @@ import com.project.springBlog.dtos.PublicacionDetails;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
-import com.project.springBlog.repositories.PostRepository;
+import com.project.springBlog.utils.SortUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -27,37 +26,36 @@ public class PublicacionService {
     PostDetailsService detailsService;
 
     /**
-     * Obtiene la informacion de todas las publicaciones existentes en la base de datos
+     * Funcion que obtiene un listado de publicaciones ordenables por campo y en orden (asc, desc)
+     * @param field campo - puede ser null y se ordenará por defecto por ID
+     * @param order orden | asc - desc | puede ser null y se ordenará por defecto desc
+     * @param page int pagina | obligatorio|
+     * @param size tamaño contenidos página | obligatorio | Su valor máximo será de 50
      * @return
      */
-    public List<PublicacionDetails> getPublicacionesDetails(){
-        List<PostModel> posts = postService.getPosts();
-        List<PublicacionDetails> listPublicaciones = new ArrayList<>();
+    public List<PublicacionDetails> getPublicacionesDetails(String field, String order, int page, int size){
+        //Lista datos a devolver
+        List<PublicacionDetails> listPublicacionOrdered = new ArrayList<>(); //Lista datos a devolver
 
-        for(PostModel post : posts){
-            PostDetailsModel details = detailsService.getPostDetails(post.getId());
-            PublicacionDetails publicacion = new PublicacionDetails(post, details);
-            listPublicaciones.add(publicacion);
+        //VALIDACIONES
+        Sort.Direction sortOrder = SortUtils.directionPageContent(order);
+        String sortField = (field != null && !field.isEmpty()) ? field : "id"; //Si field es null o vacio se pone por default id
+        int limitSize = SortUtils.maxLimitsizePage(size); //Comprueba valor limite de pagina admitido por el servidor
+
+        //Se crea un objeto con la página a mostrar:
+        PageRequest pageRequest = PageRequest.of(page,limitSize, Sort.by(sortOrder, sortField)); //Nº pagina, tamaño, y orden
+
+        try {
+            //Se obtiene una pagina de PostModels ordenada.
+            Page<PostModel> postsPage = postService.getPostSorting(sortField, sortOrder, pageRequest);
+            //Se convierte en postDetails:
+            for(PostModel post : postsPage){
+                listPublicacionOrdered.add(getPublicacionDetails(post));
+            }
+        }catch (Exception e){
+            throw  new RuntimeException("An error occurred while fetching sorted posts " +e.getMessage());
         }
-        return listPublicaciones;
-    }
-
-    public List<PublicacionDetails> getPublicacionesDetails(int from, int to){
-        List<PublicacionDetails> listPublicaciones = new ArrayList<>();
-
-        return listPublicaciones;
-    }
-
-    public List<PublicacionDetails> getPublicacionesDetails(String field, String direction){
-        List<PublicacionDetails> listPublicaciones = new ArrayList<>();
-        List<PostModel> posts = postService.getPostSorting(field, direction);
-        for(PostModel post  : posts){
-            PostDetailsModel details = detailsService.getPostDetails(post.getId());
-            PublicacionDetails publicacion = new PublicacionDetails(post, details);
-            listPublicaciones.add(publicacion);
-        }
-
-        return listPublicaciones;
+        return listPublicacionOrdered;
     }
 
 
@@ -70,6 +68,11 @@ public class PublicacionService {
     public PublicacionDetails getPublicacionDetails(long id) {
             PostModel post = postService.getPost(id);
             PostDetailsModel details = detailsService.getPostDetails(id);
+            return new PublicacionDetails(post, details);
+    }
+
+    public PublicacionDetails getPublicacionDetails(PostModel post){
+            PostDetailsModel details = detailsService.getPostDetails(post.getId());
             return new PublicacionDetails(post, details);
     }
 
