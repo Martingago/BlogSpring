@@ -22,6 +22,7 @@ public class PostModel {
 
     private String titulo;
 
+    @Column(columnDefinition="LONGTEXT")
     private String contenido;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
