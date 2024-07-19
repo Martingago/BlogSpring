@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/v1")
 public class RegistrationController {
 
     @Autowired
@@ -18,11 +20,11 @@ public class RegistrationController {
     PasswordEncoder passwordEncoder;
 
     /**
-     * Crea un usuario
+     * Crea un usuario en la base de datos
      * @param usuario
      * @return
      */
-    @PostMapping("/register")
+    @PostMapping("/register/user")
     public UserModel registerUser(@RequestBody UserModel usuario){
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword())); //Se codifica el string de password
         return userRepository.save(usuario);

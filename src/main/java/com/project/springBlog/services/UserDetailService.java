@@ -17,9 +17,15 @@ public class UserDetailService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Carga la informacion de un usuario a través de su username
+     * @param username
+     * @return objeto userDetails con la información correspondiente a ese usuario
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserModel> user = userRepository.findByUserName(username);
+        Optional<UserModel> user = userRepository.findByUsername(username);
         if(user.isPresent()){
             var userObj = user.get();
             return User.builder()
@@ -32,6 +38,11 @@ public class UserDetailService implements UserDetailsService {
         }
     }
 
+    /**
+     * Obtiene un array con los roles que tiene un usuario especificado
+     * @param user
+     * @return
+     */
     private String[] getUserRoles(UserModel user){
         if(user.getRole() == null){
             return new String[]{"USER"};

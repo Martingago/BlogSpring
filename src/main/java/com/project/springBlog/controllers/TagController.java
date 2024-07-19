@@ -15,23 +15,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/tags")
+@RequestMapping("/api/v1")
 public class TagController {
     @Autowired
     TagService tagService;
 
-    @GetMapping
+    @GetMapping("public/tags")
     public ArrayList<TagModel> getTags() {
         return tagService.getTags();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("public/tags/{id}")
     public ResponseEntity<ResponseDTO> getTagById(@PathVariable("id") long id) {
         TagModel tag = tagService.getTag(id);
         return new ResponseEntity<>(new ResponseDTO(true, "Tag succesfully founded", tag), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/admin/tags")
     public ResponseEntity<ResponseDTO> addTag(@Valid @RequestBody TagModel tag, BindingResult result) {
         if ((result.hasErrors())) {
             String err = ValidationErrorUtil.processValidationErrors(result);
@@ -41,13 +41,13 @@ public class TagController {
         return new ResponseEntity<>(new ResponseDTO(true, "Tag successfully added", newTag), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("admin/tags/{id}")
     public ResponseEntity<?> deleteTag(@PathVariable("id") long id) {
         tagService.deleteTag(id);
         return new ResponseEntity<>(new ResponseDTO(true, "Tag was succesfully removed", null), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("admin/tags/{id}")
     public ResponseEntity<ResponseDTO> updateTag(@Valid @PathVariable("id") long id, @Valid @RequestBody TagModel tag, BindingResult result) {
         if (result.hasErrors()) {
             String err = ValidationErrorUtil.processValidationErrors(result);

@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/api/v1")
 public class PublicacionController {
     @Autowired
     PublicacionService publicacionService;
 
-
-    @GetMapping
+    @GetMapping("/public/post")
     public ResponseEntity<ResponseDTO> getPublicaciones(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "12") int size
@@ -30,7 +29,7 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
-    @GetMapping ("/sorted")
+    @GetMapping ("/public/post/sorted")
     public ResponseEntity<ResponseDTO> getPublicacionesSorted(
             @RequestParam(required = false) String field,
             @RequestParam(required = false) String order,
@@ -41,13 +40,13 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "List of sorted publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/public/post/{id}")
     public ResponseEntity<ResponseDTO> getPublicacion(@PathVariable("id") long id){
         PublicacionDetails publicacion =  publicacionService.getPublicacionDetails(id);
         return new ResponseEntity<>(new ResponseDTO(true, "Post was successfully founded", publicacion), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/admin/post")
     public ResponseEntity<ResponseDTO> addPublicacion(@Valid @RequestBody Publicacion publicacion, BindingResult result) {
         if (result.hasErrors()) {
             String err = ValidationErrorUtil.processValidationErrors(result);
@@ -57,13 +56,14 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "Post succesfully upload", pub), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+
+    @DeleteMapping("/admin/post/{id}")
     public ResponseEntity<ResponseDTO> removePublicacion(@PathVariable("id") long id){
         publicacionService.deletePublicacion(id);
         return new ResponseEntity<>(new ResponseDTO(true, "Post was successfully deleted", null), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/post/{id}")
     public ResponseEntity<ResponseDTO> updatePublicacion(@PathVariable("id") long id, @Valid @RequestBody Publicacion publicacion, BindingResult result){
         if(result.hasErrors()){
             return new ResponseEntity<>(new ResponseDTO(false, result.toString(), null), HttpStatus.BAD_REQUEST);

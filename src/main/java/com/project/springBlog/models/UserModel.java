@@ -13,7 +13,7 @@ public class UserModel {
 
     private String password;
 
-    private String role; //ex: ADMIN , USER
+    private String role; //ex: ADMIN, USER
 
     private String name;
 
