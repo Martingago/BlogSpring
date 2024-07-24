@@ -29,7 +29,7 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
-    @GetMapping ("/public/post/sorted")
+    @GetMapping ("/public/post/filter")
     public ResponseEntity<ResponseDTO> getPublicacionesSorted(
             @RequestParam(required = false) String field,
             @RequestParam(required = false) String order,

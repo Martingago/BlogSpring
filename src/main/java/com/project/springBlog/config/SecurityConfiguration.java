@@ -34,7 +34,6 @@ public class SecurityConfiguration{
                             registry.anyRequest().authenticated();
                         }
                 ).formLogin(formLogin -> formLogin
-                        .loginPage("/login")
                         .permitAll()
                 )
                 .httpBasic(Customizer.withDefaults())
