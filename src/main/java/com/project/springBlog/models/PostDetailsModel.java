@@ -1,7 +1,11 @@
 package com.project.springBlog.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.project.springBlog.dtos.CreatorInfoDTO;
 import jakarta.persistence.*;
+import org.apache.catalina.User;
 
 import java.util.Date;
 
@@ -15,18 +19,28 @@ public class PostDetailsModel {
     @Column(name="fecha_creacion")
     private Date fechaCreacion;
 
-    @Column(name="created_by")
-    private String creador;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="created_by", referencedColumnName = "id")
+    private UserModel creador;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnore
     private PostModel post;
 
-    public PostDetailsModel(Date fechaCreacion, String creador) {
+    public PostDetailsModel(Date fechaCreacion, UserModel creador) {
         this.fechaCreacion = fechaCreacion;
         this.creador = creador;
     }
+
+    //Estructura de la informacion que obtiene del creador
+    @JsonGetter("creador")
+    public CreatorInfoDTO serializedCreador(){
+        return new CreatorInfoDTO(creador.getId(), creador.getUsername(), creador.getName());
+    }
+
     public PostDetailsModel(){}
 
     public long getId() {
@@ -45,11 +59,11 @@ public class PostDetailsModel {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public String getCreador() {
+    public UserModel getCreador() {
         return creador;
     }
 
-    public void setCreador(String creador) {
+    public void setCreador(UserModel creador) {
         this.creador = creador;
     }
 

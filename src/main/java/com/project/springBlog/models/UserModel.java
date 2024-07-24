@@ -2,6 +2,9 @@ package com.project.springBlog.models;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name="usuarios")
 public class UserModel {
@@ -13,9 +16,13 @@ public class UserModel {
 
     private String password;
 
-    private String role; //ex: ADMIN, USER
+    private String role; //ex: ADMIN, USER, EDITOR
 
     private String name;
+
+    //Listado de post creados por un usuario
+    @OneToMany(mappedBy = "creador", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    private Set<PostDetailsModel> postList = new HashSet<>();
 
 
     public UserModel(String username, String password, String role, String name) {
@@ -66,5 +73,13 @@ public class UserModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<PostDetailsModel> getPostList() {
+        return postList;
+    }
+
+    public void setPostList(Set<PostDetailsModel> postList) {
+        this.postList = postList;
     }
 }

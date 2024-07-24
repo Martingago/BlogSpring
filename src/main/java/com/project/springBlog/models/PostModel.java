@@ -34,7 +34,6 @@ public class PostModel {
     @JsonIgnoreProperties("postsList")
     private Set<TagModel> tagList = new HashSet<>();
 
-
     @JsonGetter("tagList")
     public Set<Object> serializedTagList() {
         Set<Object> serializedTags = new HashSet<>();

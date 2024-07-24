@@ -1,5 +1,6 @@
 package com.project.springBlog.dtos;
 
+import com.project.springBlog.models.UserModel;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,17 +16,15 @@ public class Publicacion {
     @NotEmpty(message = "Content cannot be empty")
     private String contenido;
 
-    @NotNull(message = "Creator cannot be null")
-    @NotEmpty(message = "Creator cannot be empty")
-    private String creador;
+    private UserModel creador;
     
     @NotNull(message = "List tags cannot be null")
     private List<Long> tags = new ArrayList<>();
 
-    public Publicacion(String titulo, String contenido, String creador, List<Long> tags) {
+    public Publicacion(String titulo, String contenido, List<Long> tags) {
         this.titulo = titulo;
         this.contenido = contenido;
-        this.creador = creador;
+        this.creador = null;
         this.tags = tags;
     }
 
@@ -37,9 +36,11 @@ public class Publicacion {
         return contenido;
     }
 
-    public String getCreador() {
+    public UserModel getCreador() {
         return creador;
     }
+
+    public void setCreador(UserModel creador){ this.creador = creador;}
 
     public List<Long> getTags() {
         return tags;

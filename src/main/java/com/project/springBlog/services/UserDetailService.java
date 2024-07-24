@@ -3,6 +3,8 @@ package com.project.springBlog.services;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +18,15 @@ public class UserDetailService implements UserDetailsService {
 //https://www.youtube.com/watch?v=9J-b6OlPy24
     @Autowired
     private UserRepository userRepository;
+
+    public UserModel findByUsername(String username){
+        Optional<UserModel> user = userRepository.findByUsername(username);
+        if(user.isPresent()){
+            return user.get();
+        }else{
+            throw  new UsernameNotFoundException("Username was not founded");
+        }
+    }
 
     /**
      * Carga la informacion de un usuario a través de su username
@@ -48,5 +59,14 @@ public class UserDetailService implements UserDetailsService {
             return new String[]{"USER"};
         }
         return user.getRole().split(",");
+    }
+
+    /**
+     * Realiza una authenticacion del usuario que realiza una solicitud y devuelve los datos de dicho usuario
+     * @return
+     */
+    public UserModel getUserAuth(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return findByUsername(auth.getName());
     }
 }
