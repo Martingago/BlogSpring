@@ -1,6 +1,5 @@
-drop table posts_tags;
-drop table usuarios;
-drop table post_details;
-drop table tags;
-drop table posts;
-drop table tags;
+drop table if exists posts_tags;
+drop table if exists post_details;
+drop table if exists usuarios;
+drop table if exists tags;
+drop table if exists posts;
