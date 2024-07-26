@@ -1,7 +1,10 @@
 package com.project.springBlog.services;
 
+import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.UserModel;
+import com.project.springBlog.repositories.PostDetailsRepository;
 import com.project.springBlog.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
@@ -18,6 +21,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PostDetailsRepository detailsRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -73,10 +78,20 @@ public class UserService {
      * @param id del usuario a eliminar
      * @return boolean si ha tenido éxito, error si el usuario no se ha encontrado.
      */
+    @Transactional
     public boolean deleteUser(Long id){
         Optional<UserModel> userDelete =  userRepository.findById(id);
         if(userDelete.isPresent()){
-            userRepository.deleteById(userDelete.get().getId());
+            UserModel userToDelete = userDelete.get();
+            if(!userToDelete.getPostList().isEmpty()){
+                //Se modifican los post asociados a dicho usuario y se establece su creador en la administracion
+                UserModel userAdmin = userRepository.findById(1L).get();
+                for(PostDetailsModel details : userToDelete.getPostList()){
+                    details.setCreador(userAdmin);
+                    detailsRepository.save(details);
+                }
+            }
+            userRepository.delete(userToDelete);
             return true;
         }else{
             throw  new UsernameNotFoundException("User with id " + id + " was not founded");
