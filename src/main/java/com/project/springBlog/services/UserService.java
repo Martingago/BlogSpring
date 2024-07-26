@@ -85,7 +85,8 @@ public class UserService {
             UserModel userToDelete = userDelete.get();
             if(!userToDelete.getPostList().isEmpty()){
                 //Se modifican los post asociados a dicho usuario y se establece su creador en la administracion
-                UserModel userAdmin = userRepository.findById(1L).get();
+                UserModel userAdmin = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("Admin user not found"));
+
                 for(PostDetailsModel details : userToDelete.getPostList()){
                     details.setCreador(userAdmin);
                     detailsRepository.save(details);

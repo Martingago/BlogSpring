@@ -25,7 +25,7 @@ public class UserModel {
     private String name;
 
     //Listado de post creados por un usuario
-    @OneToMany(mappedBy = "creador", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "creador", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Set<PostDetailsModel> postList = new HashSet<>();
 
 
