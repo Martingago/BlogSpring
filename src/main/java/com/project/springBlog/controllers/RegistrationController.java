@@ -6,6 +6,7 @@ import com.project.springBlog.services.UserService;
 import com.project.springBlog.utils.ValidationErrorUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,8 +32,16 @@ public class RegistrationController {
             String err = ValidationErrorUtil.processValidationErrors(result);
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
-        UserModel newUser = userService.createUser(usuario);
-        return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
+        try {
+            UserModel newUser = userService.createUser(usuario);
+            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
+        }catch (DuplicateKeyException ex){
+            return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(new ResponseDTO(false, "An unexpected error occurred", null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     /**
@@ -47,8 +56,15 @@ public class RegistrationController {
             String err = ValidationErrorUtil.processValidationErrors(result);
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
-        UserModel newUser = userService.createUser(usuario, true);
-        return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
+        try{
+            UserModel newUser = userService.createUser(usuario, true);
+            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
+        }catch (DuplicateKeyException ex){
+            return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(new ResponseDTO(false, "An unexpected error occurred", null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/admin/user/{id}")

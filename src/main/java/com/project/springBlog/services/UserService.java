@@ -3,6 +3,7 @@ package com.project.springBlog.services;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,6 +54,12 @@ public class UserService {
      * @return objeto creado en la BBDD con el roll recibido
      */
     public UserModel createUser(UserModel newUser, boolean isAdmin){
+        //Comprueba que el usuario no exista en la BBDD
+        Optional<UserModel> existingUser = userRepository.findByUsername(newUser.getUsername());
+        if(existingUser.isPresent()){
+            throw new DuplicateKeyException("The username is already exists");
+        }
+        //Crea el usuario con los datos
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword())); //Se codifica el string de password
         if(!isAdmin){
             newUser.setRole("USER"); //Asegura que el rol sea solo USER y que no se pueda inyectar desde el front
