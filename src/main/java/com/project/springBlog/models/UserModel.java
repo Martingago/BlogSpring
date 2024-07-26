@@ -12,12 +12,16 @@ public class UserModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name="username", unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String role; //ex: ADMIN, USER, EDITOR
 
+    @Column(nullable = false)
     private String name;
 
     //Listado de post creados por un usuario

@@ -15,18 +15,10 @@ import java.util.Optional;
 
 @Service
 public class UserDetailService implements UserDetailsService {
-//https://www.youtube.com/watch?v=9J-b6OlPy24
+    //Informacion adicional: https://www.youtube.com/watch?v=9J-b6OlPy24
+
     @Autowired
     private UserRepository userRepository;
-
-    public UserModel findByUsername(String username){
-        Optional<UserModel> user = userRepository.findByUsername(username);
-        if(user.isPresent()){
-            return user.get();
-        }else{
-            throw  new UsernameNotFoundException("Username was not founded");
-        }
-    }
 
     /**
      * Carga la informacion de un usuario a través de su username
@@ -61,12 +53,5 @@ public class UserDetailService implements UserDetailsService {
         return user.getRole().split(",");
     }
 
-    /**
-     * Realiza una authenticacion del usuario que realiza una solicitud y devuelve los datos de dicho usuario
-     * @return
-     */
-    public UserModel getUserAuth(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return findByUsername(auth.getName());
-    }
+
 }

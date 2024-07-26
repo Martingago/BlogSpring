@@ -5,7 +5,7 @@ import com.project.springBlog.dtos.PublicacionDetails;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.services.PublicacionService;
-import com.project.springBlog.services.UserDetailService;
+import com.project.springBlog.services.UserService;
 import com.project.springBlog.utils.ValidationErrorUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class PublicacionController {
     PublicacionService publicacionService;
 
     @Autowired
-    UserDetailService userService;
+    UserService userService;
 
     @GetMapping("/public/post")
     public ResponseEntity<ResponseDTO> getPublicaciones(
