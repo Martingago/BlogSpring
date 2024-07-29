@@ -1,8 +1,12 @@
 package com.project.springBlog.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.project.springBlog.dtos.RoleDTO;
 import jakarta.persistence.*;
 
+import javax.management.relation.Role;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -18,8 +22,13 @@ public class UserModel {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String role; //ex: ADMIN, USER, EDITOR
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleModel> rolesList = new HashSet<>();
 
     @Column(nullable = false)
     private String name;
@@ -29,14 +38,26 @@ public class UserModel {
     private Set<PostDetailsModel> postList = new HashSet<>();
 
 
-    public UserModel(String username, String password, String role, String name) {
+    public UserModel(String username, String password, String name) {
         this.username = username;
         this.password = password;
-        this.role = role;
         this.name = name;
     }
 
     public UserModel() {
+    }
+
+    /**
+     * Forma en la que se listan los roles del usuario
+     * @return
+     */
+    @JsonGetter("rolesList")
+    public Set<RoleDTO> serializedRolesList(){
+        Set<RoleDTO> rolesDTOList = new HashSet<>();
+        for(RoleModel rol : rolesList){
+            rolesDTOList.add(new RoleDTO(rol.getId(), rol.getRoleName()));
+        }
+        return rolesDTOList;
     }
 
     public long getId() {
@@ -63,12 +84,12 @@ public class UserModel {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public Set<RoleModel> getRolesList() {
+        return rolesList;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRolesList(Set<RoleModel> rolesList) {
+        this.rolesList = rolesList;
     }
 
     public String getName() {

@@ -1,10 +1,9 @@
 package com.project.springBlog.services;
 
+import com.project.springBlog.models.RoleModel;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserDetailService implements UserDetailsService {
@@ -47,10 +47,13 @@ public class UserDetailService implements UserDetailsService {
      * @return
      */
     private String[] getUserRoles(UserModel user){
-        if(user.getRole() == null){
-            return new String[]{"USER"};
-        }
-        return user.getRole().split(",");
+        //Conjunto de roles que se obtienen del usuario
+        Set<RoleModel> roles = user.getRolesList();
+        //Se convierten los RoleModels a un array de Strings con los nombres de ROL
+        String[] roleName = roles.stream()
+                .map(rol -> rol.getRoleName())
+                .toArray(String[]::new);
+        return roleName;
     }
 
 

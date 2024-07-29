@@ -1,8 +1,10 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.models.PostDetailsModel;
+import com.project.springBlog.models.RoleModel;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
+import com.project.springBlog.repositories.RoleRepository;
 import com.project.springBlog.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,12 @@ public class UserService {
 
     @Autowired
     private PostDetailsRepository detailsRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-
 
     /**
      * Funcion que obtiene los datos de un usuario pasando como parametro su nombre
@@ -67,7 +72,8 @@ public class UserService {
         //Crea el usuario con los datos
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword())); //Se codifica el string de password
         if(!isAdmin){
-            newUser.setRole("USER"); //Asegura que el rol sea solo USER y que no se pueda inyectar desde el front
+            RoleModel usuario = roleRepository.findByRoleName("USER").get();
+            newUser.getRolesList().add(usuario); //Asegura que el rol sea solo USER y que no se pueda inyectar desde el front
         }
         return userRepository.save(newUser);
     }
