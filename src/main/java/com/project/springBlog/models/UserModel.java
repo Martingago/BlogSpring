@@ -37,6 +37,38 @@ public class UserModel {
     @OneToMany(mappedBy = "creador", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Set<PostDetailsModel> postList = new HashSet<>();
 
+    /**
+     * Añade un rol a un usuario
+     * @param rol
+     */
+    public void addRol(RoleModel rol){
+        this.rolesList.add(rol);
+        rol.getUsers().add(this);
+    }
+
+    /**
+     * Elimina un rol a un usuario
+     * @param rol
+     */
+    public void deleteRol(RoleModel rol){
+        this.rolesList.remove(rol);
+        rol.getUsers().remove(this);
+    }
+
+    /**
+     * Funcion que establece que datos se van a enviar al front de la información de los roles
+     * @return Set de objeto RoleDTO
+     */
+    @JsonGetter("rolesList")
+    public Set<RoleDTO> serializedRolesList(){
+        Set<RoleDTO> rolesDTOList = new HashSet<>();
+        for(RoleModel rol : rolesList){
+            rolesDTOList.add(new RoleDTO(rol.getId(), rol.getRoleName()));
+        }
+        return rolesDTOList;
+    }
+
+    // Constructores
 
     public UserModel(String username, String password, String name) {
         this.username = username;
@@ -47,18 +79,7 @@ public class UserModel {
     public UserModel() {
     }
 
-    /**
-     * Forma en la que se listan los roles del usuario
-     * @return
-     */
-    @JsonGetter("rolesList")
-    public Set<RoleDTO> serializedRolesList(){
-        Set<RoleDTO> rolesDTOList = new HashSet<>();
-        for(RoleModel rol : rolesList){
-            rolesDTOList.add(new RoleDTO(rol.getId(), rol.getRoleName()));
-        }
-        return rolesDTOList;
-    }
+    // Getters and setters
 
     public long getId() {
         return id;
@@ -84,13 +105,9 @@ public class UserModel {
         this.password = password;
     }
 
-    public Set<RoleModel> getRolesList() {
-        return rolesList;
-    }
+    public Set<RoleModel> getRolesList() {return rolesList;}
 
-    public void setRolesList(Set<RoleModel> rolesList) {
-        this.rolesList = rolesList;
-    }
+    public void setRolesList(Set<RoleModel> rolesList) {this.rolesList = rolesList;}
 
     public String getName() {
         return name;
@@ -100,11 +117,8 @@ public class UserModel {
         this.name = name;
     }
 
-    public Set<PostDetailsModel> getPostList() {
-        return postList;
-    }
+    public Set<PostDetailsModel> getPostList() {return postList;}
 
-    public void setPostList(Set<PostDetailsModel> postList) {
-        this.postList = postList;
-    }
+    public void setPostList(Set<PostDetailsModel> postList) {this.postList = postList;}
+
 }

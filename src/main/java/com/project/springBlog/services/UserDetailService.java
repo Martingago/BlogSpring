@@ -3,6 +3,7 @@ package com.project.springBlog.services;
 import com.project.springBlog.models.RoleModel;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,10 +28,12 @@ public class UserDetailService implements UserDetailsService {
      * @throws UsernameNotFoundException
      */
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserModel> user = userRepository.findByUsername(username);
         if(user.isPresent()){
             var userObj = user.get();
+            userObj.getRolesList().size(); //Fuerza la obtencion de los roles de usuario
             return User.builder()
                     .username(userObj.getUsername())
                     .password(userObj.getPassword())

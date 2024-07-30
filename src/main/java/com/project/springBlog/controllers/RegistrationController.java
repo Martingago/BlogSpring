@@ -1,9 +1,12 @@
 package com.project.springBlog.controllers;
 
 import com.project.springBlog.dtos.ResponseDTO;
+import com.project.springBlog.dtos.UserDTO;
 import com.project.springBlog.models.UserModel;
+import com.project.springBlog.services.RoleService;
 import com.project.springBlog.services.UserService;
 import com.project.springBlog.utils.ValidationErrorUtil;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -21,6 +24,8 @@ public class RegistrationController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    RoleService roleService;
     /**
      * Crea un usuario sin privilegios en la base de datos
      * @param usuario
@@ -47,17 +52,20 @@ public class RegistrationController {
     /**
      * Crea un usuario administrador en la base de datos
      * Los roles de un ADMIN pueden ser: USUARIO, ADMIN, EDITOR
-     * @param usuario
+     * @param usuarioDTO
      * @return
      */
     @PostMapping("/register/admin")
-    public ResponseEntity<ResponseDTO> registerAdmin(@RequestBody UserModel usuario, BindingResult result){
+    @Transactional
+    public ResponseEntity<ResponseDTO> registerAdmin(@RequestBody UserDTO usuarioDTO, BindingResult result){
         if(result.hasErrors()){
             String err = ValidationErrorUtil.processValidationErrors(result);
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         try{
-            UserModel newUser = userService.createUser(usuario, true);
+            UserModel usuario = new UserModel(usuarioDTO.getUsername(), usuarioDTO.getPassword(), usuarioDTO.getName());
+            UserModel newUser = userService.createUser(usuario, true); //Crea un usuario normal
+            roleService.insertRolesToUser(newUser, usuarioDTO.getRoles()); //Le añade los roles correspondientes
             return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
