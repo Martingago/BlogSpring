@@ -25,6 +25,10 @@ public class PostModel {
     @Column(columnDefinition="LONGTEXT")
     private String contenido;
 
+    /**
+     * Es la parte propietaria de la relación entre post y tags (posts_tags) la eliminación de un post es gestionada
+     * dentro de tags por la propia sesión JPA(Hibernate), no es necesario un @Preremove cuando se elimine un post
+     */
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "posts_tags",
@@ -46,14 +50,6 @@ public class PostModel {
         return serializedTags;
     }
 
-    @PreRemove
-    private void preRemove(){
-        Set<TagModel> tags = new HashSet<>(tagList);
-        for(TagModel tag :tags){
-            deteleTag(tag);
-        }
-    }
-
     /**
      * Añade una tag al post y tambien añade un post al tag referenciado
      * @param tag
@@ -72,7 +68,7 @@ public class PostModel {
         tag.getPostsList().remove(this);
     }
 
-    //Getters and setters
+    //Contructor
 
     public PostModel(String titulo, String contenido) {
         this.titulo = titulo;
@@ -80,6 +76,8 @@ public class PostModel {
     }
 
     public PostModel(){}
+
+    //Getters and setters
 
     public long getId() {
         return id;
@@ -113,12 +111,4 @@ public class PostModel {
         this.tagList = tagList;
     }
 
-    @Override
-    public String toString() {
-        return "PostModel{" +
-                "id=" + id +
-                ", titulo='" + titulo + '\'' +
-                ", contenido='" + contenido + '\'' +
-                '}';
-    }
 }

@@ -22,12 +22,16 @@ public class TagModel {
 
     @ManyToMany(
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE},
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST},
             mappedBy = "tagList"
     )
     @JsonIgnoreProperties("tagList")
     private Set<PostModel> postsList = new HashSet<>();
 
+    /**
+     * Atributos de los post que se enviarán en el JSON cuando se obtenga la información de los tags
+     * @return Set con los IDs de los post asociados a cada Tag
+     */
     @JsonGetter("postsList")
     public Set<Object> serializedPostsList() {
         Set<Object> serializedPosts = new HashSet<>();
@@ -37,6 +41,11 @@ public class TagModel {
         return serializedPosts;
     }
 
+    /**
+     * Es necesario ya que TagModel es la parte inversa de la relación posts_tags
+     * Esta funcion se emplea antes de  eliminar tags.
+     * Realiza una busqueda de todos los post que contienen una referencia al tag y la elimina
+     */
     @PreRemove
     private void preRemove() {
         Set<PostModel> posts = new HashSet<>(postsList); // Crear una copia de la colección
@@ -45,7 +54,7 @@ public class TagModel {
         }
     }
 
-    //Constructor getters and setters
+    //Constructor
 
     public TagModel(String nombre) {
         this.nombre = nombre;
@@ -53,6 +62,7 @@ public class TagModel {
 
     public TagModel(){}
 
+    // Getters and setterss
     public long getId() {
         return id;
     }
@@ -77,11 +87,4 @@ public class TagModel {
         this.postsList = modelList;
     }
 
-    @Override
-    public String toString() {
-        return "TagModel{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                '}';
-    }
 }
