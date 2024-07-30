@@ -58,7 +58,7 @@ public class PostModel {
      * Añade una tag al post y tambien añade un post al tag referenciado
      * @param tag
      */
-    public void addTag(TagModel tag){
+    public void  addTag(TagModel tag){
         this.tagList.add(tag);
         tag.getPostsList().add(this);
     }

@@ -1,5 +1,6 @@
 package com.project.springBlog.services;
 
+import com.project.springBlog.dtos.UserDTO;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.RoleModel;
 import com.project.springBlog.models.UserModel;
@@ -30,6 +31,9 @@ public class UserService {
     private RoleRepository roleRepository;
 
     @Autowired
+    private RoleService roleService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     /**
@@ -52,30 +56,34 @@ public class UserService {
      * @param newUser datos del usuario a crear
      * @return objeto creado en la BBDD con el roll fijado en USER
      */
-    public UserModel createUser(UserModel newUser){
+    public UserModel createUser(UserDTO newUser){
         return createUser(newUser, false);
     }
 
     /**
      * Funcion que permite crear un usuario con roll de USER, o roles de ADMINISTRACION
      * Los roles deben ser recibidos en el objeto newUser, no se produce ninguna inyección por defecto
-     * @param newUser informacion del usuario a crear
+     * @param newUserDTO informacion del usuario a crear
      * @param isAdmin boolean indicando si es ADMINISTRADOR o no
      * @return objeto creado en la BBDD con el roll recibido
      */
-    public UserModel createUser(UserModel newUser, boolean isAdmin){
+    public UserModel createUser(UserDTO newUserDTO, boolean isAdmin){
         //Comprueba que el usuario no exista en la BBDD
-        Optional<UserModel> existingUser = userRepository.findByUsername(newUser.getUsername());
+        Optional<UserModel> existingUser = userRepository.findByUsername(newUserDTO.getUsername());
         if(existingUser.isPresent()){
             throw new DuplicateKeyException("The username is already exists");
         }
-        //Crea el usuario con los datos
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword())); //Se codifica el string de password
+
+        newUserDTO.setPassword(passwordEncoder.encode(newUserDTO.getPassword())); //Se codifica el string de password
+        //Se crea un modelo de usuario
+        UserModel newUser = new UserModel(newUserDTO.getUsername(), newUserDTO.getPassword(), newUserDTO.getName());
         if(!isAdmin){
-            RoleModel usuario = roleRepository.findByRoleName("USER").get();
-            newUser.getRolesList().add(usuario); //Asegura que el rol sea solo USER y que no se pueda inyectar desde el front
+            RoleModel userRol = roleRepository.findByRoleName("USER").get();
+            newUser.addRol(userRol);
+        }else{
+            roleService.insertRolesToUser(newUser, newUserDTO.getRoles()); //Le añade los roles correspondientes
         }
-        return userRepository.save(newUser);
+        return newUser;
     }
 
     /**

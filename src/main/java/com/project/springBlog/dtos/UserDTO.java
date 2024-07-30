@@ -3,6 +3,7 @@ package com.project.springBlog.dtos;
 import com.project.springBlog.models.UserModel;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDTO {
@@ -18,12 +19,41 @@ public class UserDTO {
     @NotEmpty(message = "Name cannot be empty")
     private String name;
 
+
+    /**
+     * Constructor sin argumentos
+     */
+    public UserDTO(){}
+
+    /**
+     * Constructor para un usuario básico sin roles.
+     * @param username
+     * @param password
+     * @param name
+     */
+
+    public UserDTO(String username, String password, String name){
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.roles = new ArrayList<>();
+    }
+
+    /**
+     * Contructor para un usuario con roles de administracion
+     * @param username
+     * @param password
+     * @param roles
+     * @param name
+     */
     public UserDTO(String username, String password, List<Long> roles, String name){
     this.username = username;
     this.password = password;
     this.roles = roles;
     this.name = name;
     }
+
+    // Getters and setters
 
     public String getUsername() {
         return username;

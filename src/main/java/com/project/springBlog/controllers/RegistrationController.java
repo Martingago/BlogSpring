@@ -26,19 +26,20 @@ public class RegistrationController {
 
     @Autowired
     RoleService roleService;
+
     /**
      * Crea un usuario sin privilegios en la base de datos
-     * @param usuario
+     * @param usuarioDTO
      * @return
      */
     @PostMapping("/register/user")
-    public ResponseEntity<ResponseDTO> registerUser(@Valid @RequestBody UserModel usuario, BindingResult result){
+    public ResponseEntity<ResponseDTO> registerUser(@Valid @RequestBody UserDTO usuarioDTO, BindingResult result){
         if(result.hasErrors()){
             String err = ValidationErrorUtil.processValidationErrors(result);
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         try {
-            UserModel newUser = userService.createUser(usuario);
+            UserModel newUser = userService.createUser(usuarioDTO); //Crea un usuario con permisos básicos
             return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
@@ -63,9 +64,7 @@ public class RegistrationController {
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         try{
-            UserModel usuario = new UserModel(usuarioDTO.getUsername(), usuarioDTO.getPassword(), usuarioDTO.getName());
-            UserModel newUser = userService.createUser(usuario, true); //Crea un usuario normal
-            roleService.insertRolesToUser(newUser, usuarioDTO.getRoles()); //Le añade los roles correspondientes
+            UserModel newUser = userService.createUser(usuarioDTO, true); //Crea un usuario normal
             return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
