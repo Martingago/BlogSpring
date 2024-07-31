@@ -1,6 +1,7 @@
 package com.project.springBlog.models;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.springBlog.dtos.RoleDTO;
 import jakarta.persistence.*;
 
@@ -29,6 +30,11 @@ public class UserModel {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<RoleModel> rolesList = new HashSet<>();
+
+    //Comentarios escritos por un usuario
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"usuario", "postDetail", "comentarioPadre","respuestasComentario"})
+    private Set<CommentModel> comentariosList = new HashSet<>();
 
     @Column(nullable = false)
     private String name;
@@ -121,4 +127,11 @@ public class UserModel {
 
     public void setPostList(Set<PostDetailsModel> postList) {this.postList = postList;}
 
+    public Set<CommentModel> getComentariosList() {
+        return comentariosList;
+    }
+
+    public void setComentariosList(Set<CommentModel> comentariosList) {
+        this.comentariosList = comentariosList;
+    }
 }

@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import org.apache.catalina.User;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="post_details")
@@ -29,6 +31,10 @@ public class PostDetailsModel {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JsonIgnore
     private PostModel post;
+
+    @OneToMany(mappedBy = "postDetail", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"usuario", "postDetail", "comentarioPadre", "respuestasComentario"})
+    private Set<CommentModel> comentariosList = new HashSet<>();
 
     public PostDetailsModel(Date fechaCreacion, UserModel creador) {
         this.fechaCreacion = fechaCreacion;
