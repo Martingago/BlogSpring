@@ -47,7 +47,7 @@ public class RegistrationController {
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
         }
         catch (Exception e){
-            return new ResponseEntity<>(new ResponseDTO(false, "An unexpected error occurred", null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(false, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -60,7 +60,7 @@ public class RegistrationController {
      */
     @PostMapping("/register/admin")
     @Transactional
-    public ResponseEntity<ResponseDTO> registerAdmin(@RequestBody UserDTO usuarioDTO, BindingResult result){
+    public ResponseEntity<ResponseDTO> registerAdmin(@Valid @RequestBody UserDTO usuarioDTO, BindingResult result){
         if(result.hasErrors()){
             String err = ValidationErrorUtil.processValidationErrors(result);
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
@@ -73,7 +73,7 @@ public class RegistrationController {
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
         }
         catch (Exception e){
-            return new ResponseEntity<>(new ResponseDTO(false, "An unexpected error occurred", null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(false, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
