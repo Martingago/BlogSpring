@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -29,8 +31,8 @@ public class CommentService {
 
     /**
      * Funcion que crea un comentario en un post por un usuario
-     * @param postDetails identificador del post al que pertenece el comentario
-     * @param usuario identificador del usuario que ha escrito el post
+     * @param postDetails del post al que pertenece el comentario
+     * @param usuario del usuario que ha escrito el post
      * @param contenido String con el contenido del comentario
      * @param comentarioPadreId identificador de otro comentario en caso de ser una respuesta
      * @return newComment generado en la base de datos
@@ -52,33 +54,64 @@ public class CommentService {
      * @param idComentario a eliminar
      * @return boolean si se ha completado o un error.
      */
-    public boolean validateAndDeleteCommentario(UserModel usuario, Long idComentario){
-        if(usuario.getId() == idComentario || usuario.getRolesList().contains("ADMIN")){
-            return deleteComentario(idComentario);
-        }else{
-            throw new SecurityException("No permission to do this action");
+    public boolean validateAndDeleteCommentario(UserModel usuario, Long idComentario) {
+        CommentModel comentario = null;
+        //Busca el comentario en la BBDD
+        comentario = findCommentById(idComentario);
+
+        //Valida si quien elimina el comentario es el autor o un administrador
+        System.out.println("Rol USUARIO => " +  usuario.getRoles());
+        if (usuario.getId() == comentario.getUsuario().getId() || usuario.getRoles().contains("ADMIN")) {
+            return deleteComentario(comentario);
+        } else {
+            throw new SecurityException("No permission to delete this comment");
         }
     }
 
     /**
+     * Busca un comentario por su ID y maneja el posible error en caso de no encontrarlo
+     * @param id del comentario a buscar
+     * @return
+     */
+    public CommentModel findCommentById(Long id){
+        Optional<CommentModel> commentOpt = commentRepository.findById(id);
+        if(!commentOpt.isPresent()){
+            throw  new EntityNotFoundException("Comment with id "+ id + " was not founded");
+        }
+        return commentOpt.get();
+    }
+
+    /**
+     * Elimina un comentario y sus respuestas pasando como parámetro el CommnetModel
+     * @param comentario a eliminar
+     * @return
+     */
+    public boolean deleteComentario(CommentModel comentario) {
+        //Se eliminan las respuestas de un comentario
+        for (CommentModel respuesta : comentario.getRespuestasComentario()) {
+            try {
+                //Elimina de manera recursiva las respuestas
+                deleteComentario(respuesta.getId());
+            } catch (EntityNotFoundException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        //Se elimina el comentario padre
+        try {
+            commentRepository.deleteById(comentario.getId());
+        } catch (EntityNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return true;
+    }
+
+    /**
      * Elimina un comentario de la base de datos y sus respuestas asociadas
-     * @param id
+     * @param id comentario a eliminar
      * @return
      */
     public boolean deleteComentario(Long id){
-        Optional<CommentModel> commentOpt = commentRepository.findById(id);
-        if(commentOpt.isPresent()){
-            CommentModel comentario = commentOpt.get();
-            //Elimina todas las respuestas al comentario
-            for(CommentModel respuesta : comentario.getRespuestasComentario()){
-                deleteComentario(respuesta.getId()); //Se llama a la misma funcion para que continue eliminando comentarios
-            }
-            commentRepository.delete(comentario);
-            return true;
-        }else {
-            throw  new EntityNotFoundException("Comment with id " + id + "was not founded");
-        }
+        return deleteComentario(findCommentById(id));
     }
-
-
 }

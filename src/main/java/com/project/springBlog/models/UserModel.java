@@ -9,6 +9,7 @@ import javax.management.relation.Role;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="usuarios")
@@ -72,6 +73,16 @@ public class UserModel {
             rolesDTOList.add(new RoleDTO(rol.getId(), rol.getRoleName()));
         }
         return rolesDTOList;
+    }
+
+    /**
+     * Obtiene un set de los roles de un usuario
+     * @return set de Strings con los roles que tiene un usuario
+     */
+    public Set<String> getRoles(){
+        return this.getRolesList().stream()
+                .map(role -> role.getRoleName())
+                .collect(Collectors.toSet());
     }
 
     // Constructores

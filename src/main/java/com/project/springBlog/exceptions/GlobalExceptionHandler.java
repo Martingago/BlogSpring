@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-
     /**
      * Gestiona el error de una entidad no encontrada
      * @param exception error recibido
@@ -23,7 +22,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityException.class)
-    public ResponseEntity<ResponseDTO> handleEntityDelete(EntityException exception){
+    public ResponseEntity<ResponseDTO> handleEntityException(EntityException exception){
         return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(),null), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -31,6 +30,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDTO> handleEntityArguments(MethodArgumentNotValidException exception){
         return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(), null), HttpStatus.METHOD_NOT_ALLOWED);
     }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<ResponseDTO> handleSecurityException(SecurityException exception){
+        return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(),null), HttpStatus.FORBIDDEN);
+    }
+
 
 
     /**

@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "comentarios")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CommentModel {
 
     @Id
@@ -24,12 +25,12 @@ public class CommentModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    @JsonIgnoreProperties({"comentariosList"})
+    @JsonIgnoreProperties({"comentariosList", "password", "rolesList", "postList"})
     private UserModel usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    @JsonIgnoreProperties({"comentariosList"})
+    @JsonIgnoreProperties({"comentariosList", "fechaCreacion", "creador"})
     private PostDetailsModel postDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
