@@ -1,7 +1,7 @@
 package com.project.springBlog.controllers;
 
 import com.project.springBlog.dtos.Publicacion;
-import com.project.springBlog.dtos.PublicacionDetails;
+import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.services.PublicacionService;
@@ -31,7 +31,7 @@ public class PublicacionController {
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "12") int size
     ){
-        List<PublicacionDetails> listPublicacion =  publicacionService.getPublicacionesDetails(null, null, page, size);
+        List<PublicacionDetailsDTO> listPublicacion =  publicacionService.getPublicacionesDetails(null, null, page, size);
         return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
@@ -42,13 +42,13 @@ public class PublicacionController {
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "12") int size){
 
-        List<PublicacionDetails> listPublicacion = publicacionService.getPublicacionesDetails(field, order, page, size);
+        List<PublicacionDetailsDTO> listPublicacion = publicacionService.getPublicacionesDetails(field, order, page, size);
         return new ResponseEntity<>(new ResponseDTO(true, "List of sorted publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
     @GetMapping("/public/post/{id}")
     public ResponseEntity<ResponseDTO> getPublicacion(@PathVariable("id") long id){
-        PublicacionDetails publicacion =  publicacionService.getPublicacionDetails(id);
+        PublicacionDetailsDTO publicacion =  publicacionService.getPublicacionDetails(id);
         return new ResponseEntity<>(new ResponseDTO(true, "Post was successfully founded", publicacion), HttpStatus.OK);
     }
 
@@ -61,7 +61,7 @@ public class PublicacionController {
         //Se validan los datos del usuario:
         UserModel creador = userService.getUserAuth();
         publicacion.setCreador(creador);
-        PublicacionDetails pub = publicacionService.addPublicacion(publicacion);
+        PublicacionDetailsDTO pub = publicacionService.addPublicacion(publicacion);
         return new ResponseEntity<>(new ResponseDTO(true, "Post succesfully upload", pub), HttpStatus.OK);
     }
 
@@ -70,7 +70,7 @@ public class PublicacionController {
         if(result.hasErrors()){
             return new ResponseEntity<>(new ResponseDTO(false, result.toString(), null), HttpStatus.BAD_REQUEST);
         }
-        PublicacionDetails pub = publicacionService.updatePublicacion(id, publicacion);
+        PublicacionDetailsDTO pub = publicacionService.updatePublicacion(id, publicacion);
         return new ResponseEntity<>(new ResponseDTO(true, "Publicacion was successfully updated", pub), HttpStatus.OK);
     }
 

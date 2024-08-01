@@ -10,6 +10,7 @@ import com.project.springBlog.repositories.PostDetailsRepository;
 import com.project.springBlog.repositories.UserRepository;
 import com.project.springBlog.services.CommentService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,18 +35,19 @@ public class CommentController {
     @PostMapping("/user/post/{id}/comment")
     @Transactional
     public ResponseEntity<ResponseDTO> addComentario(@PathVariable("id") long postId,
+                                                     @Valid
                                                      @RequestBody CommentDTO comentario) {
         //Validar que el usuario exista:
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<UserModel> authUser = userRepository.findByUsername(username);
-        if (!authUser.isPresent()) {
+        if (authUser.isEmpty()) {
             return new ResponseEntity<>(new ResponseDTO(false, "User not authenticated", null), HttpStatus.FORBIDDEN);
         }
         UserModel usuario = authUser.get();
 
         //Comprobar que el post exista:
         Optional<PostDetailsModel> postOpt = postDetailsRepository.findById(postId);
-        if (!postOpt.isPresent()) {
+        if (postOpt.isEmpty()) {
             return new ResponseEntity<>(new ResponseDTO(false, "Post not founded", null), HttpStatus.NOT_FOUND);
         }
         PostDetailsModel details = postOpt.get();
@@ -64,7 +66,7 @@ public class CommentController {
         //Obtiene los datos del usuario que va a realizar la acción
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<UserModel> authUser = userRepository.findByUsername(username);
-        if (!authUser.isPresent()) {
+        if (authUser.isEmpty()) {
             return new ResponseEntity<>(new ResponseDTO(false, "User not authenticated", null), HttpStatus.UNAUTHORIZED);
         }
         UserModel usuario = authUser.get();

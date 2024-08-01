@@ -14,6 +14,15 @@ public class CommentDTO {
     private Long userId;
     private Long replyId;
 
+    /**
+     * DTO salida que se envia al fron-end tras haber generado un comentario
+     * @param id
+     * @param contenido
+     * @param fechaComentario
+     * @param postId
+     * @param userId
+     * @param replyId
+     */
     public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long postId, Long userId, Long replyId) {
         this.id = id;
         this.contenido = contenido;
@@ -23,9 +32,13 @@ public class CommentDTO {
         this.replyId = replyId;
     }
 
-    public CommentDTO(String comentario, LocalDateTime fechaComentario, Long replyId) {
-        this.contenido = comentario;
-        this.fechaComentario = fechaComentario;
+    /**
+     * DTO validación para añadir un comentario estructura que debe recibir desde el front-end
+     * @param contenido
+     * @param replyId
+     */
+    public CommentDTO(String contenido,  Long replyId) {
+        this.contenido = contenido;
         this.replyId = replyId;
     }
 

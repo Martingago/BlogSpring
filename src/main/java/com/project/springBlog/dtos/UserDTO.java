@@ -1,22 +1,27 @@
 package com.project.springBlog.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.project.springBlog.models.RoleModel;
 import com.project.springBlog.models.UserModel;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class UserDTO {
 
-    @NotEmpty(message = "Username cannot be empty")
     private String username;
 
-    @NotEmpty(message = "password cannot be empty")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String password;
 
-    private List<Long> roles;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Long> roles; //Id de los roles de un usuario
 
-    @NotEmpty(message = "Name cannot be empty")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Set<String> userRoles; //Strings de los roles de usuario
+
     private String name;
 
 
@@ -46,11 +51,11 @@ public class UserDTO {
      * @param roles
      * @param name
      */
-    public UserDTO(String username, String password, List<Long> roles, String name){
-    this.username = username;
-    this.password = password;
-    this.roles = roles;
-    this.name = name;
+    public UserDTO(String username, String password, List<Long> roles, String name) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.name = name;
     }
 
     // Getters and setters
@@ -85,5 +90,13 @@ public class UserDTO {
 
     public void setName( String name) {
         this.name = name;
+    }
+
+    public Set<String> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(Set<String> userRoles) {
+        this.userRoles = userRoles;
     }
 }

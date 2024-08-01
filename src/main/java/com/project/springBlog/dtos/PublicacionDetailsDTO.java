@@ -2,19 +2,14 @@ package com.project.springBlog.dtos;
 
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
-import com.project.springBlog.models.TagModel;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-public class PublicacionDetails {
+public class PublicacionDetailsDTO {
 
     private PostModel post;
     private PostDetailsModel details;
 
 
-    public PublicacionDetails(PostModel post, PostDetailsModel details) {
+    public PublicacionDetailsDTO(PostModel post, PostDetailsModel details) {
         this.post = post;
         this.details = details;
     }

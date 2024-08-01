@@ -3,7 +3,9 @@ package com.project.springBlog.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.springBlog.dtos.RoleDTO;
+import com.project.springBlog.mapper.RoleMapper;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import javax.management.relation.Role;
 import java.util.HashSet;
@@ -19,9 +21,11 @@ public class UserModel {
     private long id;
 
     @Column(name="username", unique = true, nullable = false)
+    @NotEmpty(message = "Username cannot be empty")
     private String username;
 
     @Column(nullable = false)
+    @NotEmpty(message = "password cannot be empty")
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST })
@@ -38,6 +42,7 @@ public class UserModel {
     private Set<CommentModel> comentariosList = new HashSet<>();
 
     @Column(nullable = false)
+    @NotEmpty(message = "Name cannot be empty")
     private String name;
 
     //Listado de post creados por un usuario
@@ -66,14 +71,14 @@ public class UserModel {
      * Funcion que establece que datos se van a enviar al front de la información de los roles
      * @return Set de objeto RoleDTO
      */
-    @JsonGetter("rolesList")
-    public Set<RoleDTO> serializedRolesList(){
-        Set<RoleDTO> rolesDTOList = new HashSet<>();
-        for(RoleModel rol : rolesList){
-            rolesDTOList.add(new RoleDTO(rol.getId(), rol.getRoleName()));
-        }
-        return rolesDTOList;
-    }
+//    @JsonGetter("rolesList")
+//    public Set<RoleDTO> serializedRolesList(){
+//        Set<RoleDTO> rolesDTOList = new HashSet<>();
+//        for(RoleModel rol : rolesList){
+//            rolesDTOList.add(RoleMapper.toDTO(rol));
+//        }
+//        return rolesDTOList;
+//    }
 
     /**
      * Obtiene un set de los roles de un usuario
@@ -81,7 +86,7 @@ public class UserModel {
      */
     public Set<String> getRoles(){
         return this.getRolesList().stream()
-                .map(role -> role.getRoleName())
+                .map(RoleModel::getRoleName)
                 .collect(Collectors.toSet());
     }
 

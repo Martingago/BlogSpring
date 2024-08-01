@@ -1,6 +1,8 @@
 package com.project.springBlog.controllers;
 
 import com.project.springBlog.dtos.ResponseDTO;
+import com.project.springBlog.dtos.TagDTO;
+import com.project.springBlog.mapper.TagMapper;
 import com.project.springBlog.models.TagModel;
 import com.project.springBlog.services.TagService;
 import com.project.springBlog.utils.ValidationErrorUtil;
@@ -28,7 +30,8 @@ public class TagController {
     @GetMapping("public/tags/{id}")
     public ResponseEntity<ResponseDTO> getTagById(@PathVariable("id") long id) {
         TagModel tag = tagService.getTag(id);
-        return new ResponseEntity<>(new ResponseDTO(true, "Tag succesfully founded", tag), HttpStatus.OK);
+        TagDTO tagDTO = TagMapper.toDTO(tag);
+        return new ResponseEntity<>(new ResponseDTO(true, "Tag succesfully founded", tagDTO), HttpStatus.OK);
     }
 
     @PostMapping("/admin/tags")
@@ -38,7 +41,9 @@ public class TagController {
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         TagModel newTag = tagService.addTag(tag);
-        return new ResponseEntity<>(new ResponseDTO(true, "Tag successfully added", newTag), HttpStatus.OK);
+        //Se devuelve el DTO de la tag como respuesta
+        TagDTO tagDTO = TagMapper.toSimpleDTO(newTag);
+        return new ResponseEntity<>(new ResponseDTO(true, "Tag successfully added", tagDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("admin/tags/{id}")
@@ -54,7 +59,9 @@ public class TagController {
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         TagModel updatedTag = tagService.updateTag(id, tag);
-        return new ResponseEntity<>(new ResponseDTO(true, "Tag was succesfully updated", updatedTag), HttpStatus.OK);
+        //Se devuelve el DTO de la tag como respuesta
+        TagDTO tagDTO = TagMapper.toSimpleDTO(updatedTag);
+        return new ResponseEntity<>(new ResponseDTO(true, "Tag was succesfully updated", tagDTO), HttpStatus.OK);
     }
 
 }

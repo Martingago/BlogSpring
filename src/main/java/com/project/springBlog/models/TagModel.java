@@ -25,21 +25,8 @@ public class TagModel {
             cascade = {CascadeType.MERGE, CascadeType.PERSIST},
             mappedBy = "tagList"
     )
-    @JsonIgnoreProperties("tagList")
     private Set<PostModel> postsList = new HashSet<>();
 
-    /**
-     * Atributos de los post que se enviarán en el JSON cuando se obtenga la información de los tags
-     * @return Set con los IDs de los post asociados a cada Tag
-     */
-    @JsonGetter("postsList")
-    public Set<Object> serializedPostsList() {
-        Set<Object> serializedPosts = new HashSet<>();
-        for (PostModel post : postsList) {
-            serializedPosts.add(post.getId());
-        }
-        return serializedPosts;
-    }
 
     /**
      * Es necesario ya que TagModel es la parte inversa de la relación posts_tags
@@ -63,6 +50,7 @@ public class TagModel {
     public TagModel(){}
 
     // Getters and setterss
+
     public long getId() {
         return id;
     }

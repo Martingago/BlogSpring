@@ -1,7 +1,7 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.dtos.Publicacion;
-import com.project.springBlog.dtos.PublicacionDetails;
+import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
@@ -34,9 +34,9 @@ public class PublicacionService {
      * @param size tamaño contenidos página | obligatorio | Su valor máximo será de 50
      * @return
      */
-    public List<PublicacionDetails> getPublicacionesDetails(String field, String order, int page, int size){
+    public List<PublicacionDetailsDTO> getPublicacionesDetails(String field, String order, int page, int size){
         //Lista datos a devolver
-        List<PublicacionDetails> listPublicacionOrdered = new ArrayList<>(); //Lista datos a devolver
+        List<PublicacionDetailsDTO> listPublicacionOrdered = new ArrayList<>(); //Lista datos a devolver
 
         //VALIDACIONES
         Sort.Direction sortOrder = SortUtils.directionPageContent(order);
@@ -46,18 +46,18 @@ public class PublicacionService {
         //Se crea un objeto con la página a mostrar:
         PageRequest pageRequest = PageRequest.of(page,limitSize, Sort.by(sortOrder, sortField)); //Nº pagina, tamaño, y orden
         try {
-        if(ReflectionUtils.hasField(PostModel.class, field)){
+        if(ReflectionUtils.hasField(PostModel.class, field)){ //Filtra por atributos de postModel
 
                 //Se obtiene una pagina de PostModels ordenada.
                 Page<PostModel> postsPage = postService.getPostSorting(sortField, sortOrder, pageRequest);
-                //Se convierte en postDetails:
+                //Se convierte en un PublicacionDetails filtro por atributos de PostModel
                 for(PostModel post : postsPage){
                     listPublicacionOrdered.add(getPublicacionDetails(post));
                 }
             }
-        else if(ReflectionUtils.hasField(PostDetailsModel.class, field)){
+        else if(ReflectionUtils.hasField(PostDetailsModel.class, field)){ //Filtra por atributos de postDetails
                Page<PostDetailsModel> detailsPage = detailsService.getPostSorting(sortField, sortOrder, pageRequest);
-               //Se convierte en postDetails:
+               //Se convierte en un PublicacionDetails filtrado por atriburos de PostDetailsModel
                 for(PostDetailsModel details : detailsPage){
                     listPublicacionOrdered.add(getPublicacionDetails(details));
                 }
@@ -75,24 +75,24 @@ public class PublicacionService {
      * @param id
      * @return PublicacionDetails => DTO que contiene Post + PostDetails
      */
-    public PublicacionDetails getPublicacionDetails(long id) {
+    public PublicacionDetailsDTO getPublicacionDetails(long id) {
             PostModel post = postService.getPost(id);
             PostDetailsModel details = detailsService.getPostDetails(id);
-            return new PublicacionDetails(post, details);
+            return new PublicacionDetailsDTO(post, details);
     }
 
-    public PublicacionDetails getPublicacionDetails(PostModel post){
+    public PublicacionDetailsDTO getPublicacionDetails(PostModel post){
             PostDetailsModel details = detailsService.getPostDetails(post.getId());
-            return new PublicacionDetails(post, details);
+            return new PublicacionDetailsDTO(post, details);
     }
 
-    public PublicacionDetails getPublicacionDetails(PostDetailsModel details){
+    public PublicacionDetailsDTO getPublicacionDetails(PostDetailsModel details){
         PostModel post = postService.getPost(details.getId());
-        return new PublicacionDetails(post, details);
+        return new PublicacionDetailsDTO(post, details);
     }
 
     @Transactional
-    public PublicacionDetails addPublicacion(Publicacion publicacion) {
+    public PublicacionDetailsDTO addPublicacion(Publicacion publicacion) {
         try {
             PostModel post = null;
             PostDetailsModel details = null;
@@ -112,7 +112,7 @@ public class PublicacionService {
             details.setPost(post);
             details = detailsService.addPostDetails(details); //Se añaden los postDetails a la Base de Datos.
 
-            return new PublicacionDetails(post, details);
+            return new PublicacionDetailsDTO(post, details);
         }catch (EntityException ex){
             throw  new EntityException("Error during updating publication: ", ex);
         }
@@ -125,7 +125,7 @@ public class PublicacionService {
     }
 
     @Transactional
-    public PublicacionDetails updatePublicacion(long id, Publicacion publicacion) {
+    public PublicacionDetailsDTO updatePublicacion(long id, Publicacion publicacion) {
         PostModel dataPost = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
         PostModel updatedPost = postService.updatePost(id, dataPost); //Datos del post actualizados
 
@@ -147,7 +147,7 @@ public class PublicacionService {
         PostDetailsModel details = new PostDetailsModel(null, publicacion.getCreador());
         PostDetailsModel updatedDetails = detailsService.updatePostDetails(id, details);
 
-        return new PublicacionDetails(updatedPost, updatedDetails);
+        return new PublicacionDetailsDTO(updatedPost, updatedDetails);
     }
 
 }

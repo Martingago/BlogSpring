@@ -83,6 +83,7 @@ public class UserService {
         }else{
             roleService.insertRolesToUser(newUser, newUserDTO.getRoles()); //Le añade los roles correspondientes
         }
+        userRepository.save(newUser);
         return newUser;
     }
 

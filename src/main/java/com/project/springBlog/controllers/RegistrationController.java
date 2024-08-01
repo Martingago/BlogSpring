@@ -2,6 +2,7 @@ package com.project.springBlog.controllers;
 
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.dtos.UserDTO;
+import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.services.RoleService;
 import com.project.springBlog.services.UserService;
@@ -40,7 +41,8 @@ public class RegistrationController {
         }
         try {
             UserModel newUser = userService.createUser(usuarioDTO); //Crea un usuario con permisos básicos
-            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
+            UserDTO userDTO = UserMapper.toSimpleDTO(newUser);
+            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userDTO), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
         }
@@ -65,7 +67,8 @@ public class RegistrationController {
         }
         try{
             UserModel newUser = userService.createUser(usuarioDTO, true); //Crea un usuario normal
-            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", newUser), HttpStatus.OK);
+            UserDTO userDTO = UserMapper.toSimpleDTO(newUser);
+            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userDTO), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
         }
