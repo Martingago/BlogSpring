@@ -4,6 +4,8 @@ import com.project.springBlog.dtos.TagDTO;
 import com.project.springBlog.models.PostModel;
 import com.project.springBlog.models.TagModel;
 
+import java.util.HashSet;
+
 public class TagMapper {
     /**
      * Convierte un Model de tag en un DTO de tag con la información básia de los
@@ -14,7 +16,7 @@ public class TagMapper {
         TagDTO dto = new TagDTO();
         dto.setId(tag.getId());
         dto.setNombre(tag.getNombre());
-
+        dto.setPostList(new HashSet<>());
         if(!tag.getPostsList().isEmpty()){
             for(PostModel post : tag.getPostsList()){
                 dto.getPostList().add(post.getId());

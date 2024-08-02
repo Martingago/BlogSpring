@@ -10,7 +10,7 @@ public class UserMapper {
      * @param usuario
      * @return UserDTO simple
      */
-    public static UserDTO toSimpleDTO(UserModel usuario){
+    public static UserDTO toDTO(UserModel usuario){
         UserDTO dto = new UserDTO();
         dto.setUsername(usuario.getUsername());
         dto.setName(usuario.getName());

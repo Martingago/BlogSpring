@@ -1,6 +1,6 @@
 package com.project.springBlog.services;
 
-import com.project.springBlog.dtos.Publicacion;
+import com.project.springBlog.dtos.PublicacionDTO;
 import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
@@ -92,23 +92,23 @@ public class PublicacionService {
     }
 
     @Transactional
-    public PublicacionDetailsDTO addPublicacion(Publicacion publicacion) {
+    public PublicacionDetailsDTO addPublicacion(PublicacionDTO publicacionDTO) {
         try {
             PostModel post = null;
             PostDetailsModel details = null;
 
             //Se crea el contenido del post
-            post = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
+            post = new PostModel(publicacionDTO.getTitulo(), publicacionDTO.getContenido());
 
             //Se añaden las tags:
-            List<Long> etiquetas = publicacion.getTags();
+            List<Long> etiquetas = publicacionDTO.getTags();
             if (etiquetas != null) {
                 postService.insertTagsToList(post, etiquetas);
             }
             //Se añade el post a la base de datos empleando el servicio de Posts
             post = postService.addPost(post);
             //Se crean los postDetails
-            details = new PostDetailsModel(new Date(), publicacion.getCreador());
+            details = new PostDetailsModel(new Date(), publicacionDTO.getCreador());
             details.setPost(post);
             details = detailsService.addPostDetails(details); //Se añaden los postDetails a la Base de Datos.
 
@@ -125,13 +125,13 @@ public class PublicacionService {
     }
 
     @Transactional
-    public PublicacionDetailsDTO updatePublicacion(long id, Publicacion publicacion) {
-        PostModel dataPost = new PostModel(publicacion.getTitulo(), publicacion.getContenido());
+    public PublicacionDetailsDTO updatePublicacion(long id, PublicacionDTO publicacionDTO) {
+        PostModel dataPost = new PostModel(publicacionDTO.getTitulo(), publicacionDTO.getContenido());
         PostModel updatedPost = postService.updatePost(id, dataPost); //Datos del post actualizados
 
         //Actualizar las tags del post:
         List<Long> oldTagsList = postService.getPostTagsList(updatedPost); //Se obtienen las tags registradas que se deben actualizar
-        List<Long> updatedtagsList = publicacion.getTags(); //Se obtienen las tags con las que se va a actualizar el post
+        List<Long> updatedtagsList = publicacionDTO.getTags(); //Se obtienen las tags con las que se va a actualizar el post
 
         //Se crean 2 nuevas listas con los valores a añadir, y los valores a eliminar:
         List<Long> addedTags = new ArrayList<>(updatedtagsList); //Listado con los ID a añadir
@@ -144,7 +144,7 @@ public class PublicacionService {
         postService.removeTagsFromList(updatedPost, removedTags);
 
         //Actualizar los post details
-        PostDetailsModel details = new PostDetailsModel(null, publicacion.getCreador());
+        PostDetailsModel details = new PostDetailsModel(null, publicacionDTO.getCreador());
         PostDetailsModel updatedDetails = detailsService.updatePostDetails(id, details);
 
         return new PublicacionDetailsDTO(updatedPost, updatedDetails);

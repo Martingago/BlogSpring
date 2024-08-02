@@ -1,11 +1,8 @@
 package com.project.springBlog.models;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.project.springBlog.dtos.CreatorInfoDTO;
 import jakarta.persistence.*;
-import org.apache.catalina.User;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -33,18 +30,12 @@ public class PostDetailsModel {
     private PostModel post;
 
     @OneToMany(mappedBy = "postDetail", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties({"usuario", "postDetail", "comentarioPadre", "respuestasComentario"})
+    // @JsonIgnoreProperties({"usuario", "postDetail", "comentarioPadre", "respuestasComentario"})
     private Set<CommentModel> comentariosList = new HashSet<>();
 
     public PostDetailsModel(Date fechaCreacion, UserModel creador) {
         this.fechaCreacion = fechaCreacion;
         this.creador = creador;
-    }
-
-    //Estructura de la informacion que obtiene del creador
-    @JsonGetter("creador")
-    public CreatorInfoDTO serializedCreador(){
-        return new CreatorInfoDTO(creador.getId(), creador.getUsername(), creador.getName());
     }
 
     public PostDetailsModel(){}

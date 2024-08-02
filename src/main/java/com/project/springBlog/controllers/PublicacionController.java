@@ -1,6 +1,6 @@
 package com.project.springBlog.controllers;
 
-import com.project.springBlog.dtos.Publicacion;
+import com.project.springBlog.dtos.PublicacionDTO;
 import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.models.UserModel;
@@ -53,24 +53,24 @@ public class PublicacionController {
     }
 
     @PostMapping("/editor/post")
-    public ResponseEntity<ResponseDTO> addPublicacion(@Valid @RequestBody Publicacion publicacion, BindingResult result) {
+    public ResponseEntity<ResponseDTO> addPublicacion(@Valid @RequestBody PublicacionDTO publicacionDTO, BindingResult result) {
         if (result.hasErrors()) {
             String err = ValidationErrorUtil.processValidationErrors(result);
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         //Se validan los datos del usuario:
         UserModel creador = userService.getUserAuth();
-        publicacion.setCreador(creador);
-        PublicacionDetailsDTO pub = publicacionService.addPublicacion(publicacion);
+        publicacionDTO.setCreador(creador);
+        PublicacionDetailsDTO pub = publicacionService.addPublicacion(publicacionDTO);
         return new ResponseEntity<>(new ResponseDTO(true, "Post succesfully upload", pub), HttpStatus.OK);
     }
 
     @PutMapping("/editor/post/{id}")
-    public ResponseEntity<ResponseDTO> updatePublicacion(@PathVariable("id") long id, @Valid @RequestBody Publicacion publicacion, BindingResult result){
+    public ResponseEntity<ResponseDTO> updatePublicacion(@PathVariable("id") long id, @Valid @RequestBody PublicacionDTO publicacionDTO, BindingResult result){
         if(result.hasErrors()){
             return new ResponseEntity<>(new ResponseDTO(false, result.toString(), null), HttpStatus.BAD_REQUEST);
         }
-        PublicacionDetailsDTO pub = publicacionService.updatePublicacion(id, publicacion);
+        PublicacionDetailsDTO pub = publicacionService.updatePublicacion(id, publicacionDTO);
         return new ResponseEntity<>(new ResponseDTO(true, "Publicacion was successfully updated", pub), HttpStatus.OK);
     }
 

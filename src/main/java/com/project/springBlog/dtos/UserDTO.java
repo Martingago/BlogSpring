@@ -1,10 +1,6 @@
 package com.project.springBlog.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.project.springBlog.models.RoleModel;
-import com.project.springBlog.models.UserModel;
-import jakarta.validation.constraints.NotEmpty;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,9 +21,11 @@ public class PostModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotEmpty(message = "title of the post cannot be empty")
     private String titulo;
 
     @Column(columnDefinition="LONGTEXT")
+    @NotEmpty(message = "Content of the post cannot be empty")
     private String contenido;
 
     /**
@@ -35,20 +38,8 @@ public class PostModel {
             joinColumns = {@JoinColumn(name="post_id")},
             inverseJoinColumns = {@JoinColumn(name="tag_id")}
     )
-    @JsonIgnoreProperties("postsList")
     private Set<TagModel> tagList = new HashSet<>();
 
-    @JsonGetter("tagList")
-    public Set<Object> serializedTagList() {
-        Set<Object> serializedTags = new HashSet<>();
-        for (TagModel tag : tagList) {
-            Map<String, Object> tagInfo = new HashMap<>();
-            tagInfo.put("id", tag.getId());
-            tagInfo.put("nombre", tag.getNombre());
-            serializedTags.add(tagInfo);
-        }
-        return serializedTags;
-    }
 
     /**
      * Añade una tag al post y tambien añade un post al tag referenciado

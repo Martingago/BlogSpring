@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/v1")
 public class RegistrationController {
@@ -41,7 +39,7 @@ public class RegistrationController {
         }
         try {
             UserModel newUser = userService.createUser(usuarioDTO); //Crea un usuario con permisos básicos
-            UserDTO userDTO = UserMapper.toSimpleDTO(newUser);
+            UserDTO userDTO = UserMapper.toDTO(newUser);
             return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userDTO), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
@@ -67,7 +65,7 @@ public class RegistrationController {
         }
         try{
             UserModel newUser = userService.createUser(usuarioDTO, true); //Crea un usuario normal
-            UserDTO userDTO = UserMapper.toSimpleDTO(newUser);
+            UserDTO userDTO = UserMapper.toDTO(newUser);
             return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userDTO), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);

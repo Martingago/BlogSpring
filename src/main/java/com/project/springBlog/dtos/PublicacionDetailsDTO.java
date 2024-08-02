@@ -1,33 +1,41 @@
 package com.project.springBlog.dtos;
 
+import com.project.springBlog.mapper.PostDetailsMapper;
+import com.project.springBlog.mapper.PostMapper;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
 
 public class PublicacionDetailsDTO {
 
-    private PostModel post;
-    private PostDetailsModel details;
+    private PostDTO post;
+    private PostDetailsDTO postDetails;
 
+    //Añadir los que serán los comentarios que tiene la publicación.
 
     public PublicacionDetailsDTO(PostModel post, PostDetailsModel details) {
-        this.post = post;
-        this.details = details;
+        this.post = PostMapper.toDTO(post);
+        this.postDetails = PostDetailsMapper.toDTO(details);
     }
 
-    public PostModel getPost() {
+    public PublicacionDetailsDTO(PostDTO post, PostDetailsDTO postDetails) {
+        this.post = post;
+        this.postDetails = postDetails;
+    }
+
+    public PostDTO getPost() {
         return post;
     }
 
-    public PostDetailsModel getDetails() {
-        return details;
+    public void setPost(PostDTO post) {
+        this.post = post;
     }
 
-    @Override
-    public String toString() {
-        return "PublicacionDetails{" +
-                "post=" + post +
-                ", details=" + details +
-                '}';
+    public PostDetailsDTO getPostDetails() {
+        return postDetails;
+    }
+
+    public void setPostDetails(PostDetailsDTO postDetails) {
+        this.postDetails = postDetails;
     }
 }
 

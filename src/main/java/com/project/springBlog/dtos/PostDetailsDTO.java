@@ -1,17 +1,25 @@
 package com.project.springBlog.dtos;
 
+import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.UserModel;
 
 import java.util.Date;
 
 public class PostDetailsDTO {
     private Date fechaCreacion;
-    private UserModel creador;
-
+    private UserDTO creador;
 
     public PostDetailsDTO(Date fechaCreacion, UserModel creador) {
         this.fechaCreacion = fechaCreacion;
+        this.creador = UserMapper.toDTO(creador);
+    }
+
+    public PostDetailsDTO(Date fechaCreacion, UserDTO creador) {
+        this.fechaCreacion = fechaCreacion;
         this.creador = creador;
+    }
+
+    public PostDetailsDTO() {
     }
 
     public Date getFechaCreacion() {
@@ -22,11 +30,15 @@ public class PostDetailsDTO {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public UserModel getCreador() {
+    public UserDTO getCreador() {
         return creador;
     }
 
-    public void setCreador(UserModel creador) {
+    public void setCreador(UserDTO creador) {
         this.creador = creador;
+    }
+
+    public void setCreador(UserModel creador){
+        this.creador = UserMapper.toDTO(creador);
     }
 }

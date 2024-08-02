@@ -68,19 +68,6 @@ public class UserModel {
     }
 
     /**
-     * Funcion que establece que datos se van a enviar al front de la información de los roles
-     * @return Set de objeto RoleDTO
-     */
-//    @JsonGetter("rolesList")
-//    public Set<RoleDTO> serializedRolesList(){
-//        Set<RoleDTO> rolesDTOList = new HashSet<>();
-//        for(RoleModel rol : rolesList){
-//            rolesDTOList.add(RoleMapper.toDTO(rol));
-//        }
-//        return rolesDTOList;
-//    }
-
-    /**
      * Obtiene un set de los roles de un usuario
      * @return set de Strings con los roles que tiene un usuario
      */
