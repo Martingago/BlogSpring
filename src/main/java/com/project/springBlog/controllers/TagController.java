@@ -9,12 +9,14 @@ import com.project.springBlog.utils.ValidationErrorUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -23,8 +25,12 @@ public class TagController {
     TagService tagService;
 
     @GetMapping("public/tags")
-    public ArrayList<TagModel> getTags() {
-        return tagService.getTags();
+    public ResponseEntity<ResponseDTO> getTags(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "12") int size
+    ) {
+        Page<TagDTO> tags =  tagService.getTagsPaginated(null, null, page, size);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of tags", tags), HttpStatus.OK);
     }
 
     @GetMapping("public/tags/{id}")
