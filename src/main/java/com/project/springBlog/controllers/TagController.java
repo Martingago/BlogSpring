@@ -29,8 +29,8 @@ public class TagController {
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "12") int size
     ) {
-        Page<TagDTO> tags =  tagService.getTagsPaginated(null, null, page, size);
-        return new ResponseEntity<>(new ResponseDTO(true, "List of tags", tags), HttpStatus.OK);
+        Page<TagDTO> tagsDTO =  tagService.getTagsPaginated(null, null, page, size);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of tags", tagsDTO), HttpStatus.OK);
     }
 
     @GetMapping("public/tags/{id}")

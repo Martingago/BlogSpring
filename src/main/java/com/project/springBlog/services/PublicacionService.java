@@ -26,6 +26,9 @@ public class PublicacionService {
     @Autowired
     PostDetailsService detailsService;
 
+    @Autowired
+    SortUtils sortUtils;
+
     /**
      * Funcion que obtiene un listado de publicaciones ordenables por campo y en orden (asc, desc)
      * @param field campo - puede ser null y se ordenará por defecto por ID
@@ -39,9 +42,9 @@ public class PublicacionService {
         List<PublicacionDetailsDTO> listPublicacionOrdered = new ArrayList<>(); //Lista datos a devolver
 
         //VALIDACIONES
-        Sort.Direction sortOrder = SortUtils.directionPageContent(order);
+        Sort.Direction sortOrder = sortUtils.directionPageContent(order);
         String sortField = (field != null && !field.isEmpty()) ? field : "id"; //Si field es null o vacio se pone por default id
-        int limitSize = SortUtils.maxLimitsizePage(size); //Comprueba valor limite de pagina admitido por el servidor
+        int limitSize = sortUtils.maxLimitsizePage(size); //Comprueba valor limite de pagina admitido por el servidor
 
         //Se crea un objeto con la página a mostrar:
         PageRequest pageRequest = PageRequest.of(page,limitSize, Sort.by(sortOrder, sortField)); //Nº pagina, tamaño, y orden

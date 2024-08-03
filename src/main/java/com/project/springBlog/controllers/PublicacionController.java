@@ -1,5 +1,6 @@
 package com.project.springBlog.controllers;
 
+import com.project.springBlog.config.AppProperties;
 import com.project.springBlog.dtos.PublicacionDTO;
 import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.dtos.ResponseDTO;
@@ -21,6 +22,9 @@ import java.util.List;
 public class PublicacionController {
 
     @Autowired
+    AppProperties appProperties;
+
+    @Autowired
     PublicacionService publicacionService;
 
     @Autowired
@@ -28,10 +32,12 @@ public class PublicacionController {
 
     @GetMapping("/public/post")
     public ResponseEntity<ResponseDTO> getPublicaciones(
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "12") int size
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
     ){
-        List<PublicacionDetailsDTO> listPublicacion =  publicacionService.getPublicacionesDetails(null, null, page, size);
+        int pageNumber = (page != null) ? page : appProperties.getDefaultpPageNumber(); //Establece pagina
+        int pageSize = (size != null) ? size : appProperties.getDefaultPageSize(); //Establece tamaño pagina
+        List<PublicacionDetailsDTO> listPublicacion =  publicacionService.getPublicacionesDetails(null, null, pageNumber, pageSize);
         return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 

@@ -31,6 +31,16 @@ public class RoleService {
     }
 
     /**
+     * Recibe como parametro un nombre de ROLL y devuelve los datos correspondientes de ese rol
+     * @param role string del rol a buscar
+     * @return RoleModel o exception
+     */
+    public RoleModel getRole(String role){
+        Optional<RoleModel> rol = roleRepository.findByRoleName(role);
+        return rol.orElseThrow(() -> new EntityNotFoundException("Role was not founded"));
+    }
+
+    /**
      * Añade desde un listado de ID los roles correspondientes a un usuario especificado
      * @param usuario al que se le añaden los roles
      * @param roles List de IDs con los roles a añadir

@@ -1,5 +1,6 @@
 package com.project.springBlog.services;
 
+import com.project.springBlog.config.AppProperties;
 import com.project.springBlog.dtos.UserDTO;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.RoleModel;
@@ -20,6 +21,9 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+
+    @Autowired
+    private AppProperties appProperties;
 
     @Autowired
     private UserRepository userRepository;
@@ -78,7 +82,7 @@ public class UserService {
         //Se crea un modelo de usuario
         UserModel newUser = new UserModel(newUserDTO.getUsername(), newUserDTO.getPassword(), newUserDTO.getName());
         if(!isAdmin){
-            RoleModel userRol = roleRepository.findByRoleName("USER").get();
+            RoleModel userRol = roleService.getRole("USER");
             newUser.addRol(userRol);
         }else{
             roleService.insertRolesToUser(newUser, newUserDTO.getRoles()); //Le añade los roles correspondientes
@@ -100,7 +104,9 @@ public class UserService {
             UserModel userToDelete = userDelete.get();
             if(!userToDelete.getPostList().isEmpty()){
                 //Se modifican los post asociados a dicho usuario y se establece su creador en la administracion
-                UserModel userAdmin = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("Admin user not found"));
+                UserModel userAdmin = userRepository.findById(appProperties.getAdminAccountId())
+                        .orElseThrow(() -> new RuntimeException("Admin user not found")
+                        );
 
                 for(PostDetailsModel details : userToDelete.getPostList()){
                     details.setCreador(userAdmin);

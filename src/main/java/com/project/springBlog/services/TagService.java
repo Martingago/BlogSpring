@@ -1,6 +1,6 @@
 package com.project.springBlog.services;
 
-import com.project.springBlog.dtos.ResponseDTO;
+
 import com.project.springBlog.dtos.TagDTO;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.mapper.TagMapper;
@@ -14,8 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +25,8 @@ public class TagService {
     @Autowired
     TagRepository tagRepository;
 
+    @Autowired
+    SortUtils sortUtils;
 
     /**
      * Devuelve una list de objetos TagDTO filtrados y paginados
@@ -39,9 +39,9 @@ public class TagService {
     public List<TagDTO> getTags(String field, String order, int page, int size) {
         List<TagDTO> listTags = new ArrayList<>(); //lista datos a devolver
         //Validaciones de filtro
-        Sort.Direction sortOrder = SortUtils.directionPageContent(order);
+        Sort.Direction sortOrder = sortUtils.directionPageContent(order);
         String sortField = (field != null && !field.isEmpty()) ? field : "id";
-        int limitSize = SortUtils.maxLimitsizePage(size);
+        int limitSize = sortUtils.maxLimitsizePage(size);
 
         //Creacion de la página a mostrar
         PageRequest pageRequest = PageRequest.of(page,limitSize, Sort.by(sortOrder,sortField));
@@ -54,18 +54,16 @@ public class TagService {
 
     public Page<TagDTO> getTagsPaginated(String field, String order, int page, int size) {
         // Validaciones de filtro
-        Sort.Direction sortOrder = SortUtils.directionPageContent(order);
+        Sort.Direction sortOrder = sortUtils.directionPageContent(order);
         String sortField = (field != null && !field.isEmpty()) ? field : "id";
-        int limitSize = SortUtils.maxLimitsizePage(size);
+        int limitSize = sortUtils.maxLimitsizePage(size);
 
         // Creación de la página a mostrar
         PageRequest pageRequest = PageRequest.of(page, limitSize, Sort.by(sortOrder, sortField));
         Page<TagModel> tagsPage = getTagsSorting(sortField, sortOrder, pageRequest);
 
         // Convertir Page<TagModel> a Page<TagDTO>
-        Page<TagDTO> tagsDtoPage = tagsPage.map(TagMapper::toSimpleDTO);
-
-        return tagsDtoPage;
+        return tagsPage.map(TagMapper::toSimpleDTO);
     }
 
 

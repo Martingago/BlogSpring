@@ -23,9 +23,6 @@ public class RegistrationController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    RoleService roleService;
-
     /**
      * Crea un usuario sin privilegios en la base de datos
      * @param usuarioDTO
@@ -53,8 +50,9 @@ public class RegistrationController {
     /**
      * Crea un usuario administrador en la base de datos
      * Los roles de un ADMIN pueden ser: USUARIO, ADMIN, EDITOR
-     * @param usuarioDTO
-     * @return
+     * @param usuarioDTO DTO  recibido desde el front-end del usuario que se quiere registrar
+     * @param result
+     * @return ResponseEntity con un booleano de exito, mensaje y userDTO
      */
     @PostMapping("/register/admin")
     @Transactional
