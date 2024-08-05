@@ -89,6 +89,4 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "Post was successfully deleted", null), HttpStatus.OK);
     }
 
-
-
 }

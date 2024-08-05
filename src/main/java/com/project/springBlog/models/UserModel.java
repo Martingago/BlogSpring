@@ -67,6 +67,16 @@ public class UserModel {
         rol.getUsers().remove(this);
     }
 
+    public void addPost(PostDetailsModel details){
+        this.postList.add(details);
+        details.setCreador(this);
+    }
+
+    public void deletePost(PostDetailsModel details){
+        this.postList.remove(details);
+        details.setCreador(null);
+    }
+
     /**
      * Obtiene un set de los roles de un usuario
      * @return set de Strings con los roles que tiene un usuario
@@ -74,6 +84,16 @@ public class UserModel {
     public Set<String> getRoles(){
         return this.getRolesList().stream()
                 .map(RoleModel::getRoleName)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Obtiene un set de las publicaciones de un usuario
+     * @return set con Id de las publicaciones que ha creado un usuario
+     */
+    public Set<Long> getPublicaciones(){
+        return this.getPostList().stream()
+                .map(PostDetailsModel::getId)
                 .collect(Collectors.toSet());
     }
 

@@ -18,6 +18,9 @@ public class UserDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Set<String> userRoles; //Strings de los roles de usuario
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Set<Long> userPublicaciones;
+
     private String name;
 
 
@@ -32,7 +35,6 @@ public class UserDTO {
      * @param password
      * @param name
      */
-
     public UserDTO(String username, String password, String name){
         this.username = username;
         this.password = password;
@@ -52,6 +54,20 @@ public class UserDTO {
         this.password = password;
         this.roles = roles;
         this.name = name;
+    }
+
+    /**
+     * Constructor de usuario información detallada para enviar al front-end
+     * @param username
+     * @param roles
+     * @param name
+     * @param userPublicaciones
+     */
+    public UserDTO(String username, Set<String> roles, String name, Set<Long> userPublicaciones){
+        this.username = username;
+        this.userRoles = roles;
+        this.name = name;
+        this.userPublicaciones = userPublicaciones;
     }
 
     // Getters and setters
@@ -94,5 +110,13 @@ public class UserDTO {
 
     public void setUserRoles(Set<String> userRoles) {
         this.userRoles = userRoles;
+    }
+
+    public Set<Long> getUserPublicaciones() {
+        return userPublicaciones;
+    }
+
+    public void setUserPublicaciones(Set<Long> userPublicaciones) {
+        this.userPublicaciones = userPublicaciones;
     }
 }

@@ -129,7 +129,7 @@ public class PublicacionService {
     @Transactional
     public boolean deletePublicacion(long id) {
         detailsService.deletePostDetails(id); //Se eliminan los details de un post
-        return postService.deletePost(id); //Se elimina un post
+        return postService.deletePost(id); //Se elimina un post; si no se encuentra hace un throw entity not founded
     }
 
     @Transactional

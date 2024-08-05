@@ -23,6 +23,26 @@ public class RegistrationController {
     @Autowired
     UserService userService;
 
+
+    /**
+     * Obtiene los datos de un usuario recibido como id
+     * @param id
+     * @return map de userDTO con la informacion de un usuario
+     */
+    @GetMapping("public/user/{id}")
+    public ResponseEntity<ResponseDTO> getUser(@PathVariable Long id){
+        UserModel user = userService.findUserById(id);
+        UserDTO userDTO = UserMapper.toDetailDTO(user);
+        return new ResponseEntity<>(new ResponseDTO(true, "User succesfully founded", userDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("public/user/{username}")
+    public ResponseEntity<ResponseDTO> getUser(@PathVariable String username){
+        UserModel user = userService.findByUsername(username);
+        UserDTO userDTO = UserMapper.toDetailDTO(user);
+        return new ResponseEntity<>(new ResponseDTO(true, "User succesfully founded", userDTO), HttpStatus.OK);
+    }
+
     /**
      * Crea un usuario sin privilegios en la base de datos
      * @param usuarioDTO
@@ -73,8 +93,15 @@ public class RegistrationController {
         }
     }
 
+    /**
+     * Elimina un usuario de la Base de datos
+     * @param id del usuario a eliminar
+     * @return
+     */
     @DeleteMapping("/admin/user/{id}")
-    public boolean deleteUser(@PathVariable Long id){
-        return userService.deleteUser(id);
+    public ResponseEntity<ResponseDTO> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return new ResponseEntity<>(new ResponseDTO(true, "User successfully deleted", null), HttpStatus.OK);
+
     }
 }

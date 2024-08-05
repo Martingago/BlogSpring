@@ -8,6 +8,7 @@ import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
 import com.project.springBlog.repositories.RoleRepository;
 import com.project.springBlog.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -55,6 +56,20 @@ public class UserService {
     }
 
     /**
+     * Funcion que obtiene un usuario por su Identificador.
+     * Si el usuario no es encontrado devuelve una exception de entity not found
+     * @param id del usuario a buscar
+     * @return UserModel del usuario encontrado || EntityNotFoundException
+     */
+    public UserModel findUserById(long id){
+        Optional<UserModel> user = userRepository.findById(id);
+        if(!user.isPresent()){
+            throw  new EntityNotFoundException("User with id " + id + " was not founded");
+        }
+        return user.get();
+    }
+
+    /**
      * Funcion que emplea la sobrecarga del método createUser(UserModel, boolean) para crear un usuario de roll USER
      * Inyecta y sobreescribe automácticamente el roll de USER al objeto recibido para evitar vulnerabilidades de roles.
      * @param newUser datos del usuario a crear
@@ -98,26 +113,22 @@ public class UserService {
      * @return boolean si ha tenido éxito, error si el usuario no se ha encontrado.
      */
     @Transactional
-    public boolean deleteUser(Long id){
-        Optional<UserModel> userDelete =  userRepository.findById(id);
-        if(userDelete.isPresent()){
-            UserModel userToDelete = userDelete.get();
-            if(!userToDelete.getPostList().isEmpty()){
-                //Se modifican los post asociados a dicho usuario y se establece su creador en la administracion
-                UserModel userAdmin = userRepository.findById(appProperties.getAdminAccountId())
-                        .orElseThrow(() -> new RuntimeException("Admin user not found")
-                        );
-
-                for(PostDetailsModel details : userToDelete.getPostList()){
-                    details.setCreador(userAdmin);
-                    detailsRepository.save(details);
-                }
+    public boolean deleteUser(Long id) {
+        UserModel userToDelete = findUserById(id);
+        if (!userToDelete.getPostList().isEmpty()) {
+            //Se busa la cuenta de la administracion
+            UserModel userAdmin = userRepository.findById(appProperties.getAdminAccountId())
+                    .orElseThrow(() -> new RuntimeException("Admin user not found")
+                    );
+            //Se modifican los post asociados a dicho usuario y se establece su creador en la administracion
+            for (PostDetailsModel details : userToDelete.getPostList()) {
+                details.setCreador(userAdmin);
+                detailsRepository.save(details);
             }
-            userRepository.delete(userToDelete);
-            return true;
-        }else{
-            throw  new UsernameNotFoundException("User with id " + id + " was not founded");
         }
+        //Se elimina el usuario
+        userRepository.delete(userToDelete);
+        return true;
     }
 
     /**

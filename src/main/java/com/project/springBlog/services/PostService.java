@@ -46,7 +46,7 @@ public class PostService {
 
     public boolean deletePost(long id){
         if(!postRepository.existsById(id)){
-            throw new EntityNotFoundException("Error, post was not found");
+            throw  new EntityNotFoundException("Post to delete with id " + id + " was not founded");
         }
         try{
             postRepository.deleteById(id);

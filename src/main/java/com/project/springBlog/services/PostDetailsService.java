@@ -59,7 +59,8 @@ public class PostDetailsService {
 
     public boolean deletePostDetails(long id){
         if(!postDetailsRepository.existsById(id)){
-           throw  new EntityNotFoundException("PostDetails with id "+ id + " was nout founded");
+            System.out.println("PostDetails to delete with id" + id + " was not founded, skipping that one");
+            return false;
         }
         try {
             postDetailsRepository.deleteById(id);

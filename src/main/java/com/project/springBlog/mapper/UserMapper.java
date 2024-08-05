@@ -18,4 +18,9 @@ public class UserMapper {
 
         return dto;
     }
+
+    public static UserDTO toDetailDTO(UserModel usuario){
+        UserDTO dto = new UserDTO(usuario.getUsername(),usuario.getRoles(), usuario.getName(), usuario.getPublicaciones());
+        return dto;
+    }
 }

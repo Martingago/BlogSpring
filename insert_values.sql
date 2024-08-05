@@ -296,23 +296,23 @@ INSERT INTO post_details(fecha_creacion, post_id, created_by) VALUES
 ('2024-01-05', 23, 1),   -- Introducción a la Inteligencia Artificial
 ('2024-02-10', 24, 2),   -- Machine Learning con Python
 ('2024-03-15', 25, 15),  -- Desarrollo de Juegos con Unity
-('2024-04-20', 26, 16),  -- Introducción a Blockchain
-('2024-05-25', 27, 1),   -- Ciberseguridad para Principiantes
+('2024-04-20', 26, 14),  -- Introducción a Blockchain
+('2024-05-25', 27, 14),   -- Ciberseguridad para Principiantes
 ('2024-06-30', 28, 2),   -- Big Data y su Impacto
 ('2024-07-15', 29, 15),  -- Automatización de Tareas con Selenium
-('2024-08-10', 30, 16),  -- Desarrollo de Aplicaciones Móviles con Flutter
+('2024-08-10', 30, 14),  -- Desarrollo de Aplicaciones Móviles con Flutter
 ('2024-09-05', 31, 1),   -- Introducción a DevOps
 ('2024-10-01', 32, 2),   -- Desarrollo de APIs RESTful
 ('2024-11-12', 33, 15),  -- Introducción a Docker
-('2024-12-20', 34, 16),  -- Desarrollo con AWS
+('2024-12-20', 34, 1),  -- Desarrollo con AWS
 ('2024-01-15', 35, 1),   -- Automatización de Infraestructura con Terraform
 ('2024-02-25', 36, 2),   -- Implementación de Microservicios
 ('2024-03-30', 37, 15),  -- Introducción a Kubernetes
-('2024-04-15', 38, 16),  -- Testing Automatizado con JUnit
+('2024-04-15', 38, 15),  -- Testing Automatizado con JUnit
 ('2024-05-20', 39, 1),   -- Desarrollo de Bots para Telegram
 ('2024-06-25', 40, 2),   -- Introducción a GraphQL
 ('2024-07-10', 41, 15),  -- Desarrollo de Aplicaciones con Vue.js
-('2024-08-05', 42, 16),  -- Continuous Integration con Jenkins
+('2024-08-05', 42, 14),  -- Continuous Integration con Jenkins
 ('2024-09-15', 43, 1),   -- Desarrollo de Aplicaciones con SwiftUI
 ('2024-10-10', 44, 2),   -- Introducción a la Realidad Aumentada
 ('2024-11-05', 45, 15);  -- Desarrollo de Aplicaciones IoT
