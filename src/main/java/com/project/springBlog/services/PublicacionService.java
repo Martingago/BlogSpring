@@ -7,12 +7,14 @@ import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
 import com.project.springBlog.utils.ReflectionUtils;
 import com.project.springBlog.utils.SortUtils;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,13 +33,14 @@ public class PublicacionService {
 
     /**
      * Funcion que obtiene un listado de publicaciones ordenables por campo y en orden (asc, desc)
+     *
      * @param field campo - puede ser null y se ordenará por defecto por ID
      * @param order orden | asc - desc | puede ser null y se ordenará por defecto desc
-     * @param page int pagina | obligatorio|
-     * @param size tamaño contenidos página | obligatorio | Su valor máximo será de 50
+     * @param page  int pagina | obligatorio|
+     * @param size  tamaño contenidos página | obligatorio | Su valor máximo será de 50
      * @return
      */
-    public List<PublicacionDetailsDTO> getPublicacionesDetails(String field, String order, int page, int size){
+    public List<PublicacionDetailsDTO> getPublicacionesDetails(String field, String order, int page, int size) {
         //Lista datos a devolver
         List<PublicacionDetailsDTO> listPublicacionOrdered = new ArrayList<>(); //Lista datos a devolver
 
@@ -47,26 +50,28 @@ public class PublicacionService {
         int limitSize = sortUtils.maxLimitsizePage(size); //Comprueba valor limite de pagina admitido por el servidor
 
         //Se crea un objeto con la página a mostrar:
-        PageRequest pageRequest = PageRequest.of(page,limitSize, Sort.by(sortOrder, sortField)); //Nº pagina, tamaño, y orden
+        PageRequest pageRequest = PageRequest.of(page, limitSize, Sort.by(sortOrder, sortField)); //Nº pagina, tamaño, y orden
         try {
-        if(ReflectionUtils.hasField(PostModel.class, field)){ //Filtra por atributos de postModel
-
+            if (ReflectionUtils.hasField(PostModel.class, field)) { //Filtra por atributos de postModel
                 //Se obtiene una pagina de PostModels ordenada.
                 Page<PostModel> postsPage = postService.getPostSorting(sortField, sortOrder, pageRequest);
                 //Se convierte en un PublicacionDetails filtro por atributos de PostModel
-                for(PostModel post : postsPage){
-                    listPublicacionOrdered.add(getPublicacionDetails(post));
+                for (PostModel post : postsPage) {
+                    try {
+                        listPublicacionOrdered.add(getPublicacionDetails(post));
+                    } catch (EntityNotFoundException ex) {
+                        System.out.println(ex + " skipping that one");
+                    }
                 }
-            }
-        else if(ReflectionUtils.hasField(PostDetailsModel.class, field)){ //Filtra por atributos de postDetails
-               Page<PostDetailsModel> detailsPage = detailsService.getPostSorting(sortField, sortOrder, pageRequest);
-               //Se convierte en un PublicacionDetails filtrado por atriburos de PostDetailsModel
-                for(PostDetailsModel details : detailsPage){
+            } else if (ReflectionUtils.hasField(PostDetailsModel.class, field)) { //Filtra por atributos de postDetails
+                Page<PostDetailsModel> detailsPage = detailsService.getPostSorting(sortField, sortOrder, pageRequest);
+                //Se convierte en un PublicacionDetails filtrado por atriburos de PostDetailsModel
+                for (PostDetailsModel details : detailsPage) {
                     listPublicacionOrdered.add(getPublicacionDetails(details));
                 }
-        }
-        }catch (Exception e){
-            throw  new RuntimeException("An error occurred while fetching sorted posts " +e.getMessage());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while fetching sorted posts " + e.getMessage());
         }
         return listPublicacionOrdered;
     }
@@ -79,17 +84,17 @@ public class PublicacionService {
      * @return PublicacionDetails => DTO que contiene Post + PostDetails
      */
     public PublicacionDetailsDTO getPublicacionDetails(long id) {
-            PostModel post = postService.getPost(id);
-            PostDetailsModel details = detailsService.getPostDetails(id);
-            return new PublicacionDetailsDTO(post, details);
+        PostModel post = postService.getPost(id);
+        PostDetailsModel details = detailsService.getPostDetails(id);
+        return new PublicacionDetailsDTO(post, details);
     }
 
-    public PublicacionDetailsDTO getPublicacionDetails(PostModel post){
-            PostDetailsModel details = detailsService.getPostDetails(post.getId());
-            return new PublicacionDetailsDTO(post, details);
+    public PublicacionDetailsDTO getPublicacionDetails(PostModel post) {
+        PostDetailsModel details = detailsService.getPostDetails(post.getId());
+        return new PublicacionDetailsDTO(post, details);
     }
 
-    public PublicacionDetailsDTO getPublicacionDetails(PostDetailsModel details){
+    public PublicacionDetailsDTO getPublicacionDetails(PostDetailsModel details) {
         PostModel post = postService.getPost(details.getId());
         return new PublicacionDetailsDTO(post, details);
     }
@@ -116,8 +121,8 @@ public class PublicacionService {
             details = detailsService.addPostDetails(details); //Se añaden los postDetails a la Base de Datos.
 
             return new PublicacionDetailsDTO(post, details);
-        }catch (EntityException ex){
-            throw  new EntityException("Error during updating publication: ", ex);
+        } catch (EntityException ex) {
+            throw new EntityException("Error during updating publication: ", ex);
         }
     }
 

@@ -18,7 +18,6 @@ public class PostDetailsModel {
     @Column(name="fecha_creacion")
     private Date fechaCreacion;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="created_by", referencedColumnName = "id")
     private UserModel creador;

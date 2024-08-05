@@ -45,10 +45,13 @@ public class PublicacionController {
     public ResponseEntity<ResponseDTO> getPublicacionesSorted(
             @RequestParam(required = false) String field,
             @RequestParam(required = false) String order,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "12") int size){
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size){
 
-        List<PublicacionDetailsDTO> listPublicacion = publicacionService.getPublicacionesDetails(field, order, page, size);
+        int pageNumber = (page != null) ? page : appProperties.getDefaultpPageNumber();
+        int pageSize = (size != null) ? size : appProperties.getDefaultPageSize();
+
+        List<PublicacionDetailsDTO> listPublicacion = publicacionService.getPublicacionesDetails(field, order, pageNumber, pageSize);
         return new ResponseEntity<>(new ResponseDTO(true, "List of sorted publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 

@@ -4,6 +4,7 @@ import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,11 @@ public class PostDetailsService {
     @Autowired
     PostDetailsRepository postDetailsRepository;
 
+    /**
+     * Añade PostDetailsModels asociado a un PostModel en la BBDD
+     * @param postDetails
+     * @return
+     */
     public PostDetailsModel addPostDetails(PostDetailsModel postDetails){
         try {
             return postDetailsRepository.save(postDetails);
@@ -33,14 +39,14 @@ public class PostDetailsService {
     }
 
     public PostDetailsModel getPostDetails(long id){
-        try {
             Optional<PostDetailsModel> details = postDetailsRepository.findById(id);
-            return details.orElse(null);
-        }catch (Exception ex){
-            throw new EntityException("Exception during getting post details", ex);
+            if(details.isPresent()){
+                return details.get();
+            }else{
+                throw new EntityNotFoundException("PostDetails with id: " + id + " where not founded");
+            }
         }
 
-    }
 
     public PostDetailsModel updatePostDetails(long id, PostDetailsModel newDetails){
             PostDetailsModel oldDetails  = getPostDetails(id);
@@ -53,7 +59,7 @@ public class PostDetailsService {
 
     public boolean deletePostDetails(long id){
         if(!postDetailsRepository.existsById(id)){
-            return false;
+           throw  new EntityNotFoundException("PostDetails with id "+ id + " was nout founded");
         }
         try {
             postDetailsRepository.deleteById(id);
