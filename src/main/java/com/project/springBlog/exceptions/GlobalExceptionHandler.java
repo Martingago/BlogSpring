@@ -4,6 +4,7 @@ import com.project.springBlog.dtos.ResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<ResponseDTO> handleSecurityException(SecurityException exception){
         return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(),null), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ResponseDTO> handleUsernameNotFoundException(UsernameNotFoundException exception){
+        return new ResponseEntity<>(createResponseDTO(false, "Username was not founded", null), HttpStatus.NOT_FOUND);
     }
 
 
