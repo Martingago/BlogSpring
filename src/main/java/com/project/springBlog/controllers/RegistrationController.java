@@ -54,6 +54,7 @@ public class RegistrationController {
      * @return
      */
     @PostMapping("/register/user")
+    @Transactional
     public ResponseEntity<ResponseDTO> registerUser(@Valid @RequestBody UserDTO usuarioDTO, BindingResult result){
         if(result.hasErrors()){
             String err = ValidationErrorUtil.processValidationErrors(result);

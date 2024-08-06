@@ -88,11 +88,10 @@ public class UserService {
      */
     public UserModel createUser(UserDTO newUserDTO, boolean isAdmin){
         //Comprueba que el usuario no exista en la BBDD
-        Optional<UserModel> existingUser = userRepository.findByUsername(newUserDTO.getUsername());
+        Optional<UserModel> existingUser =  userRepository.findByUsername(newUserDTO.getUsername());
         if(existingUser.isPresent()){
-            throw new DuplicateKeyException("The username is already exists");
+            throw  new DuplicateKeyException("Username already exists");
         }
-
         newUserDTO.setPassword(passwordEncoder.encode(newUserDTO.getPassword())); //Se codifica el string de password
         //Se crea un modelo de usuario
         UserModel newUser = new UserModel(newUserDTO.getUsername(), newUserDTO.getPassword(), newUserDTO.getName());

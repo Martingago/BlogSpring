@@ -96,6 +96,7 @@ public class TagService {
             throw new EntityNotFoundException("Tag to be removed was not found");
         }
         try {
+            System.out.println("Eliminando tag");
             tagRepository.deleteById(id);
         } catch (Exception e) {
             throw new EntityException("An error occurred while the tag was being removed: \n", e);
