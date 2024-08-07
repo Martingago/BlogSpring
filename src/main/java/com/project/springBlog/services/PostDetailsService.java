@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -47,12 +48,22 @@ public class PostDetailsService {
             }
         }
 
-
+    /**
+     * Actualiza la información total de unos details: Autor, fecha creacion
+      * @param id
+     * @param newDetails
+     * @return
+     */
     public PostDetailsModel updatePostDetails(long id, PostDetailsModel newDetails){
             PostDetailsModel oldDetails  = getPostDetails(id);
-            oldDetails.setCreador(newDetails.getCreador());
+            if(newDetails.getCreador() != null){
+                oldDetails.setCreador(newDetails.getCreador());
+            }
+
             if(newDetails.getFechaCreacion() != null){
                 oldDetails.setFechaCreacion(newDetails.getFechaCreacion());
+            }else{
+                oldDetails.setFechaCreacion(new Date());
             }
             return postDetailsRepository.save(oldDetails);
     }

@@ -5,6 +5,7 @@ import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
+import com.project.springBlog.models.TagModel;
 import com.project.springBlog.utils.ReflectionUtils;
 import com.project.springBlog.utils.SortUtils;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PublicacionService {
@@ -137,7 +139,6 @@ public class PublicacionService {
         PostModel dataPost = new PostModel(publicacionDTO.getTitulo(), publicacionDTO.getContenido());
         PostModel updatedPost = postService.updatePost(id, dataPost); //Datos del post actualizados
 
-        //Actualizar las tags del post:
         List<Long> oldTagsList = postService.getPostTagsList(updatedPost); //Se obtienen las tags registradas que se deben actualizar
         List<Long> updatedtagsList = publicacionDTO.getTags(); //Se obtienen las tags con las que se va a actualizar el post
 
@@ -150,7 +151,8 @@ public class PublicacionService {
 
         postService.insertTagsToList(updatedPost, addedTags);
         postService.removeTagsFromList(updatedPost, removedTags);
-
+        System.out.println("------------------------------------------");
+        System.out.println("Actualizando la informacion");
         //Actualizar los post details
         PostDetailsModel details = new PostDetailsModel(null, publicacionDTO.getCreador());
         PostDetailsModel updatedDetails = detailsService.updatePostDetails(id, details);
