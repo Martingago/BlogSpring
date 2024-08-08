@@ -3,16 +3,18 @@ package com.project.springBlog.dtos;
 import com.project.springBlog.models.UserModel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PublicacionDTO {
 
     private String titulo;
     private String contenido;
     private UserModel creador;
-    private List<Long> tags = new ArrayList<>();
+    private Set<Long> tags = new HashSet<>();
 
-    public PublicacionDTO(String titulo, String contenido, List<Long> tags) {
+    public PublicacionDTO(String titulo, String contenido, Set<Long> tags) {
         this.titulo = titulo;
         this.contenido = contenido;
         this.creador = null;
@@ -33,12 +35,11 @@ public class PublicacionDTO {
 
     public void setCreador(UserModel creador){ this.creador = creador;}
 
-    public List<Long> getTags() {
+    public Set<Long> getTags() {
         return tags;
     }
 
-    public void setTags(List<Long> tags) {
+    public void setTags(Set<Long> tags) {
         this.tags = tags;
     }
-
 }

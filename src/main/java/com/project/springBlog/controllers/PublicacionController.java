@@ -68,6 +68,8 @@ public class PublicacionController {
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         //Se validan los datos del usuario:
+        System.out.println("------------------------------------");
+        System.out.println("Obtengo usuario que realiza operacion");
         UserModel creador = userService.getUserAuth();
         publicacionDTO.setCreador(creador);
         PublicacionDetailsDTO pub = publicacionService.addPublicacion(publicacionDTO);

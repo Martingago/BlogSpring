@@ -1,5 +1,6 @@
 package com.project.springBlog.services;
 
+import com.project.springBlog.dtos.PostDTO;
 import com.project.springBlog.dtos.PublicacionDTO;
 import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.exceptions.EntityException;
@@ -16,10 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class PublicacionService {
@@ -104,22 +102,27 @@ public class PublicacionService {
     @Transactional
     public PublicacionDetailsDTO addPublicacion(PublicacionDTO publicacionDTO) {
         try {
+            System.out.println("--------------------------------------------");
+            System.out.println("iniciada funcion para añadir publicaciones: ");
             PostModel post = null;
             PostDetailsModel details = null;
-
             //Se crea el contenido del post
             post = new PostModel(publicacionDTO.getTitulo(), publicacionDTO.getContenido());
-
             //Se añaden las tags:
-            List<Long> etiquetas = publicacionDTO.getTags();
+            Set<Long> etiquetas = publicacionDTO.getTags();
+            System.out.println("--------------------------------------------");
+            System.out.println("Añadiendo tags");
             if (etiquetas != null) {
                 postService.insertTagsToList(post, etiquetas);
             }
+
             //Se añade el post a la base de datos empleando el servicio de Posts
             post = postService.addPost(post);
             //Se crean los postDetails
             details = new PostDetailsModel(new Date(), publicacionDTO.getCreador());
             details.setPost(post);
+            System.out.println("--------------------------------------------");
+            System.out.println("Subiendo post details");
             details = detailsService.addPostDetails(details); //Se añaden los postDetails a la Base de Datos.
 
             return new PublicacionDetailsDTO(post, details);
@@ -136,28 +139,19 @@ public class PublicacionService {
 
     @Transactional
     public PublicacionDetailsDTO updatePublicacion(long id, PublicacionDTO publicacionDTO) {
-        PostModel dataPost = new PostModel(publicacionDTO.getTitulo(), publicacionDTO.getContenido());
-        PostModel updatedPost = postService.updatePost(id, dataPost); //Datos del post actualizados
+        //Se comprueba que el post a actualizar existe
+        PostModel postModel =  postService.getPost(id);
+        PostDTO postDTO = new PostDTO(publicacionDTO.getTitulo(), publicacionDTO.getContenido(), publicacionDTO.getTags());
 
-        List<Long> oldTagsList = postService.getPostTagsList(updatedPost); //Se obtienen las tags registradas que se deben actualizar
-        List<Long> updatedtagsList = publicacionDTO.getTags(); //Se obtienen las tags con las que se va a actualizar el post
+        PostModel updatedPost = postService.updatePost(postModel,postDTO); //Datos del post actualizados
 
-        //Se crean 2 nuevas listas con los valores a añadir, y los valores a eliminar:
-        List<Long> addedTags = new ArrayList<>(updatedtagsList); //Listado con los ID a añadir
-        addedTags.removeAll(oldTagsList);
-
-        List<Long> removedTags = new ArrayList<>(oldTagsList); //Listado con los ID a eliminar
-        removedTags.removeAll(updatedtagsList);
-
-        postService.insertTagsToList(updatedPost, addedTags);
-        postService.removeTagsFromList(updatedPost, removedTags);
-        System.out.println("------------------------------------------");
-        System.out.println("Actualizando la informacion");
         //Actualizar los post details
         PostDetailsModel details = new PostDetailsModel(null, publicacionDTO.getCreador());
         PostDetailsModel updatedDetails = detailsService.updatePostDetails(id, details);
 
+        //Se devuelven los datos
         return new PublicacionDetailsDTO(updatedPost, updatedDetails);
+
     }
 
 }
