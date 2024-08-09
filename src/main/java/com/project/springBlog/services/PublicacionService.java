@@ -6,6 +6,8 @@ import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
+import com.project.springBlog.repositories.PostDetailsRepository;
+import com.project.springBlog.repositories.PostRepository;
 import com.project.springBlog.utils.ReflectionUtils;
 import com.project.springBlog.utils.SortUtils;
 import jakarta.persistence.EntityNotFoundException;
@@ -101,6 +103,7 @@ public class PublicacionService {
     @Transactional
     public PublicacionDetailsDTO addPublicacion(PublicacionDTO publicacionDTO) {
         try {
+            //Se crea un nuevo post
             PostModel post = new PostModel(publicacionDTO.getTitulo(), publicacionDTO.getContenido());
 
             // Se añaden las tags
@@ -134,6 +137,7 @@ public class PublicacionService {
     public PublicacionDetailsDTO updatePublicacion(long id, PublicacionDTO publicacionDTO) {
         //Se comprueba que el post a actualizar existe
         PostModel postModel =  postService.getPost(id);
+        //Se crea un DTO para actualizar datos de los post
         PostDTO postDTO = new PostDTO(publicacionDTO.getTitulo(), publicacionDTO.getContenido(), publicacionDTO.getTags());
 
         PostModel updatedPost = postService.updatePost(postModel,postDTO); //Datos del post actualizados
@@ -144,7 +148,6 @@ public class PublicacionService {
 
         //Se devuelven los datos
         return new PublicacionDetailsDTO(updatedPost, updatedDetails);
-
     }
 
 }

@@ -106,10 +106,10 @@ public class PostService {
         //Se crean Set Auxiliares: Set tags a eliminar
         Set<Long> tagsToRemove = new HashSet<>(oldTagsIdList);
         tagsToRemove.removeAll(newTagsIdList);
-        System.out.println("Se añaden tags al post");
+
         //Se llama a la funcion para añadir los tags:
         oldPostData = addTagsToPost(oldPostData,tagsToAdd);
-        System.out.println("Se eliminan tags del post");
+
         //Se llama a la funcion para eliminar los tags:
         oldPostData =  removeTagsFromList(oldPostData, tagsToRemove);
 
@@ -139,13 +139,11 @@ public class PostService {
      * @param tagsToAdd
      * @return
      */
-    @Transactional
     public PostModel addTagsToPost(PostModel post, Set<Long> tagsToAdd){
         if(tagsToAdd != null && !tagsToAdd.isEmpty()){
             List<TagModel> tags = tagRepository.findAllById(tagsToAdd);
             post.getTagList().addAll(tags);
         }
-        postRepository.save(post);
         return post;
     }
 
