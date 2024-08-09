@@ -22,8 +22,8 @@ public class TagModel {
 
     @ManyToMany(
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST},
-            mappedBy = "tagList"
+            mappedBy = "tagList",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
     private Set<PostModel> postsList = new HashSet<>();
 

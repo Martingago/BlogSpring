@@ -32,7 +32,7 @@ public class PostModel {
      * Es la parte propietaria de la relación entre post y tags (posts_tags) la eliminación de un post es gestionada
      * dentro de tags por la propia sesión JPA(Hibernate), no es necesario un @Preremove cuando se elimine un post
      */
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "posts_tags",
             joinColumns = {@JoinColumn(name="post_id")},

@@ -6,7 +6,6 @@ import com.project.springBlog.dtos.PublicacionDetailsDTO;
 import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
-import com.project.springBlog.models.TagModel;
 import com.project.springBlog.utils.ReflectionUtils;
 import com.project.springBlog.utils.SortUtils;
 import jakarta.persistence.EntityNotFoundException;
@@ -102,34 +101,28 @@ public class PublicacionService {
     @Transactional
     public PublicacionDetailsDTO addPublicacion(PublicacionDTO publicacionDTO) {
         try {
-            System.out.println("--------------------------------------------");
-            System.out.println("iniciada funcion para añadir publicaciones: ");
-            PostModel post = null;
-            PostDetailsModel details = null;
-            //Se crea el contenido del post
-            post = new PostModel(publicacionDTO.getTitulo(), publicacionDTO.getContenido());
-            //Se añaden las tags:
-            Set<Long> etiquetas = publicacionDTO.getTags();
-            System.out.println("--------------------------------------------");
-            System.out.println("Añadiendo tags");
-            if (etiquetas != null) {
-                postService.insertTagsToList(post, etiquetas);
-            }
+            PostModel post = new PostModel(publicacionDTO.getTitulo(), publicacionDTO.getContenido());
 
-            //Se añade el post a la base de datos empleando el servicio de Posts
+            // Se añaden las tags
+            Set<Long> etiquetas = publicacionDTO.getTags();
+            post = postService.addTagsToPost(post, etiquetas);
+
+            // Se añade el post a la base de datos
             post = postService.addPost(post);
-            //Se crean los postDetails
-            details = new PostDetailsModel(new Date(), publicacionDTO.getCreador());
-            details.setPost(post);
-            System.out.println("--------------------------------------------");
-            System.out.println("Subiendo post details");
-            details = detailsService.addPostDetails(details); //Se añaden los postDetails a la Base de Datos.
+
+            // Se crean y persisten los detalles del post
+            PostDetailsModel details = new PostDetailsModel(new Date(), publicacionDTO.getCreador());
+            details.setPost(post); //Se establece el post asociado con los postDetails
+
+            // Se añaden los postDetails a la Base de Datos.
+            details = detailsService.addPostDetails(details);
 
             return new PublicacionDetailsDTO(post, details);
         } catch (EntityException ex) {
             throw new EntityException("Error during updating publication: ", ex);
         }
     }
+
 
     @Transactional
     public boolean deletePublicacion(long id) {

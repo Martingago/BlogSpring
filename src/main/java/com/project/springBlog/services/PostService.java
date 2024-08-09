@@ -5,7 +5,9 @@ import com.project.springBlog.exceptions.EntityException;
 import com.project.springBlog.models.PostModel;
 import com.project.springBlog.models.TagModel;
 import com.project.springBlog.repositories.PostRepository;
+import com.project.springBlog.repositories.TagRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,9 @@ import java.util.*;
 public class PostService {
     @Autowired
     PostRepository postRepository;
+
+    @Autowired
+    TagRepository tagRepository;
 
     @Autowired
     TagService tagService;
@@ -103,7 +108,7 @@ public class PostService {
         tagsToRemove.removeAll(newTagsIdList);
         System.out.println("Se añaden tags al post");
         //Se llama a la funcion para añadir los tags:
-        oldPostData = insertTagsToList(oldPostData,tagsToAdd);
+        oldPostData = addTagsToPost(oldPostData,tagsToAdd);
         System.out.println("Se eliminan tags del post");
         //Se llama a la funcion para eliminar los tags:
         oldPostData =  removeTagsFromList(oldPostData, tagsToRemove);
@@ -134,17 +139,13 @@ public class PostService {
      * @param tagsToAdd
      * @return
      */
-    public PostModel insertTagsToList(PostModel post, Set<Long> tagsToAdd){
+    @Transactional
+    public PostModel addTagsToPost(PostModel post, Set<Long> tagsToAdd){
         if(tagsToAdd != null && !tagsToAdd.isEmpty()){
-            for(long id : tagsToAdd){
-                try{
-                    System.out.println("--- Añadida tag al post ---");
-                    post.addTag(tagService.getTag(id));
-                }catch (EntityNotFoundException ex){
-                    System.out.println("Tag with id: " + id + " was not founded, skipping that one");
-                }
-            }
+            List<TagModel> tags = tagRepository.findAllById(tagsToAdd);
+            post.getTagList().addAll(tags);
         }
+        postRepository.save(post);
         return post;
     }
 
@@ -155,15 +156,8 @@ public class PostService {
      */
     public PostModel removeTagsFromList(PostModel post, Set<Long> tagsToRemove) {
         if (tagsToRemove != null && !tagsToRemove.isEmpty()) { //Si existen valores en etiquetas se ejecuta
-            Set<TagModel> tagsFromPost = post.getTagList(); //Se obtiene el Set de Tags contenientes en el post
-
-            Iterator<TagModel> tagsToCompare = tagsFromPost.iterator(); // Iterator de las tags de un post
-            while (tagsToCompare.hasNext()) {
-                TagModel tag = tagsToCompare.next();
-                if (tagsToRemove.contains(tag.getId())) {
-                    post.deteleTag(tag);
-                }
-            }
+          List<TagModel> tags = tagRepository.findAllById(tagsToRemove);
+            post.getTagList().removeAll(tags);
         }
         return post;
     }
