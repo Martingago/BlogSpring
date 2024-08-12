@@ -108,6 +108,8 @@ public class PublicacionService {
 
             // Se añaden las tags
             Set<Long> etiquetas = publicacionDTO.getTags();
+
+
             post = postService.addTagsToPost(post, etiquetas);
 
             // Se añade el post a la base de datos

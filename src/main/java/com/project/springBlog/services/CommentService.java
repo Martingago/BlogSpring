@@ -40,7 +40,9 @@ public class CommentService {
     public CommentModel addComentario(PostDetailsModel postDetails, UserModel usuario, String contenido, Long comentarioPadreId) {
         CommentModel comentarioPadre = null;
         if(comentarioPadreId != null){ //Se comprueba si el comentario es una respuesta o no
-            comentarioPadre = commentRepository.findById(comentarioPadreId).orElse(null);
+            comentarioPadre = commentRepository.findById(comentarioPadreId).orElseThrow(
+                    () ->new EntityNotFoundException("The comment does not exists or it was removed"));
+
         }
             CommentModel newComment = new CommentModel(contenido, LocalDateTime.now(), usuario, postDetails,comentarioPadre); //Se crea el comentario
             commentRepository.save(newComment);
@@ -59,8 +61,6 @@ public class CommentService {
         //Busca el comentario en la BBDD
         comentario = findCommentById(idComentario);
 
-        //Valida si quien elimina el comentario es el autor o un administrador
-        System.out.println("Rol USUARIO => " +  usuario.getRoles());
         if (usuario.getId() == comentario.getUsuario().getId() || usuario.getRoles().contains("ADMIN")) {
             return deleteComentario(comentario);
         } else {

@@ -37,6 +37,12 @@ public class PostDetailsModel {
         this.creador = creador;
     }
 
+    public void addComentario(CommentModel coment){
+        this.getComentariosList().add(coment);
+        coment.setPostDetail(this);
+    }
+
+
     public PostDetailsModel(){}
 
     public long getId() {
@@ -69,6 +75,14 @@ public class PostDetailsModel {
 
     public void setPost(PostModel post) {
         this.post = post;
+    }
+
+    public Set<CommentModel> getComentariosList() {
+        return comentariosList;
+    }
+
+    public void setComentariosList(Set<CommentModel> comentariosList) {
+        this.comentariosList = comentariosList;
     }
 
     @Override

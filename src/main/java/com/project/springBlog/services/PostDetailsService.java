@@ -1,6 +1,7 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.exceptions.EntityException;
+import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.PostModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PostDetailsService {
@@ -68,6 +70,11 @@ public class PostDetailsService {
             return postDetailsRepository.save(oldDetails);
     }
 
+    /**
+     * Elimina los detalles de un post pasado como id
+     * @param id
+     * @return
+     */
     public boolean deletePostDetails(long id){
         if(!postDetailsRepository.existsById(id)){
             System.out.println("PostDetails to delete with id" + id + " was not founded, skipping that one");
@@ -79,6 +86,11 @@ public class PostDetailsService {
         }catch (Exception ex){
             throw  new EntityException("Error during deleting post details", ex);
         }
+    }
+
+    public Set<CommentModel> getCommentsFromPost(long id){
+        PostDetailsModel details = getPostDetails(id);
+        return details.getComentariosList();
     }
 
 }
