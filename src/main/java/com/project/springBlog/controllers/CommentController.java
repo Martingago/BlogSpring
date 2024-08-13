@@ -40,10 +40,8 @@ public class CommentController {
 
     @GetMapping("public/post/{id}/comments")
     public ResponseEntity<ResponseDTO> getCommentsFromPost(@PathVariable("id") long id){
-        Set<CommentModel> commentModelSet =  detailsService.getCommentsFromPost(id);
-//        commentModelSet.stream().map(
-//                CommentMapper::toDTO)
-//                .collect(Collectors.toSet());
+        Set<CommentDTO> commentModelSet =  detailsService.getCommentsFromPost(id);
+
         return new ResponseEntity<>(new ResponseDTO(true, "List of post comments",commentModelSet), HttpStatus.OK);
     }
 

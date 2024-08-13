@@ -1,5 +1,6 @@
 package com.project.springBlog.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.UserModel;
@@ -10,6 +11,7 @@ public class CommentDTO {
     private Long id;
     private String contenido;
     private LocalDateTime fechaComentario;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long postId;
     private Long userId;
     private Long replyId;
@@ -19,15 +21,13 @@ public class CommentDTO {
      * @param id
      * @param contenido
      * @param fechaComentario
-     * @param postId
      * @param userId
      * @param replyId
      */
-    public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long postId, Long userId, Long replyId) {
+    public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long userId, Long replyId) {
         this.id = id;
         this.contenido = contenido;
         this.fechaComentario = fechaComentario;
-        this.postId = postId;
         this.userId = userId;
         this.replyId = replyId;
     }
