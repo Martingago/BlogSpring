@@ -1,21 +1,21 @@
 package com.project.springBlog.services;
 
+import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.CommentRepository;
-import com.project.springBlog.repositories.PostDetailsRepository;
-import com.project.springBlog.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Service
 public class CommentService {
@@ -23,10 +23,16 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     @Autowired
-    private PostDetailsRepository postDetailsRepository;
+    PostDetailsService detailsService;
 
-    @Autowired
-    private UserRepository userRepository;
+   public Page<CommentDTO> getCommentsFromPost(long postId, int page, int size){
+       Pageable pageable = PageRequest.of(page, size);
+       return commentRepository.findAllCommentsByPostId(postId, pageable);
+   }
+
+   public List<CommentDTO> getCommentsFromPost(long postId){
+       return commentRepository.findMainCommentsByPostId(postId);
+   }
 
 
     /**

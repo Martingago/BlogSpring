@@ -15,6 +15,8 @@ public class CommentDTO {
     private Long postId;
     private Long userId;
     private Long replyId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private int countReplies;
 
     /**
      * DTO salida que se envia al fron-end tras haber generado un comentario
@@ -91,5 +93,13 @@ public class CommentDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public int getCountReplies() {
+        return countReplies;
+    }
+
+    public void setCountReplies(int countReplies) {
+        this.countReplies = countReplies;
     }
 }

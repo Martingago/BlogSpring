@@ -1,26 +1,21 @@
 package com.project.springBlog.services;
 
-import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.exceptions.EntityException;
-import com.project.springBlog.mapper.CommentMapper;
-import com.project.springBlog.models.CommentModel;
+
 import com.project.springBlog.models.PostDetailsModel;
-import com.project.springBlog.models.PostModel;
+
 import com.project.springBlog.repositories.CommentRepository;
 import com.project.springBlog.repositories.PostDetailsRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Service
 public class PostDetailsService {
@@ -92,15 +87,6 @@ public class PostDetailsService {
         }catch (Exception ex){
             throw  new EntityException("Error during deleting post details", ex);
         }
-    }
-
-    public Set<CommentDTO> getCommentsFromPost(long id){
-       PostDetailsModel details = getPostDetails(id);
-        return commentRepository.findAllCommentsByPostId(id);
-//        return details.getComentariosList()
-//                .stream().map(
-//                CommentMapper::toDTO)
-//                .collect(Collectors.toSet());
     }
 
 }

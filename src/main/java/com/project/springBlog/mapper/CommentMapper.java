@@ -6,7 +6,7 @@ import com.project.springBlog.models.CommentModel;
 public class CommentMapper {
 
     /**
-     * Funcion que matea un CommentModel a un objeto para enviar al front
+     * Funcion que mapea un CommentModel a un objeto para enviar al front
      * @param comment objeto CommnetModel
      * @return commentDTO con los atributos a enviar al front
      */
@@ -15,8 +15,9 @@ public class CommentMapper {
         dto.setId(comment.getId());
         dto.setContenido(comment.getContenido());
         dto.setFechaComentario(comment.getFechaComentario());
-        dto.setPostId(comment.getPostDetail().getId());
         dto.setUserId(comment.getUsuario().getId());
+        dto.setCountReplies(comment.getRespuestasComentario().size());
+
         if(comment.getComentarioPadre() != null){
             dto.setReplyId(comment.getComentarioPadre().getId());
         }
