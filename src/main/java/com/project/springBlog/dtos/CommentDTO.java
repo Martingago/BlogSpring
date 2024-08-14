@@ -14,9 +14,10 @@ public class CommentDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long postId;
     private Long userId;
+    private Long originId;
     private Long replyId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private int countReplies;
+    private long countReplies;
 
     /**
      * DTO salida que se envia al fron-end tras haber generado un comentario
@@ -32,6 +33,15 @@ public class CommentDTO {
         this.fechaComentario = fechaComentario;
         this.userId = userId;
         this.replyId = replyId;
+    }
+
+    public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long userId, Long replyId, long countReplies) {
+        this.id = id;
+        this.contenido = contenido;
+        this.fechaComentario = fechaComentario;
+        this.userId = userId;
+        this.replyId = replyId;
+        this.countReplies = countReplies;
     }
 
     /**
@@ -61,6 +71,14 @@ public class CommentDTO {
 
     public void setFechaComentario(LocalDateTime fechaComentario) {
         this.fechaComentario = fechaComentario;
+    }
+
+    public Long getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(Long originId) {
+        this.originId = originId;
     }
 
     public Long getReplyId() {
@@ -95,11 +113,11 @@ public class CommentDTO {
         this.userId = userId;
     }
 
-    public int getCountReplies() {
+    public long getCountReplies() {
         return countReplies;
     }
 
-    public void setCountReplies(int countReplies) {
+    public void setCountReplies(long countReplies) {
         this.countReplies = countReplies;
     }
 }

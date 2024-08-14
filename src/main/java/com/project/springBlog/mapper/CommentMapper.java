@@ -2,8 +2,13 @@ package com.project.springBlog.mapper;
 
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.models.CommentModel;
+import com.project.springBlog.repositories.CommentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommentMapper {
+
+    @Autowired
+    CommentRepository commentRepository;
 
     /**
      * Funcion que mapea un CommentModel a un objeto para enviar al front
@@ -16,8 +21,7 @@ public class CommentMapper {
         dto.setContenido(comment.getContenido());
         dto.setFechaComentario(comment.getFechaComentario());
         dto.setUserId(comment.getUsuario().getId());
-        dto.setCountReplies(comment.getRespuestasComentario().size());
-
+        dto.setOriginId(comment.getComentarioOrigen().getId());
         if(comment.getComentarioPadre() != null){
             dto.setReplyId(comment.getComentarioPadre().getId());
         }

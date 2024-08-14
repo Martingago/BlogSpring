@@ -38,7 +38,11 @@ public class CommentModel {
     @JsonIgnoreProperties({"respuestasComentario"})
     private CommentModel comentarioPadre;
 
-    @OneToMany(mappedBy = "comentarioPadre", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comentario_origen_id")
+    private CommentModel comentarioOrigen;
+
+    @OneToMany(mappedBy = "comentarioOrigen", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"comentarioPadre"})
     private Set<CommentModel> respuestasComentario = new HashSet<>();
 
@@ -111,5 +115,13 @@ public class CommentModel {
 
     public void setRespuestasComentario(Set<CommentModel> respuestasComentario) {
         this.respuestasComentario = respuestasComentario;
+    }
+
+    public CommentModel getComentarioOrigen() {
+        return comentarioOrigen;
+    }
+
+    public void setComentarioOrigen(CommentModel comentarioOrigen) {
+        this.comentarioOrigen = comentarioOrigen;
     }
 }

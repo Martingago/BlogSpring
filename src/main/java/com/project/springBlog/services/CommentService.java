@@ -1,6 +1,7 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.dtos.CommentDTO;
+import com.project.springBlog.mapper.CommentMapper;
 import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.UserModel;
@@ -12,9 +13,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 @Service
@@ -30,11 +32,6 @@ public class CommentService {
        return commentRepository.findAllCommentsByPostId(postId, pageable);
    }
 
-   public List<CommentDTO> getCommentsFromPost(long postId){
-       return commentRepository.findMainCommentsByPostId(postId);
-   }
-
-
     /**
      * Funcion que crea un comentario en un post por un usuario
      * @param postDetails del post al que pertenece el comentario
@@ -44,16 +41,21 @@ public class CommentService {
      * @return newComment generado en la base de datos
      */
     public CommentModel addComentario(PostDetailsModel postDetails, UserModel usuario, String contenido, Long comentarioPadreId) {
-        CommentModel comentarioPadre = null;
+        CommentModel newComment = new CommentModel(); //Comentario a publicar
+        newComment.setPostDetail(postDetails);
+        newComment.setUsuario(usuario);
+        newComment.setContenido(contenido);
+        newComment.setFechaComentario(LocalDateTime.now());
         if(comentarioPadreId != null){ //Se comprueba si el comentario es una respuesta o no
-            comentarioPadre = commentRepository.findById(comentarioPadreId).orElseThrow(
+           CommentModel comentarioPadre = commentRepository.findById(comentarioPadreId).orElseThrow(
                     () ->new EntityNotFoundException("The comment does not exists or it was removed"));
-
+           newComment.setComentarioPadre(comentarioPadre); //Establece el comentario padre (Se trata de una respuesta)
+            newComment.setComentarioOrigen(comentarioPadre.getComentarioOrigen()); //Establece cual es el origen principal de un comentario
+        }else{
+            newComment.setComentarioOrigen(newComment); //Establece el comentario origen como la raiz
         }
-            CommentModel newComment = new CommentModel(contenido, LocalDateTime.now(), usuario, postDetails,comentarioPadre); //Se crea el comentario
-            commentRepository.save(newComment);
-            return newComment;
-    }
+            return commentRepository.save(newComment);
+        }
 
     /**
      * Realiza una validacion antes de eliminar el comentario de un usuario.

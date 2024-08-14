@@ -43,29 +43,26 @@ public class CommentController {
      * @param size tamaño de la paginas
      * @return
      */
-//    @GetMapping("public/post/{id}/comments")
-//    public ResponseEntity<ResponseDTO> getCommentsFromPost(
-//            @PathVariable("id") long id,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size) {
-//
-//        Page<CommentDTO> pageCommentsFromPost = commentService.getCommentsFromPost(id,page,size);
-//
-//        return new ResponseEntity<>(new ResponseDTO(true, "List of post comments", pageCommentsFromPost), HttpStatus.OK);
-//    }
-
-
     @GetMapping("public/post/{id}/comments")
     public ResponseEntity<ResponseDTO> getCommentsFromPost(
             @PathVariable("id") long id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        List<CommentDTO> pageCommentsFromPost = commentService.getCommentsFromPost(id);
+        Page<CommentDTO> pageCommentsFromPost = commentService.getCommentsFromPost(id,page,size);
 
-        return new ResponseEntity<>(new ResponseDTO(true, "List test of post comments", pageCommentsFromPost), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of post comments", pageCommentsFromPost), HttpStatus.OK);
     }
 
+
+    @GetMapping("public/comments/{id}")
+    public ResponseEntity<ResponseDTO> getCommentById(
+            @PathVariable("id") long id
+    ){
+        CommentModel comentario = commentService.findCommentById(id);
+        CommentDTO commentDTO = CommentMapper.toDTO(comentario);
+        return  new ResponseEntity<>( new ResponseDTO(true, "Comentario encontrado", commentDTO), HttpStatus.OK);
+    }
 
     /**
      * Añade un comentario a una publicacion
