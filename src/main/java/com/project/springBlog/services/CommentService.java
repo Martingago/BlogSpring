@@ -1,10 +1,12 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.dtos.CommentDTO;
+import com.project.springBlog.mapper.CommentMapper;
 import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.CommentRepository;
+import com.project.springBlog.utils.SortUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,7 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -23,9 +26,40 @@ public class CommentService {
     @Autowired
     PostDetailsService detailsService;
 
+    @Autowired
+    SortUtils sortUtils;
+
+    /**
+     * Obtiene paginacion de los comentarios principales de un post
+     * @param postId identificador del post sobre el que se quieren obtener los comentarios prinicipales
+     * @param page número de pagina de la cual extraer los comentarios
+     * @param size tamaño de elementos mostrados por página
+     * @return página con objetos CommentDTO de cada comentario a mostrar
+     */
    public Page<CommentDTO> getCommentsFromPost(long postId, int page, int size){
-       Pageable pageable = PageRequest.of(page, size);
+       int pageSize = sortUtils.maxLimitsizePage(size); //Comprueba el valor máximo de página
+       Pageable pageable = PageRequest.of(page, pageSize);
        return commentRepository.findMainCommentsByPostId(postId, pageable);
+   }
+
+    /**
+     * Obtiene las respuestas totales existentes a un comentario específico
+     * @param commentId
+     * @param page
+     * @param size
+     * @return
+     */
+   public Set<CommentDTO> getRepliesFromComment(long commentId, int page, int size){
+       int pageSize = sortUtils.maxLimitsizePage(size); //Comprueba valor máximo de página
+       Pageable pageable = PageRequest.of(page,pageSize);
+
+       CommentModel mainComment = findCommentById(commentId);
+       Set<CommentModel> respuestas = mainComment.getRespuestasTotales();
+       respuestas.remove(mainComment); //Se debe excluir de las respuestas el propio comentario principal
+       Set<CommentDTO> respuestasDTO = respuestas.stream()
+               .map(CommentMapper::toDTO)
+               .collect(Collectors.toSet());
+       return respuestasDTO;
    }
 
     /**
@@ -97,7 +131,6 @@ public class CommentService {
         return commentRepository.getCommentById(id).orElseThrow(
                 () -> new EntityNotFoundException("Comment with id " + id + " was not founded")
         );
-
     }
 
     /**
@@ -121,7 +154,6 @@ public class CommentService {
         } catch (EntityNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
-
         return true;
     }
 

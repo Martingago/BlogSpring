@@ -54,6 +54,11 @@ public class CommentController {
         return new ResponseEntity<>(new ResponseDTO(true, "List of post comments", pageCommentsFromPost), HttpStatus.OK);
     }
 
+    @GetMapping("public/comments/{id}/replies")
+    public ResponseEntity<ResponseDTO> getCommentReplies(@PathVariable("id") long id){
+        Set<CommentDTO> respuestasDTO = commentService.getRepliesFromComment(id,0,10);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of replies to comment", respuestasDTO), HttpStatus.OK);
+    }
 
     @GetMapping("public/comments/{id}")
     public ResponseEntity<ResponseDTO> getCommentById(

@@ -52,4 +52,9 @@ public interface CommentRepository  extends JpaRepository<CommentModel, Long> {
             "WHERE c.postDetail.id = :postId AND c.comentarioPadre IS NULL " +
             "GROUP BY c.id")
     Page<CommentDTO> findMainCommentsByPostId(@Param("postId") Long postId, Pageable pageable);
+
+
+//    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido,c.fechaComentario,c.usuario.id, c.comentarioOrigen.id, c.comentarioPadre.id," +
+//            ")")
+//    Page<CommentDTO> findRepliesToComment(@Param("identificador") Long identificador, Pageable pageable);
 }
