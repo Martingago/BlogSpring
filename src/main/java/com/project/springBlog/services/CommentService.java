@@ -1,7 +1,6 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.dtos.CommentDTO;
-import com.project.springBlog.mapper.CommentMapper;
 import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.UserModel;
@@ -13,9 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -29,7 +25,7 @@ public class CommentService {
 
    public Page<CommentDTO> getCommentsFromPost(long postId, int page, int size){
        Pageable pageable = PageRequest.of(page, size);
-       return commentRepository.findAllCommentsByPostId(postId, pageable);
+       return commentRepository.findMainCommentsByPostId(postId, pageable);
    }
 
     /**
@@ -79,7 +75,7 @@ public class CommentService {
     /**
      * Busca un comentario por su ID y maneja el posible error en caso de no encontrarlo
      * @param id del comentario a buscar
-     * @return
+     * @return CommentModel con la información de dicho comentario
      */
     public CommentModel findCommentById(Long id){
         Optional<CommentModel> commentOpt = commentRepository.findById(id);
@@ -87,6 +83,21 @@ public class CommentService {
             throw  new EntityNotFoundException("Comment with id "+ id + " was not founded");
         }
         return commentOpt.get();
+    }
+
+    /**
+     * Busca un comentario por su ID en la base de datos y maneja el posible error de no encontrarlo
+     * A diferencia de la función anterior, esta función devuelve un CommentDTO que contiene otra información
+     * específica del comentario como el número de respuestas asociadas al comentario.
+     * Se usa para enviar al front información específica de un comentario
+     * @param id del comentario a obtener información
+     * @return CommentDTO con la información detallada de un comentario
+     */
+    public CommentDTO getCommentData(long id){
+        return commentRepository.getCommentById(id).orElseThrow(
+                () -> new EntityNotFoundException("Comment with id " + id + " was not founded")
+        );
+
     }
 
     /**

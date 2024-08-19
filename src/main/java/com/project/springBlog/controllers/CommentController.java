@@ -59,8 +59,7 @@ public class CommentController {
     public ResponseEntity<ResponseDTO> getCommentById(
             @PathVariable("id") long id
     ){
-        CommentModel comentario = commentService.findCommentById(id);
-        CommentDTO commentDTO = CommentMapper.toDTO(comentario);
+        CommentDTO commentDTO = commentService.getCommentData(id);
         return  new ResponseEntity<>( new ResponseDTO(true, "Comentario encontrado", commentDTO), HttpStatus.OK);
     }
 

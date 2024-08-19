@@ -35,12 +35,13 @@ public class CommentDTO {
         this.replyId = replyId;
     }
 
-    public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long userId, Long replyId, long countReplies) {
+    public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long userId, Long originId, Long replyId, long countReplies) {
         this.id = id;
         this.contenido = contenido;
         this.fechaComentario = fechaComentario;
         this.userId = userId;
         this.replyId = replyId;
+        this.originId = originId;
         this.countReplies = countReplies;
     }
 

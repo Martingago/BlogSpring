@@ -25,26 +25,27 @@ public class CommentModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    @JsonIgnoreProperties({"comentariosList", "password", "rolesList", "postList"})
     private UserModel usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    @JsonIgnoreProperties({"comentariosList", "fechaCreacion", "creador"})
     private PostDetailsModel postDetail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) //Se utiliza para las respuestas directas
     @JoinColumn(name = "comentario_padre_id")
-    @JsonIgnoreProperties({"respuestasComentario"})
     private CommentModel comentarioPadre;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) //Se utiliza para respuestas directas + indirectas
     @JoinColumn(name = "comentario_origen_id")
     private CommentModel comentarioOrigen;
 
-    @OneToMany(mappedBy = "comentarioOrigen", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties({"comentarioPadre"})
+    //Respuestas directas al comentario
+    @OneToMany(mappedBy = "comentarioPadre", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentModel> respuestasComentario = new HashSet<>();
+
+    //Respuestas indirectas(Totales) al comentario
+    @OneToMany(mappedBy = "comentarioOrigen")
+    private Set<CommentModel> respuestasTotales = new HashSet<>();
 
     //Constructores
 
@@ -123,5 +124,13 @@ public class CommentModel {
 
     public void setComentarioOrigen(CommentModel comentarioOrigen) {
         this.comentarioOrigen = comentarioOrigen;
+    }
+
+    public Set<CommentModel> getRespuestasTotales() {
+        return respuestasTotales;
+    }
+
+    public void setRespuestasTotales(Set<CommentModel> respuestasTotales) {
+        this.respuestasTotales = respuestasTotales;
     }
 }
