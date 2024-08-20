@@ -9,10 +9,13 @@ import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
 import com.project.springBlog.repositories.UserRepository;
 import com.project.springBlog.services.CommentService;
+import com.project.springBlog.utils.SortUtils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +28,9 @@ import java.util.Optional;
 public class CommentController {
 
     @Autowired
+    private SortUtils sortUtils;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -34,19 +40,21 @@ public class CommentController {
     private PostDetailsRepository postDetailsRepository;
 
     /**
-     * Obtiene un ResponseEntity con el estado del servicio + paginacion de comentarios de una publicacion
+     * Obtiene un ResponseEntity con el estado del servicio + paginación de comentarios principales de una publicación
      * @param id identificador del post sobre el que se quieren cargar los comentarios
-     * @param page pagina de la que se quieren extraer los comentarios
-     * @param size tamaño de la paginas
+     * @param page página de la que se quieren extraer los comentarios
+     * @param size tamaño de las páginas
      * @return
      */
     @GetMapping("public/post/{id}/comments")
     public ResponseEntity<ResponseDTO> getCommentsFromPost(
             @PathVariable("id") long id,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
 
-        Page<CommentDTO> pageCommentsFromPost = commentService.getCommentsFromPost(id,page,size);
+        Pageable pageable=  sortUtils.createPageable(page, size);
+
+        Page<CommentDTO> pageCommentsFromPost = commentService.getCommentsFromPost(id,pageable);
 
         return new ResponseEntity<>(new ResponseDTO(true, "List of post comments", pageCommentsFromPost), HttpStatus.OK);
     }
@@ -65,21 +73,44 @@ public class CommentController {
     }
 
     /**
-     * Obtiene la información de las respuestas existentes a un comentario
-     * @param id
+     * Obtiene la información de las respuestas directas a un comentario
+     * @param id del comentario sobre el que se quieren obtener las respuestas
      * @return objeto page con las respuestas existentes a un comentario
      */
     @GetMapping("public/comments/{id}/replies")
-    public ResponseEntity<ResponseDTO> getCommentReplies(@PathVariable("id") long id){
-        Page<CommentDTO> respuestasDTO = commentService.getAllRepliesFromComment(id,0,10);
-        return new ResponseEntity<>(new ResponseDTO(true, "List of replies to comment", respuestasDTO), HttpStatus.OK);
+    public ResponseEntity<ResponseDTO> getCommentReplies(
+            @PathVariable("id") long id,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        Pageable pageable = sortUtils.createPageable(page, size);
+
+        Page<CommentDTO> respuestasDTO = commentService.getDirectRepliesFromComment(id, pageable);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of direct replies to a comment", respuestasDTO), HttpStatus.OK);
     }
 
+    /**
+     * Obtiene la información de las respuestas totales existentes a un comentario
+     * @param id del comentario sobre el que se quieren obtener las respuestas
+     * @return objeto page con las respuestas existentes a un comentario
+     */
+    @GetMapping("public/comments/{id}/replies/all")
+    public ResponseEntity<ResponseDTO> getAllCommentReplies(
+            @PathVariable("id") long id,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size)
+    {
+
+        Pageable pageable = sortUtils.createPageable(page, size);
+
+        Page<CommentDTO> respuestasDTO = commentService.getAllRepliesFromComment(id, pageable);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of all replies to a comment", respuestasDTO), HttpStatus.OK);
+    }
 
     /**
-     * Añade un comentario a una publicacion
+     * Añade un comentario a una publicación
      * @param postId identificador del post sobre el que se añade un comentario
-     * @param comentario DTO con la informacion a añadir a la base de datos
+     * @param comentario DTO con la información a añadir a la base de datos
      * @return DTO con otros datos adicionales sobre el comentario añadido
      */
     @PostMapping("/user/post/{id}/comment")
@@ -105,9 +136,9 @@ public class CommentController {
         //Se añade el comentario:
         CommentModel newComment = commentService.addComentario(details, usuario, comentario.getContenido(), comentario.getReplyId());
 
-        //Se envia un DTO con la información del comentario
+        //Se envía un DTO con la información del comentario
         CommentDTO commentDTO  = CommentMapper.toDTO(newComment);
-        return new ResponseEntity<>(new ResponseDTO(true, "Comment addded succesfully", commentDTO), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDTO(true, "Comment added successfully", commentDTO), HttpStatus.OK);
     }
 
     /**
@@ -125,7 +156,7 @@ public class CommentController {
             return new ResponseEntity<>(new ResponseDTO(false, "User not authenticated", null), HttpStatus.UNAUTHORIZED);
         }
         UserModel usuario = authUser.get();
-        //Valida y elimina el comentario
+        // Valida y elimina el comentario
         commentService.validateAndDeleteCommentario(usuario, id);
         return new ResponseEntity<>(new ResponseDTO(true, "Comment was successfully deleted", null), HttpStatus.OK);
     }

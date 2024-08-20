@@ -54,39 +54,30 @@ public class CommentService {
     /**
      * Obtiene paginacion de los comentarios principales de un post
      * @param postId identificador del post sobre el que se quieren obtener los comentarios prinicipales
-     * @param page número de pagina de la cual extraer los comentarios
-     * @param size tamaño de elementos mostrados por página
+     * @param pageable
      * @return página con objetos CommentDTO de cada comentario a mostrar
      */
-   public Page<CommentDTO> getCommentsFromPost(long postId, int page, int size){
-       int pageSize = sortUtils.maxLimitsizePage(size); //Comprueba el valor máximo de página
-       Pageable pageable = PageRequest.of(page, pageSize);
+   public Page<CommentDTO> getCommentsFromPost(long postId, Pageable pageable){
        return commentRepository.findMainCommentsByPostId(postId, pageable);
    }
 
     /**
      * Obtiene las respuestas totales existentes a un comentario específico
      * @param commentId
-     * @param page
-     * @param size
+     * @param pageable
      * @return
      */
-   public Page<CommentDTO> getAllRepliesFromComment(long commentId, int page, int size){
-       int pageSize = sortUtils.maxLimitsizePage(size); //Comprueba valor máximo de página
-       Pageable pageable = PageRequest.of(page,pageSize);
+   public Page<CommentDTO> getAllRepliesFromComment(long commentId, Pageable pageable){
        return commentRepository.findAllRepliesToComment(commentId, pageable);
    }
 
     /**
      * Obtiene respuestas directas existentes a un comentario especifico
      * @param commentId
-     * @param page
-     * @param size
+     * @param pageable
      * @return
      */
-   public Page<CommentDTO> getDirectRepliesFromComment(long commentId, int page, int size){
-       int pageSize = sortUtils.maxLimitsizePage(size);
-       Pageable pageable = PageRequest.of(page, pageSize);
+   public Page<CommentDTO> getDirectRepliesFromComment(long commentId, Pageable pageable){
        return commentRepository.findDirectRepliesToComment(commentId, pageable);
    }
 

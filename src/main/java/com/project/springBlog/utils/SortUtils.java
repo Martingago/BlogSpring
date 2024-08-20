@@ -2,6 +2,8 @@ package com.project.springBlog.utils;
 
 import com.project.springBlog.config.AppProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,15 @@ public class SortUtils {
 
     @Autowired
     AppProperties appProperties;
+
+    public Pageable createPageable(Integer page, Integer size){
+        int pageNumber = (page !=null) ? page : appProperties.getDefaultpPageNumber();
+        int pageTmp = (size != null) ? size : appProperties.getDefaultPageSize();
+        int pageSize = maxLimitsizePage(pageTmp);
+
+        return PageRequest.of(pageNumber, pageSize);
+    }
+
 
     /**
      * Si el valor que recibe como tamaño de pagina es mayor al limite permitido, devuelve el valor maximo permitido
