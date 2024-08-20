@@ -18,10 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -54,19 +51,30 @@ public class CommentController {
         return new ResponseEntity<>(new ResponseDTO(true, "List of post comments", pageCommentsFromPost), HttpStatus.OK);
     }
 
-    @GetMapping("public/comments/{id}/replies")
-    public ResponseEntity<ResponseDTO> getCommentReplies(@PathVariable("id") long id){
-        Set<CommentDTO> respuestasDTO = commentService.getRepliesFromComment(id,0,10);
-        return new ResponseEntity<>(new ResponseDTO(true, "List of replies to comment", respuestasDTO), HttpStatus.OK);
-    }
-
+    /**
+     * Obtiene la información de un comentario pasado como id
+     * @param id del comentario sobre el que se quieren obtener los datos
+     * @return ResponseEntity con el CommentDTO con la información del comentario
+     */
     @GetMapping("public/comments/{id}")
     public ResponseEntity<ResponseDTO> getCommentById(
             @PathVariable("id") long id
     ){
         CommentDTO commentDTO = commentService.getCommentData(id);
-        return  new ResponseEntity<>( new ResponseDTO(true, "Comentario encontrado", commentDTO), HttpStatus.OK);
+        return  new ResponseEntity<>( new ResponseDTO(true, "Comment was successfully founded", commentDTO), HttpStatus.OK);
     }
+
+    /**
+     * Obtiene la información de las respuestas existentes a un comentario
+     * @param id
+     * @return objeto page con las respuestas existentes a un comentario
+     */
+    @GetMapping("public/comments/{id}/replies")
+    public ResponseEntity<ResponseDTO> getCommentReplies(@PathVariable("id") long id){
+        Page<CommentDTO> respuestasDTO = commentService.getAllRepliesFromComment(id,0,10);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of replies to comment", respuestasDTO), HttpStatus.OK);
+    }
+
 
     /**
      * Añade un comentario a una publicacion

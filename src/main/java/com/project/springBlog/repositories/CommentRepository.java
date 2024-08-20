@@ -21,21 +21,13 @@ public interface CommentRepository  extends JpaRepository<CommentModel, Long> {
      * @param identificador del comentario a buscar
      * @return Optional commentDTO con información del comentario y del número de respuestas asociadas en caso de ser encontrada
      */
-    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido, c.fechaComentario, c.usuario.id, c.comentarioOrigen.id ,c.comentarioPadre.id," +
+    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido, c.fechaComentario, c.postDetail.id, c.usuario.id, c.comentarioOrigen.id ,c.comentarioPadre.id," +
             "COUNT(r)) " +
             "FROM CommentModel c " +
             "LEFT JOIN c.respuestasComentario r " +
             "WHERE c.id = :identificador " +
             "GROUP BY c.id")
     Optional<CommentDTO> getCommentById(@Param("identificador")Long identificador);
-
-    /**
-     * Cuenta el número de respuestas que tiene un comentario principal
-     * @param comentario
-     * @return
-     */
-    @Query("SELECT COUNT(c) FROM CommentModel c WHERE c.comentarioOrigen = :comentario")
-    long countRespuestasComentario(@Param("comentario") CommentModel comentario);
 
     /**
      * Realiza una búsqueda de todos los comentarios PRINCIPALES asociados a un post (comentarios que no son una respuesta a otros)
@@ -53,8 +45,34 @@ public interface CommentRepository  extends JpaRepository<CommentModel, Long> {
             "GROUP BY c.id")
     Page<CommentDTO> findMainCommentsByPostId(@Param("postId") Long postId, Pageable pageable);
 
+    /**
+     * Obtiene las respuestas totales a un comentario en especifico pasado como parámetro
+     * @param identificador del comentario sobre el que se quieren obtener TODAS las respuestas
+     * @param pageable paginación para devolver con los datos de las respuestas
+     * @return Page con los comentarios respuesta al comentario pasado como identificador
+     */
+    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido, c.fechaComentario, c.usuario.id, c.comentarioOrigen.id, c.comentarioPadre.id) " +
+            "FROM CommentModel c " +
+            "WHERE c.comentarioOrigen.id = :identificador AND c.id <> :identificador")
+    Page<CommentDTO> findAllRepliesToComment(@Param("identificador")Long identificador, Pageable pageable);
 
-//    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido,c.fechaComentario,c.usuario.id, c.comentarioOrigen.id, c.comentarioPadre.id," +
-//            ")")
-//    Page<CommentDTO> findRepliesToComment(@Param("identificador") Long identificador, Pageable pageable);
+    /**
+     * Obtiene las respuestas directas a un comentario en especifico pasado como identificador
+     * @param identificador del comentario sobre el que se quieren obtener las respuestas
+     * @param pageable paginacion para devolver los datos de las respuestas
+     * @return Page con los comentarios respuesta al comentario pasado como identificador
+     */
+    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido,c.fechaComentario,c.usuario.id, c.comentarioOrigen.id, c.comentarioPadre.id) " +
+            "FROM CommentModel c " +
+            "WHERE c.comentarioPadre.id = :identificador")
+    Page<CommentDTO> findDirectRepliesToComment(@Param("identificador") Long identificador, Pageable pageable);
+
+    /**
+     * Cuenta el número de respuestas que tiene un comentario principal
+     * @param comentario
+     * @return
+     */
+    @Query("SELECT COUNT(c) FROM CommentModel c WHERE c.comentarioOrigen = :comentario")
+    long countRespuestasComentario(@Param("comentario") CommentModel comentario);
+
 }

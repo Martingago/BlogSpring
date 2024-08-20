@@ -1,7 +1,6 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.dtos.CommentDTO;
-import com.project.springBlog.mapper.CommentMapper;
 import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.UserModel;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -24,10 +22,34 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     @Autowired
-    PostDetailsService detailsService;
-
-    @Autowired
     SortUtils sortUtils;
+
+    /**
+     * Busca un comentario por su ID y maneja el posible error en caso de no encontrarlo
+     * @param id del comentario a buscar
+     * @return CommentModel con la información de dicho comentario
+     */
+    public CommentModel findCommentById(Long id){
+        Optional<CommentModel> commentOpt = commentRepository.findById(id);
+        if(!commentOpt.isPresent()){
+            throw  new EntityNotFoundException("Comment with id "+ id + " was not founded");
+        }
+        return commentOpt.get();
+    }
+
+    /**
+     * Busca un comentario por su ID en la base de datos y maneja el posible error de no encontrarlo
+     * A diferencia de la función anterior, esta función devuelve un CommentDTO que contiene otra información
+     * específica del comentario como el número de respuestas asociadas al comentario.
+     * Se usa para enviar al front información específica de un comentario
+     * @param id del comentario a obtener información
+     * @return CommentDTO con la información detallada de un comentario
+     */
+    public CommentDTO getCommentData(long id){
+        return commentRepository.getCommentById(id).orElseThrow(
+                () -> new EntityNotFoundException("Comment with id " + id + " was not founded")
+        );
+    }
 
     /**
      * Obtiene paginacion de los comentarios principales de un post
@@ -49,17 +71,23 @@ public class CommentService {
      * @param size
      * @return
      */
-   public Set<CommentDTO> getRepliesFromComment(long commentId, int page, int size){
+   public Page<CommentDTO> getAllRepliesFromComment(long commentId, int page, int size){
        int pageSize = sortUtils.maxLimitsizePage(size); //Comprueba valor máximo de página
        Pageable pageable = PageRequest.of(page,pageSize);
+       return commentRepository.findAllRepliesToComment(commentId, pageable);
+   }
 
-       CommentModel mainComment = findCommentById(commentId);
-       Set<CommentModel> respuestas = mainComment.getRespuestasTotales();
-       respuestas.remove(mainComment); //Se debe excluir de las respuestas el propio comentario principal
-       Set<CommentDTO> respuestasDTO = respuestas.stream()
-               .map(CommentMapper::toDTO)
-               .collect(Collectors.toSet());
-       return respuestasDTO;
+    /**
+     * Obtiene respuestas directas existentes a un comentario especifico
+     * @param commentId
+     * @param page
+     * @param size
+     * @return
+     */
+   public Page<CommentDTO> getDirectRepliesFromComment(long commentId, int page, int size){
+       int pageSize = sortUtils.maxLimitsizePage(size);
+       Pageable pageable = PageRequest.of(page, pageSize);
+       return commentRepository.findDirectRepliesToComment(commentId, pageable);
    }
 
     /**
@@ -104,33 +132,6 @@ public class CommentService {
         } else {
             throw new SecurityException("No permission to delete this comment");
         }
-    }
-
-    /**
-     * Busca un comentario por su ID y maneja el posible error en caso de no encontrarlo
-     * @param id del comentario a buscar
-     * @return CommentModel con la información de dicho comentario
-     */
-    public CommentModel findCommentById(Long id){
-        Optional<CommentModel> commentOpt = commentRepository.findById(id);
-        if(!commentOpt.isPresent()){
-            throw  new EntityNotFoundException("Comment with id "+ id + " was not founded");
-        }
-        return commentOpt.get();
-    }
-
-    /**
-     * Busca un comentario por su ID en la base de datos y maneja el posible error de no encontrarlo
-     * A diferencia de la función anterior, esta función devuelve un CommentDTO que contiene otra información
-     * específica del comentario como el número de respuestas asociadas al comentario.
-     * Se usa para enviar al front información específica de un comentario
-     * @param id del comentario a obtener información
-     * @return CommentDTO con la información detallada de un comentario
-     */
-    public CommentDTO getCommentData(long id){
-        return commentRepository.getCommentById(id).orElseThrow(
-                () -> new EntityNotFoundException("Comment with id " + id + " was not founded")
-        );
     }
 
     /**

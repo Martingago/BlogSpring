@@ -19,22 +19,17 @@ public class CommentDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private long countReplies;
 
-    /**
-     * DTO salida que se envia al fron-end tras haber generado un comentario
-     * @param id
-     * @param contenido
-     * @param fechaComentario
-     * @param userId
-     * @param replyId
-     */
-    public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long userId, Long replyId) {
+    // DTO salida que se envia al fron-end tras haber generado un comentario
+    public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long userId, Long originId, Long replyId) {
         this.id = id;
         this.contenido = contenido;
         this.fechaComentario = fechaComentario;
         this.userId = userId;
+        this.originId = originId;
         this.replyId = replyId;
     }
 
+    // DTO que se envia en una página de comentarios existentes en un post.
     public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long userId, Long originId, Long replyId, long countReplies) {
         this.id = id;
         this.contenido = contenido;
@@ -44,6 +39,19 @@ public class CommentDTO {
         this.originId = originId;
         this.countReplies = countReplies;
     }
+
+    // DTO que se envia con la información especifica de un comentario. Incluye todos los datos del comentario
+    public CommentDTO(Long id, String contenido, LocalDateTime fechaComentario, Long postId, Long userId, Long originId, Long replyId, long countReplies) {
+        this.id = id;
+        this.contenido = contenido;
+        this.fechaComentario = fechaComentario;
+        this.postId = postId;
+        this.userId = userId;
+        this.originId = originId;
+        this.replyId = replyId;
+        this.countReplies = countReplies;
+    }
+
 
     /**
      * DTO validación para añadir un comentario estructura que debe recibir desde el front-end
