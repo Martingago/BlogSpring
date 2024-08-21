@@ -1,7 +1,9 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.config.AppProperties;
+import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.dtos.UserDTO;
+import com.project.springBlog.mapper.CommentMapper;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.RoleModel;
 import com.project.springBlog.models.UserModel;
@@ -19,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -31,9 +35,6 @@ public class UserService {
 
     @Autowired
     private PostDetailsRepository detailsRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Autowired
     private RoleService roleService;
@@ -67,6 +68,31 @@ public class UserService {
             throw  new EntityNotFoundException("User with id " + id + " was not founded");
         }
         return user.get();
+    }
+
+    /**
+     * Busca en la base de datos a un usuario tanto por su identificador(id) tanto como por su username
+     * @param identificador String que puede ser tanto su id, como su username
+     * @return usermodel del usuario encontrado o null si no existe
+     */
+    public UserModel findUserByIdOrUsername(String identificador){
+        UserModel userModel;
+        try{
+            long id = Long.parseLong(identificador);
+            userModel = findUserById(id);
+        }catch (NumberFormatException ex){
+            userModel = findByUsername(identificador);
+        }
+        return  userModel;
+    }
+
+    /**
+     * Obtiene un listado de todos los comentarios que ha escrito un usuario en específico
+     * @param user UserModel del cual se quiere extraer los comentarios escritos
+     * @return Set con los commentDTO escritos por el usuario
+     */
+    public Set<CommentDTO> getUserComments(UserModel user){
+        return user.getComentariosList().stream().map(CommentMapper::toDTO).collect(Collectors.toSet());
     }
 
     /**

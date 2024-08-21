@@ -38,7 +38,6 @@ public class UserModel {
 
     //Comentarios escritos por un usuario
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties({"usuario", "postDetail", "comentarioPadre","respuestasComentario"})
     private Set<CommentModel> comentariosList = new HashSet<>();
 
     @Column(nullable = false)

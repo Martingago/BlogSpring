@@ -23,31 +23,6 @@ public class RegistrationController {
     @Autowired
     UserService userService;
 
-
-    /**
-     * Obtiene los datos de un usuario tanto a través de su ID, como de su username
-     * @return map de userDTO con la informacion de un usuario
-     */
-    @GetMapping("public/user")
-    public ResponseEntity<ResponseDTO> getUser(@RequestParam("identifier") String identifier){
-        UserModel userModel;
-        try{
-            Long id = Long.parseLong(identifier);
-            userModel = userService.findUserById(id);
-            UserDTO userDTO = UserMapper.toDetailDTO(userModel);
-        }catch (NumberFormatException ex){
-            userModel = userService.findByUsername(identifier);
-
-        }
-        if(userModel != null){
-            UserDTO userDTO = UserMapper.toDetailDTO(userModel);
-            return new ResponseEntity<>(new ResponseDTO(true, "User succesfully founded", userDTO), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(new ResponseDTO(false, "User not found", null), HttpStatus.NOT_FOUND);
-        }
-    }
-
-
     /**
      * Crea un usuario sin privilegios en la base de datos
      * @param usuarioDTO

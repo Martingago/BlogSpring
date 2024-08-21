@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommentMapper {
 
-    @Autowired
-    CommentRepository commentRepository;
 
     /**
      * Funcion que mapea un CommentModel a un objeto para enviar al front
@@ -21,6 +19,7 @@ public class CommentMapper {
         dto.setContenido(comment.getContenido());
         dto.setFechaComentario(comment.getFechaComentario());
         dto.setUserId(comment.getUsuario().getId());
+        dto.setPostId(comment.getPostDetail().getId());
         dto.setOriginId(comment.getComentarioOrigen().getId());
         if(comment.getComentarioPadre() != null){
             dto.setReplyId(comment.getComentarioPadre().getId());
