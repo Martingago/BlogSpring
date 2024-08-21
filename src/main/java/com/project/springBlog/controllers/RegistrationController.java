@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +52,7 @@ public class RegistrationController {
     /**
      * Crea un usuario administrador en la base de datos
      * Los roles de un ADMIN pueden ser: USUARIO, ADMIN, EDITOR
-     * @param usuarioDTO DTO  recibido desde el front-end del usuario que se quiere registrar
+     * @param usuarioDTO DTO recibido desde el front-end del usuario que se quiere registrar
      * @param result
      * @return ResponseEntity con un booleano de exito, mensaje y userDTO
      */
@@ -76,10 +77,12 @@ public class RegistrationController {
 
     /**
      * Elimina un usuario de la Base de datos
+     * Para poder eliminar un usuario es necesario o tener el rol de admin, o ser el propio usuario
      * @param id del usuario a eliminar
      * @return
      */
-    @DeleteMapping("/admin/user/{id}")
+    @DeleteMapping("/user/profile/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<ResponseDTO> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(new ResponseDTO(true, "User successfully deleted", null), HttpStatus.OK);

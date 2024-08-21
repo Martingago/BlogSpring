@@ -10,6 +10,9 @@ public class UserDTO {
     private String username;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private long id;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String password;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -71,6 +74,15 @@ public class UserDTO {
     }
 
     // Getters and setters
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;

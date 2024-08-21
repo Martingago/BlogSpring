@@ -16,7 +16,6 @@ import java.util.Set;
 
 @Service
 public class UserDetailService implements UserDetailsService {
-    //Informacion adicional: https://www.youtube.com/watch?v=9J-b6OlPy24
 
     @Autowired
     private UserRepository userRepository;

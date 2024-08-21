@@ -108,7 +108,7 @@ public class UserService {
     /**
      * Funcion que permite crear un usuario con roll de USER, o roles de ADMINISTRACION
      * Los roles deben ser recibidos en el objeto newUser, no se produce ninguna inyección por defecto
-     * @param newUserDTO informacion del usuario a crear
+     * @param newUserDTO información del usuario a crear
      * @param isAdmin boolean indicando si es ADMINISTRADOR o no
      * @return objeto creado en la BBDD con el roll recibido
      */
@@ -121,10 +121,9 @@ public class UserService {
         newUserDTO.setPassword(passwordEncoder.encode(newUserDTO.getPassword())); //Se codifica el string de password
         //Se crea un modelo de usuario
         UserModel newUser = new UserModel(newUserDTO.getUsername(), newUserDTO.getPassword(), newUserDTO.getName());
-        if(!isAdmin){
-            RoleModel userRol = roleService.getRole("USER");
-            newUser.addRol(userRol);
-        }else{
+        RoleModel userRol = roleService.getRole("USER");
+        newUser.addRol(userRol);
+        if(isAdmin){
             roleService.insertRolesToUser(newUser, newUserDTO.getRoles()); //Le añade los roles correspondientes
         }
         userRepository.save(newUser);
