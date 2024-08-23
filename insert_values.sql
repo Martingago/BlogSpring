@@ -14,25 +14,25 @@ INSERT INTO usuarios(username, password, name) VALUES
 ("Javier", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Javier Castro"),
 ("Carlitos", "$2a$12$ygwRDTKqj3EQTtwQsiof3uNqcsFwPCFXwf5YLH1m7myuqV/3W1Yhe", "Carlitos editor"), -- pw: editor
 ("bamba", "$2a$12$ygwRDTKqj3EQTtwQsiof3uNqcsFwPCFXwf5YLH1m7myuqV/3W1Yhe", "Bamba editor"), -- pw: editor 
-("Pedro", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Pedro Muñoz"), -- pw: 12345
-("Lucía", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Lucía Pérez"), 
-("Juan", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Juan López"), 
-("Marta", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Marta García"), 
-("Raúl", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Raúl Martínez"),
-("Nuria", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Nuria Hernández"), 
-("Hugo", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Hugo Fernández"), 
-("Clara", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Clara Jiménez"), 
-("Adrián", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Adrián Ruiz"), 
-("Sara", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Sara Gómez"), 
-("David", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "David Sánchez"),
-("Eva", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Eva Díaz"),
-("Álvaro", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Álvaro Romero"), 
-("Cristina", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Cristina Ortega"), 
-("Iván", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Iván Castro"), 
-("Paula", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Paula Torres"), 
-("María", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "María Alonso"),
-("Andrés", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Andrés Ramos"),
-("LauraR", "$2a$12$6.lgt1DbR/aQ9HYGQTOENeORpLE/5Q4TVvIobQO5P07dLQ.qg5lsu", "Laura Rodríguez");
+("Pedro", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Pedro Muñoz"), -- pw: 12345
+("Lucía", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Lucía Pérez"), 
+("Juan", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Juan López"), 
+("Marta", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Marta García"), 
+("Raúl", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Raúl Martínez"),
+("Nuria", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Nuria Hernández"), 
+("Hugo", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Hugo Fernández"), 
+("Clara", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Clara Jiménez"), 
+("Adrián", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Adrián Ruiz"), 
+("Sara", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Sara Gómez"), 
+("David", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "David Sánchez"),
+("Eva", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Eva Díaz"),
+("Álvaro", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Álvaro Romero"), 
+("Cristina", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Cristina Ortega"), 
+("Iván", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Iván Castro"), 
+("Paula", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Paula Torres"), 
+("María", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "María Alonso"),
+("Andrés", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Andrés Ramos"),
+("LauraR", "$2a$12$ur.02QyguOLHCS9bAv1ziO5qu64v.mf29fcztSYIGNnTOmGtTB.va", "Laura Rodríguez");
 
 -- Inserción de roles
 INSERT INTO roles(rol) VALUES

@@ -1,5 +1,6 @@
 package com.project.springBlog.controllers;
 
+import com.project.springBlog.config.CustomUserDetails;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.dtos.UserDTO;
 import com.project.springBlog.mapper.UserMapper;
@@ -14,6 +15,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,8 +83,8 @@ public class RegistrationController {
      * @param id del usuario a eliminar
      * @return
      */
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     @DeleteMapping("/user/profile/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<ResponseDTO> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(new ResponseDTO(true, "User successfully deleted", null), HttpStatus.OK);
