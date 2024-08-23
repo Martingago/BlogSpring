@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -148,6 +149,8 @@ public class CommentController {
     @DeleteMapping("/user/comment/{id}")
     @Transactional
     public ResponseEntity<ResponseDTO> eliminarComentario(@PathVariable("id") long id) {
+
+
         //Obtiene los datos del usuario que va a realizar la acción
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<UserModel> authUser = userRepository.findByUsername(username);

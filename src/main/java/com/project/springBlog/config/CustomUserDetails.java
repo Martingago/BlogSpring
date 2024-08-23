@@ -43,4 +43,14 @@ public class CustomUserDetails implements UserDetails {
         return user.getId();
     }
 
+    /**
+     * Obtiene los roles de usuario en formato de cadena
+     * @return
+     */
+    public Collection<String> getRoles(){
+        return getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+    }
+
 }
