@@ -44,7 +44,7 @@ public class CommentModel {
     private Set<CommentModel> respuestasComentario = new HashSet<>();
 
     //Respuestas indirectas(Totales) al comentario
-    @OneToMany(mappedBy = "comentarioOrigen")
+    @OneToMany(mappedBy = "comentarioOrigen", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentModel> respuestasTotales = new HashSet<>();
 
     //Constructores

@@ -1,5 +1,6 @@
 package com.project.springBlog.controllers;
 
+import com.project.springBlog.config.CustomUserDetails;
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.mapper.CommentMapper;
@@ -9,6 +10,8 @@ import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
 import com.project.springBlog.repositories.UserRepository;
 import com.project.springBlog.services.CommentService;
+import com.project.springBlog.services.PostDetailsService;
+import com.project.springBlog.services.PostService;
 import com.project.springBlog.utils.SortUtils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -29,6 +32,9 @@ public class CommentController {
 
     @Autowired
     private SortUtils sortUtils;
+
+    @Autowired
+    private PostDetailsService detailsService;
 
     @Autowired
     private UserRepository userRepository;
@@ -118,20 +124,12 @@ public class CommentController {
     public ResponseEntity<ResponseDTO> addComentario(@PathVariable("id") long postId,
                                                      @Valid
                                                      @RequestBody CommentDTO comentario) {
-        //Validar que el usuario exista:
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<UserModel> authUser = userRepository.findByUsername(username);
-        if (authUser.isEmpty()) {
-            return new ResponseEntity<>(new ResponseDTO(false, "User not authenticated", null), HttpStatus.FORBIDDEN);
-        }
-        UserModel usuario = authUser.get();
+        //Obtener credenciales del usuario
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserModel usuario = userRepository.findById(userDetails.getId()).get();
 
-        //Comprobar que el post exista:
-        Optional<PostDetailsModel> postOpt = postDetailsRepository.findById(postId);
-        if (postOpt.isEmpty()) {
-            return new ResponseEntity<>(new ResponseDTO(false, "Post not founded", null), HttpStatus.NOT_FOUND);
-        }
-        PostDetailsModel details = postOpt.get();
+        //Obtiene los datos del post - En caso de no existir lanza un throw EntityNotFound
+        PostDetailsModel details = detailsService.getPostDetails(postId);
 
         //Se añade el comentario:
         CommentModel newComment = commentService.addComentario(details, usuario, comentario.getContenido(), comentario.getReplyId());
@@ -149,17 +147,7 @@ public class CommentController {
     @DeleteMapping("/user/comment/{id}")
     @Transactional
     public ResponseEntity<ResponseDTO> eliminarComentario(@PathVariable("id") long id) {
-
-
-        //Obtiene los datos del usuario que va a realizar la acción
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<UserModel> authUser = userRepository.findByUsername(username);
-        if (authUser.isEmpty()) {
-            return new ResponseEntity<>(new ResponseDTO(false, "User not authenticated", null), HttpStatus.UNAUTHORIZED);
-        }
-        UserModel usuario = authUser.get();
-        // Valida y elimina el comentario
-        commentService.validateAndDeleteCommentario(usuario, id);
+        commentService.validateAndDeleteCommentario(id);
         return new ResponseEntity<>(new ResponseDTO(true, "Comment was successfully deleted", null), HttpStatus.OK);
     }
 

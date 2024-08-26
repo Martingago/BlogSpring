@@ -1,6 +1,6 @@
 package com.project.springBlog.config;
 
-import com.project.springBlog.services.UserDetailService;
+import com.project.springBlog.services.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration{
 
     @Autowired
-    UserDetailService userDetailsService;
+    CustomUserDetailService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

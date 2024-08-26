@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name="username", unique = true, nullable = false)
     @NotEmpty(message = "Username cannot be empty")
@@ -109,11 +109,11 @@ public class UserModel {
 
     // Getters and setters
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

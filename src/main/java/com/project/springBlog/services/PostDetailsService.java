@@ -47,7 +47,7 @@ public class PostDetailsService {
             if(details.isPresent()){
                 return details.get();
             }else{
-                throw new EntityNotFoundException("PostDetails with id: " + id + " where not founded");
+                throw new EntityNotFoundException("PostDetails with id: " + id + " was not founded");
             }
         }
 

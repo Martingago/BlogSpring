@@ -1,23 +1,18 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.config.CustomUserDetails;
-import com.project.springBlog.models.RoleModel;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Set;
-
 @Service
-public class UserDetailService implements UserDetailsService {
+public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;

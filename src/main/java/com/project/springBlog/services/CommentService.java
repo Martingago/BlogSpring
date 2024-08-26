@@ -18,8 +18,16 @@ import java.util.*;
 
 @Service
 public class CommentService {
+
+    @Autowired
+
+    private UserService userService;
+
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    SecurityService securityService;
 
     @Autowired
     SortUtils sortUtils;
@@ -109,52 +117,42 @@ public class CommentService {
     /**
      * Realiza una validacion antes de eliminar el comentario de un usuario.
      * Un comentario sólo puede ser eliminado por el usuario creador de dicho comentario o por un administrador
-     * @param usuario datos del usuario que realiza la operación
      * @param idComentario a eliminar
      * @return boolean si se ha completado o un error.
      */
-    public boolean validateAndDeleteCommentario(UserModel usuario, Long idComentario) {
-        CommentModel comentario = null;
-        //Busca el comentario en la BBDD
-        comentario = findCommentById(idComentario);
+    public boolean validateAndDeleteCommentario(Long idComentario) {
+        //Busca el comentario en la BBDD - Si no existe hace un throw EntityNotFound
+        CommentModel comentario = findCommentById(idComentario);
+        //Si es un usuario administrador elimina el comentario
+        if (securityService.isAdmin()) {
+            return deleteComentario(comentario);
+        }
+        // Obtiene usuario authenticado
+        Long userId = securityService.getUserModelId();
+        UserModel usuario = userService.findUserById(userId);
 
-        if (usuario.getId() == comentario.getUsuario().getId() || usuario.getRoles().contains("ADMIN")) {
+        if (usuario.getId().equals(comentario.getUsuario().getId())) {
             return deleteComentario(comentario);
         } else {
             throw new SecurityException("No permission to delete this comment");
         }
+
     }
 
     /**
-     * Elimina un comentario y sus respuestas pasando como parámetro el CommnetModel
-     * @param comentario a eliminar
-     * @return
+     * Elimina un comentario de la base de datos
+     * @param comentario modelo del comentario a eliminar
+     * @return boolean indicando el exito de la operación
      */
     public boolean deleteComentario(CommentModel comentario) {
-        //Se eliminan las respuestas de un comentario
-        for (CommentModel respuesta : comentario.getRespuestasComentario()) {
-            try {
-                //Elimina de manera recursiva las respuestas
-                deleteComentario(respuesta.getId());
-            } catch (EntityNotFoundException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
         //Se elimina el comentario padre
         try {
             commentRepository.deleteById(comentario.getId());
-        } catch (EntityNotFoundException ex) {
-            System.out.println(ex.getMessage());
+            return true;
+        }catch (Exception ex){
+            System.err.println("Error al eliminar comentario: " + ex);
+            return false;
         }
-        return true;
     }
 
-    /**
-     * Elimina un comentario de la base de datos y sus respuestas asociadas
-     * @param id comentario a eliminar
-     * @return
-     */
-    public boolean deleteComentario(Long id){
-        return deleteComentario(findCommentById(id));
-    }
 }
