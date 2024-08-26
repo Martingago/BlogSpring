@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -152,7 +153,9 @@ public class CommentService {
     public boolean deleteComentario(CommentModel comentario) {
         //Se elimina el comentario padre
         try {
-            commentRepository.deleteById(comentario.getId());
+            Set<CommentModel> respuestas = comentario.getRespuestasComentario();
+            commentRepository.deleteAll(respuestas);
+            commentRepository.delete(comentario);
             return true;
         }catch (Exception ex){
             System.err.println("Error al eliminar comentario: " + ex);

@@ -38,7 +38,7 @@ public interface CommentRepository  extends JpaRepository<CommentModel, Long> {
      * @return Page con los comentarios de una publicacion
      */
     @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido, c.fechaComentario, c.usuario.id, c.comentarioOrigen.id, c.comentarioPadre.id, " +
-            "(COUNT(r)) " +
+            "COUNT(r)) " +
             "FROM CommentModel c " +
             "LEFT JOIN c.respuestasTotales r " +
             "WHERE c.postDetail.id = :postId AND c.comentarioPadre IS NULL " +
