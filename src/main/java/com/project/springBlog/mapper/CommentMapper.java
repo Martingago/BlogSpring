@@ -2,8 +2,6 @@ package com.project.springBlog.mapper;
 
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.models.CommentModel;
-import com.project.springBlog.repositories.CommentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommentMapper {
 
@@ -20,7 +18,11 @@ public class CommentMapper {
         dto.setFechaComentario(comment.getFechaComentario());
         dto.setUserId(comment.getUsuario().getId());
         dto.setPostId(comment.getPostDetail().getId());
-        dto.setOriginId(comment.getComentarioOrigen().getId());
+
+        if(comment.getComentarioOrigen() !=  null){
+            dto.setOriginId(comment.getComentarioOrigen().getId());
+        }
+
         if(comment.getComentarioPadre() != null){
             dto.setReplyId(comment.getComentarioPadre().getId());
         }

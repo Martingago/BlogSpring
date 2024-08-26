@@ -103,13 +103,18 @@ public class CommentService {
         newComment.setUsuario(usuario);
         newComment.setContenido(contenido);
         newComment.setFechaComentario(LocalDateTime.now());
-        if(comentarioPadreId != null){ //Se comprueba si el comentario es una respuesta o no
+        //El comentario se trata de una respuesta a otro comentario
+        if(comentarioPadreId != null){
            CommentModel comentarioPadre = commentRepository.findById(comentarioPadreId).orElseThrow(
                     () ->new EntityNotFoundException("The comment does not exists or it was removed"));
-           newComment.setComentarioPadre(comentarioPadre); //Establece el comentario padre (Se trata de una respuesta)
-            newComment.setComentarioOrigen(comentarioPadre.getComentarioOrigen()); //Establece cual es el origen principal de un comentario
-        }else{
-            newComment.setComentarioOrigen(newComment); //Establece el comentario origen como la raiz
+            //Establece el comentario padre (Se trata de una respuesta)
+           newComment.setComentarioPadre(comentarioPadre);
+
+           //Establece el origen de las respuestas
+            newComment.setComentarioOrigen(
+                    comentarioPadre.getComentarioOrigen() != null ? comentarioPadre.getComentarioOrigen() //Si no es null se obtiene el origen de la respuesta
+                            : comentarioPadre //null el comentario al que se responde es el origen
+            );
         }
             return commentRepository.save(newComment);
         }
