@@ -4,6 +4,7 @@ import com.project.springBlog.config.AppProperties;
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.dtos.UserDTO;
 import com.project.springBlog.mapper.CommentMapper;
+import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.RoleModel;
 import com.project.springBlog.models.UserModel;
@@ -20,6 +21,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.Role;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +39,9 @@ public class UserService {
 
     @Autowired
     private PostDetailsRepository detailsRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private RoleService roleService;
@@ -153,6 +160,36 @@ public class UserService {
         //Se elimina el usuario
         userRepository.delete(userToDelete);
         return true;
+    }
+
+    /**
+     * Actualiza información básica de un usuario (nombre y contraseña)
+     * @param oldData
+     * @param updatedData
+     * @return
+     */
+    public UserDTO updateUser(UserModel oldData, UserDTO updatedData){
+        if(updatedData.getPassword() != null){ //Actualiza contraseña
+            oldData.setPassword(passwordEncoder.encode(updatedData.getPassword())); //Actualiza password
+        }
+        oldData.setName(updatedData.getName()); //Actualiza nombre
+        userRepository.save(oldData);
+        return UserMapper.toDTO(oldData);
+    }
+
+    /**
+     * Actualiza los roles de usuario
+     * @param user
+     * @param basicRoles
+     * @return
+     */
+    public UserDTO updateUserRoles(UserModel user , List<Long> basicRoles){
+        if(!basicRoles.contains(1L)) basicRoles.add(1L); //Añade rol de User si no está incluido por defecto
+        List<RoleModel> roles = roleRepository.findAllById(basicRoles);
+        Set<RoleModel> rolesSet = new HashSet<>(roles);
+        user.setRolesList(rolesSet); //Actualiza roles de usuario
+        userRepository.save(user);
+        return UserMapper.toDTO(user);
     }
 
     /**

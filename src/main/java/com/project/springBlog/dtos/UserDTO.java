@@ -73,6 +73,29 @@ public class UserDTO {
         this.userPublicaciones = userPublicaciones;
     }
 
+    /**
+     * Constructor para el login
+     * @param username
+     * @param password
+     */
+    public UserDTO(String username, String password){
+        this.username = username;
+        this.password = password;
+    }
+
+    /**
+     * Constructor para la actualizacion de datos de usuario
+     * @param password
+     * @param roles
+     * @param name
+     */
+    public UserDTO(String password, List<Long> roles, String name) {
+        this.password = password;
+        this.roles = roles;
+        this.name = name;
+    }
+
+
     // Getters and setters
 
 

@@ -1,19 +1,24 @@
 package com.project.springBlog.controllers;
 
+import com.project.springBlog.config.CustomUserDetails;
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.dtos.UserDTO;
 import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Set;
 
 @Controller
@@ -21,7 +26,38 @@ import java.util.Set;
 public class UserController {
 
     @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
     UserService userService;
+
+
+    @PostMapping("/public/login")
+    public ResponseEntity<ResponseDTO> loginUser(@Valid @RequestBody UserDTO userDTO){
+        try {
+            // Validación básica de entrada
+            if (userDTO.getUsername() == null || userDTO.getPassword() == null) {
+                return new ResponseEntity<>(new ResponseDTO(false, "Username and password must be provided", null), HttpStatus.BAD_REQUEST);
+            }
+
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword())
+            );
+            //Establece el login de usuario
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            //Obtener detalles del usuario authenticado
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            UserModel usuario = userService.findUserById(customUserDetails.getId());
+            UserDTO loginDTO = UserMapper.toDTO(usuario);
+
+            //Respuesta del login
+            return new ResponseEntity<>(new ResponseDTO(true, "Login successfully", loginDTO ), HttpStatus.OK);
+        }catch (AuthenticationException ex){
+            return new ResponseEntity<>(new ResponseDTO(false, "Username and password are invalid", false), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
 
     /**
      * Obtiene los datos de un usuario tanto a través de su ID, como de su username

@@ -88,6 +88,33 @@ public class RegistrationController {
     public ResponseEntity<ResponseDTO> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(new ResponseDTO(true, "User successfully deleted", null), HttpStatus.OK);
+    }
 
+    /**
+     * Actualiza los roles de un usuario
+     * @param id
+     * @param userDTO
+     * @return
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/user/profile/{id}/roles")
+    public ResponseEntity<ResponseDTO> updateUserRoles(@PathVariable Long id, @RequestBody UserDTO userDTO){
+        UserModel userModel =  userService.findUserById(id);
+        UserDTO userUpdatedRolesDTO = userService.updateUserRoles(userModel, userDTO.getRoles());
+        return new ResponseEntity<>(new ResponseDTO(true, "Roles to user succesfully updated", userUpdatedRolesDTO), HttpStatus.OK);
+    }
+
+    /**
+     * ACtualiza datos básicos de un usuario (nombre y contraseña)
+     * @param id
+     * @param userDTO
+     * @return
+     */
+    @PutMapping("/user/profile/{id}")
+    @PreAuthorize("#id == principal.id")
+    public ResponseEntity<ResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
+        UserModel oldUser = userService.findUserById(id);
+        UserDTO updatedDTO = userService.updateUser(oldUser,userDTO);
+        return new ResponseEntity<>(new ResponseDTO(true, "Changes succesfully saves", updatedDTO), HttpStatus.OK);
     }
 }
