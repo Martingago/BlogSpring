@@ -5,7 +5,6 @@ import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.dtos.UserDTO;
 import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.UserModel;
-import com.project.springBlog.services.CommentService;
 import com.project.springBlog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.Set;
 
 @Controller
