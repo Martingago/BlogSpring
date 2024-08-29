@@ -24,6 +24,12 @@ public class TagController {
     @Autowired
     TagService tagService;
 
+    /**
+     * Obtiene una paginación con las tags existentes en la base de datos
+     * @param page pagina
+     * @param size tamaño de la pagina
+     * @return page con los datos encontrados
+     */
     @GetMapping("public/tags")
     public ResponseEntity<ResponseDTO> getTags(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -33,6 +39,11 @@ public class TagController {
         return new ResponseEntity<>(new ResponseDTO(true, "List of tags", tagsDTO), HttpStatus.OK);
     }
 
+    /**
+     * Obtiene la información de una tag especificada con su identificador
+     * @param id
+     * @return
+     */
     @GetMapping("public/tags/{id}")
     public ResponseEntity<ResponseDTO> getTagById(@PathVariable("id") long id) {
         TagModel tag = tagService.getTag(id);
@@ -40,6 +51,12 @@ public class TagController {
         return new ResponseEntity<>(new ResponseDTO(true, "Tag succesfully founded", tagDTO), HttpStatus.OK);
     }
 
+    /**
+     * Añade una etiqueta a la base de datos
+     * @param tag
+     * @param result
+     * @return
+     */
     @PostMapping("/admin/tags")
     public ResponseEntity<ResponseDTO> addTag(@Valid @RequestBody TagModel tag, BindingResult result) {
         if ((result.hasErrors())) {
@@ -52,12 +69,24 @@ public class TagController {
         return new ResponseEntity<>(new ResponseDTO(true, "Tag successfully added", tagDTO), HttpStatus.OK);
     }
 
+    /**
+     * Elimina una tag de la base de datos
+     * @param id
+     * @return
+     */
     @DeleteMapping("admin/tags/{id}")
     public ResponseEntity<?> deleteTag(@PathVariable("id") long id) {
         tagService.deleteTag(id);
         return new ResponseEntity<>(new ResponseDTO(true, "Tag was succesfully removed", null), HttpStatus.OK);
     }
 
+    /**
+     * Actualiza la información de una etiqueta pasada como parámetro
+     * @param id
+     * @param tag
+     * @param result
+     * @return
+     */
     @PutMapping("admin/tags/{id}")
     public ResponseEntity<ResponseDTO> updateTag(@Valid @PathVariable("id") long id, @Valid @RequestBody TagModel tag, BindingResult result) {
         if (result.hasErrors()) {

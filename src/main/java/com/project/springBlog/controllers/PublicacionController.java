@@ -30,6 +30,12 @@ public class PublicacionController {
     @Autowired
     UserService userService;
 
+    /**
+     * Obtiene todos los post existentes en la base de datos. Devuelve una lista de la paginación de los post encontrados
+     * @param page número de página de la lista total
+     * @param size tamaño de la página (máximo 24)
+     * @return
+     */
     @GetMapping("/public/post")
     public ResponseEntity<ResponseDTO> getPublicaciones(
             @RequestParam(required = false) Integer page,
@@ -41,6 +47,15 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", listPublicacion), HttpStatus.OK);
     }
 
+    /**
+     * Obtiene todos los post existentes en la base de datos filtrados  por el atributo indicado y ordenados de forma ascendete o descendete.
+     * Devuelve una lista paginada de los post encontrados
+     * @param field campo por el que se quiere ordenar
+     * @param order orden de como se muestran los resultados
+     * @param page pagina
+     * @param size tamaño de página
+     * @return lista paginada resultados encontrados
+     */
     @GetMapping ("/public/post/filter")
     public ResponseEntity<ResponseDTO> getPublicacionesSorted(
             @RequestParam(required = false) String field,
@@ -74,6 +89,13 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "Post succesfully upload", pub), HttpStatus.OK);
     }
 
+    /**
+     * Actualiza una publicación de la base de datos. Sólo los editores/administradores pueden editar publicaciones
+     * @param id
+     * @param publicacionDTO
+     * @param result
+     * @return
+     */
     @PutMapping("/editor/post/{id}")
     public ResponseEntity<ResponseDTO> updatePublicacion(@PathVariable("id") long id, @Valid @RequestBody PublicacionDTO publicacionDTO, BindingResult result){
         if(result.hasErrors()){
@@ -83,6 +105,11 @@ public class PublicacionController {
         return new ResponseEntity<>(new ResponseDTO(true, "Publicacion was successfully updated", pub), HttpStatus.OK);
     }
 
+    /**
+     * Elimina una publicacion de la base de datos - Elimina tambien comentarios asociados a dicha publicación.
+     * @param id
+     * @return
+     */
     @DeleteMapping("/admin/post/{id}")
     public ResponseEntity<ResponseDTO> removePublicacion(@PathVariable("id") long id){
         publicacionService.deletePublicacion(id);

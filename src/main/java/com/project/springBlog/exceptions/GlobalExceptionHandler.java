@@ -9,6 +9,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.naming.NoPermissionException;
+import java.nio.file.AccessDeniedException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -40,6 +43,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ResponseDTO> handleUsernameNotFoundException(UsernameNotFoundException exception){
         return new ResponseEntity<>(createResponseDTO(false, "Username was not founded", null), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoPermissionException.class)
+    public ResponseEntity<ResponseDTO> handleNoPermissionException(NoPermissionException exception) {
+        return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(), null), HttpStatus.FORBIDDEN);
+
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ResponseDTO> handleAccessDeniedException(AccessDeniedException exception) {
+        return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(), null), HttpStatus.FORBIDDEN);
     }
 
 
