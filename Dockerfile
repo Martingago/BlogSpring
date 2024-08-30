@@ -1,14 +1,5 @@
-# Usar la imagen base de Maven para construir la aplicación
-FROM maven:3.8.4-openjdk-22 AS build
-
-# Establecer el directorio de trabajo
-WORKDIR /app
-
-# Copiar los archivos de tu proyecto al contenedor
-COPY . .
-
 # Ejecutar el comando Maven para construir el proyecto
-RUN mvn clean package -DskipTests
+RUN mvn clean package
 
 # Usar la imagen base de OpenJDK para ejecutar la aplicación
 FROM openjdk:22-oracle
