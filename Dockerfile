@@ -1,7 +1,17 @@
+# Etapa 1: Construcción
+FROM maven:3.9.9-eclipse-temurin-22 AS build
+
+# Establecer el directorio de trabajo
+WORKDIR /app
+
+# Copiar el archivo pom.xml y el directorio src
+COPY pom.xml .
+COPY src ./src
+
 # Ejecutar el comando Maven para construir el proyecto
 RUN mvn clean package
 
-# Usar la imagen base de OpenJDK para ejecutar la aplicación
+# Etapa 2: Ejecución
 FROM openjdk:22-oracle
 
 # Establecer el directorio de trabajo
@@ -15,3 +25,4 @@ EXPOSE 8080
 
 # Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "springBlog.war"]
+
