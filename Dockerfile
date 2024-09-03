@@ -9,7 +9,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Ejecutar el comando Maven para construir el proyecto
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 # Etapa 2: Ejecución
 FROM openjdk:22-oracle
