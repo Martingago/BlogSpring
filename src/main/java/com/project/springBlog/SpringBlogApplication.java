@@ -16,12 +16,4 @@ public class SpringBlogApplication {
 
 		SpringApplication.run(SpringBlogApplication.class, args);
 	}
-
-	// Este método se asegura de que las variables se carguen antes de cualquier inicialización
-	@PostConstruct
-	public void init() {
-		Dotenv dotenv = Dotenv.configure().directory("./").load();
-		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
-	}
-
 }
