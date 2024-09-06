@@ -42,4 +42,32 @@ Siguiendo la siguiente ruta de carpetas, partiendo desde la raíz del proyecto: 
 | `app.default-max-page-size`| 24                | Tamaño máximo de elementos que se mostrarán al usuario en cada petición      |
 | `app.admin-account-id`     | 1                 | Identificador de la cuenta administradora principal                          |
 
+## Ejecución del Programa
+
+Para lanzar el proyecto de forma local, abre una terminal y dirígete a la raíz del proyecto. Una vez allí, ejecuta el siguiente comando:
+
+```bash
+./mvnw spring-boot:run
+```
+
+## Inserción de Valores Predeterminados
+
+Para facilitar las pruebas y la configuración inicial, puedes insertar automáticamente valores predeterminados en la base de datos utilizando el archivo `insert_values.sql` que se encuentra en la raíz del repositorio.
+
+### Consideraciones
+
+- **Creación Automática de Tablas:** Si la configuración inicial del software ha sido correcta, una vez se ha lanzado el software, éste creará automáticamente las tablas y relaciones en la base de datos.
+- **Inserción de Valores:** Puedes introducir valores predeterminados en la base de datos ejecutando el archivo `insert_values.sql`. Este archivo contiene comandos SQL para insertar datos iniciales necesarios para las pruebas.
+- **Eliminación de Valores:** Si deseas eliminar automáticamente todos los valores de la base de datos, puedes ejecutar el archivo `reset_tables.sql`. **Nota:** `reset_tables.sql` eliminará las tablas de la base de datos. Para volver a crearlas, simplemente vuelve a lanzar el software y éste creará nuevamente las tablas y sus relaciones.
+
+### Ejecución de Archivos SQL
+
+Para ejecutar estos archivos SQL, puedes utilizar herramientas como **MySQL Workbench** o cualquier otro cliente de base de datos compatible. A continuación, se muestra un ejemplo de cómo ejecutar estos archivos desde la línea de comandos:
+
+```bash
+# Para insertar valores predeterminados
+mysql -u root -p < insert_values.sql
+
+# Para eliminar todas las tablas
+mysql -u root -p < reset_tables.sql
 
