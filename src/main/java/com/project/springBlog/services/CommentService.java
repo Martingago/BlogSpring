@@ -1,6 +1,7 @@
 package com.project.springBlog.services;
 
 import com.project.springBlog.dtos.CommentDTO;
+import com.project.springBlog.dtos.comment.CommentResponseDTO;
 import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.UserModel;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -54,7 +54,7 @@ public class CommentService {
      * @param id del comentario a obtener información
      * @return CommentDTO con la información detallada de un comentario
      */
-    public CommentDTO getCommentData(long id){
+    public CommentResponseDTO getCommentData(long id){
         return commentRepository.getCommentById(id).orElseThrow(
                 () -> new EntityNotFoundException("Comment with id " + id + " was not founded")
         );
@@ -66,7 +66,7 @@ public class CommentService {
      * @param pageable
      * @return página con objetos CommentDTO de cada comentario a mostrar
      */
-   public Page<CommentDTO> getCommentsFromPost(long postId, Pageable pageable){
+   public Page<CommentResponseDTO> getCommentsFromPost(long postId, Pageable pageable){
        return commentRepository.findMainCommentsByPostId(postId, pageable);
    }
 
@@ -76,7 +76,7 @@ public class CommentService {
      * @param pageable
      * @return
      */
-   public Page<CommentDTO> getAllRepliesFromComment(long commentId, Pageable pageable){
+   public Page<CommentResponseDTO> getAllRepliesFromComment(long commentId, Pageable pageable){
        return commentRepository.findAllRepliesToComment(commentId, pageable);
    }
 
@@ -86,7 +86,7 @@ public class CommentService {
      * @param pageable
      * @return
      */
-   public Page<CommentDTO> getDirectRepliesFromComment(long commentId, Pageable pageable){
+   public Page<CommentResponseDTO> getDirectRepliesFromComment(long commentId, Pageable pageable){
        return commentRepository.findDirectRepliesToComment(commentId, pageable);
    }
 

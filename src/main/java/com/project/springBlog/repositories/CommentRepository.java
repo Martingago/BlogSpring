@@ -1,6 +1,7 @@
 package com.project.springBlog.repositories;
 
 import com.project.springBlog.dtos.CommentDTO;
+import com.project.springBlog.dtos.comment.CommentResponseDTO;
 import com.project.springBlog.models.CommentModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,13 +22,21 @@ public interface CommentRepository  extends JpaRepository<CommentModel, Long> {
      * @param identificador del comentario a buscar
      * @return Optional commentDTO con información del comentario y del número de respuestas asociadas en caso de ser encontrada
      */
-    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido, c.fechaComentario, c.postDetail.id, c.usuario.id, c.comentarioOrigen.id ,c.comentarioPadre.id," +
+    @Query("SELECT new com.project.springBlog.dtos.comment.CommentResponseDTO(" +
+            "c.id, " +
+            "c.contenido, " +
+            "c.fechaComentario, " +
+            "c.postDetail.id, " +
+            "c.usuario.id, " +
+            "c.usuario.username," +
+            "c.comentarioOrigen.id, " +
+            "c.comentarioPadre.id," +
             "COUNT(r)) " +
             "FROM CommentModel c " +
             "LEFT JOIN c.respuestasComentario r " +
             "WHERE c.id = :identificador " +
-            "GROUP BY c.id")
-    Optional<CommentDTO> getCommentById(@Param("identificador")Long identificador);
+            "GROUP BY c.id, c.usuario.id, c.usuario.username")
+    Optional<CommentResponseDTO> getCommentById(@Param("identificador")Long identificador);
 
     /**
      * Realiza una búsqueda de todos los comentarios PRINCIPALES asociados a un post (comentarios que no son una respuesta a otros)
@@ -37,13 +46,21 @@ public interface CommentRepository  extends JpaRepository<CommentModel, Long> {
      * @param pageable objeto pageable para devolver paginacion
      * @return Page con los comentarios de una publicacion
      */
-    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido, c.fechaComentario, c.usuario.id, c.comentarioOrigen.id, c.comentarioPadre.id, " +
+    @Query("SELECT new com.project.springBlog.dtos.comment.CommentResponseDTO(" +
+            "c.id, " +
+            "c.contenido, " +
+            "c.fechaComentario, " +
+            "c.postDetail.id, " +
+            "c.usuario.id, " +
+            "c.usuario.username, " +
+            "c.comentarioOrigen.id, " +
+            "c.comentarioPadre.id, " +
             "COUNT(r)) " +
             "FROM CommentModel c " +
             "LEFT JOIN c.respuestasTotales r " +
             "WHERE c.postDetail.id = :postId AND c.comentarioPadre IS NULL " +
-            "GROUP BY c.id")
-    Page<CommentDTO> findMainCommentsByPostId(@Param("postId") Long postId, Pageable pageable);
+            "GROUP BY c.id, c.usuario.id, c.usuario.username")
+    Page<CommentResponseDTO> findMainCommentsByPostId(@Param("postId") Long postId, Pageable pageable);
 
     /**
      * Obtiene las respuestas totales a un comentario en especifico pasado como parámetro
@@ -51,10 +68,21 @@ public interface CommentRepository  extends JpaRepository<CommentModel, Long> {
      * @param pageable paginación para devolver con los datos de las respuestas
      * @return Page con los comentarios respuesta al comentario pasado como identificador
      */
-    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido, c.fechaComentario, c.usuario.id, c.comentarioOrigen.id, c.comentarioPadre.id) " +
+    @Query("SELECT new com.project.springBlog.dtos.comment.CommentResponseDTO(" +
+            "c.id, " +
+            "c.contenido, " +
+            "c.fechaComentario, " +
+            "c.postDetail.id, " +
+            "c.usuario.id, " +
+            "c.usuario.username, " +
+            "c.comentarioOrigen.id, " +
+            "c.comentarioPadre.id, " +
+            "COUNT(r)) " +
             "FROM CommentModel c " +
-            "WHERE c.comentarioOrigen.id = :identificador AND c.id <> :identificador")
-    Page<CommentDTO> findAllRepliesToComment(@Param("identificador")Long identificador, Pageable pageable);
+            "LEFT JOIN c.respuestasTotales r " +
+            "WHERE c.comentarioOrigen.id = :identificador AND c.id <> :identificador " +
+            "GROUP by c.id, c.usuario.id, c.usuario.username")
+    Page<CommentResponseDTO> findAllRepliesToComment(@Param("identificador")Long identificador, Pageable pageable);
 
     /**
      * Obtiene las respuestas directas a un comentario en especifico pasado como identificador
@@ -62,10 +90,21 @@ public interface CommentRepository  extends JpaRepository<CommentModel, Long> {
      * @param pageable paginacion para devolver los datos de las respuestas
      * @return Page con los comentarios respuesta al comentario pasado como identificador
      */
-    @Query("SELECT new com.project.springBlog.dtos.CommentDTO(c.id, c.contenido,c.fechaComentario,c.usuario.id, c.comentarioOrigen.id, c.comentarioPadre.id) " +
+    @Query("SELECT new com.project.springBlog.dtos.comment.CommentResponseDTO(" +
+            "c.id, " +
+            "c.contenido," +
+            "c.fechaComentario," +
+            "c.postDetail.id, " +
+            "c.usuario.id, " +
+            "c.usuario.username, " +
+            "c.comentarioOrigen.id, " +
+            "c.comentarioPadre.id, " +
+            "count(r)) " +
             "FROM CommentModel c " +
-            "WHERE c.comentarioPadre.id = :identificador")
-    Page<CommentDTO> findDirectRepliesToComment(@Param("identificador") Long identificador, Pageable pageable);
+            "LEFT JOIN c.respuestasComentario r " +
+            "WHERE c.comentarioPadre.id = :identificador " +
+            "GROUP by c.id, c.usuario.id, c.usuario.username")
+    Page<CommentResponseDTO> findDirectRepliesToComment(@Param("identificador") Long identificador, Pageable pageable);
 
     /**
      * Cuenta el número de respuestas que tiene un comentario principal

@@ -3,6 +3,7 @@ package com.project.springBlog.controllers;
 import com.project.springBlog.config.CustomUserDetails;
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.dtos.ResponseDTO;
+import com.project.springBlog.dtos.comment.CommentResponseDTO;
 import com.project.springBlog.mapper.CommentMapper;
 import com.project.springBlog.models.CommentModel;
 import com.project.springBlog.models.PostDetailsModel;
@@ -60,7 +61,7 @@ public class CommentController {
 
         Pageable pageable=  sortUtils.createPageable(page, size);
 
-        Page<CommentDTO> pageCommentsFromPost = commentService.getCommentsFromPost(id,pageable);
+        Page<CommentResponseDTO> pageCommentsFromPost = commentService.getCommentsFromPost(id,pageable);
 
         return new ResponseEntity<>(new ResponseDTO(true, "List of post comments", pageCommentsFromPost), HttpStatus.OK);
     }
@@ -74,8 +75,8 @@ public class CommentController {
     public ResponseEntity<ResponseDTO> getCommentById(
             @PathVariable("id") long id
     ){
-        CommentDTO commentDTO = commentService.getCommentData(id);
-        return  new ResponseEntity<>( new ResponseDTO(true, "Comment was successfully founded", commentDTO), HttpStatus.OK);
+        CommentResponseDTO commentResponseDTO = commentService.getCommentData(id);
+        return  new ResponseEntity<>( new ResponseDTO(true, "Comment was successfully founded", commentResponseDTO), HttpStatus.OK);
     }
 
     /**
@@ -91,7 +92,7 @@ public class CommentController {
 
         Pageable pageable = sortUtils.createPageable(page, size);
 
-        Page<CommentDTO> respuestasDTO = commentService.getDirectRepliesFromComment(id, pageable);
+        Page<CommentResponseDTO> respuestasDTO = commentService.getDirectRepliesFromComment(id, pageable);
         return new ResponseEntity<>(new ResponseDTO(true, "List of direct replies to a comment", respuestasDTO), HttpStatus.OK);
     }
 
@@ -109,7 +110,7 @@ public class CommentController {
 
         Pageable pageable = sortUtils.createPageable(page, size);
 
-        Page<CommentDTO> respuestasDTO = commentService.getAllRepliesFromComment(id, pageable);
+        Page<CommentResponseDTO> respuestasDTO = commentService.getAllRepliesFromComment(id, pageable);
         return new ResponseEntity<>(new ResponseDTO(true, "List of all replies to a comment", respuestasDTO), HttpStatus.OK);
     }
 
