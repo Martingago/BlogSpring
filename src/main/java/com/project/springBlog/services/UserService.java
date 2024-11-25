@@ -13,6 +13,7 @@ import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
 import com.project.springBlog.repositories.RoleRepository;
 import com.project.springBlog.repositories.UserRepository;
+import com.project.springBlog.utils.ReflectionUtils;
 import com.project.springBlog.utils.SortUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -98,7 +99,9 @@ public class UserService {
     public Page<UserResponseDTO> getUsersPaginated(String field, String order, int page, int size){
         // Validaciones de filtro
         Sort.Direction sortOrder = sortUtils.directionPageContent(order);
-        String sortField = (field != null && !field.isEmpty()) ? field : "id";
+
+        //Valida que el field que recibe exista dentro de userModel, en caso de no existir será id por defecto
+        String sortField = (field != null && !field.isEmpty() && ReflectionUtils.hasField(UserModel.class, field)) ? field : "id";
         int limitSize = sortUtils.maxLimitsizePage(size); //limita el tamaño maximo de paginacion
 
         // Creación de la página a mostrar
