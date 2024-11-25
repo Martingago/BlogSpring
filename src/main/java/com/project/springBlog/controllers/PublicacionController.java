@@ -10,6 +10,7 @@ import com.project.springBlog.services.UserService;
 import com.project.springBlog.utils.ValidationErrorUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -38,37 +39,15 @@ public class PublicacionController {
      */
     @GetMapping("/public/post")
     public ResponseEntity<ResponseDTO> getPublicaciones(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size
-    ){
-        int pageNumber = (page != null) ? page : appProperties.getDefaultpPageNumber(); //Establece pagina
-        int pageSize = (size != null) ? size : appProperties.getDefaultPageSize(); //Establece tamaño pagina
-        List<PublicacionDetailsDTO> listPublicacion =  publicacionService.getPublicacionesDetails(null, null, pageNumber, pageSize);
-        return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", listPublicacion), HttpStatus.OK);
-    }
-
-    /**
-     * Obtiene todos los post existentes en la base de datos filtrados  por el atributo indicado y ordenados de forma ascendete o descendete.
-     * Devuelve una lista paginada de los post encontrados
-     * @param field campo por el que se quiere ordenar
-     * @param order orden de como se muestran los resultados
-     * @param page pagina
-     * @param size tamaño de página
-     * @return lista paginada resultados encontrados
-     */
-    @GetMapping ("/public/post/filter")
-    public ResponseEntity<ResponseDTO> getPublicacionesSorted(
             @RequestParam(required = false) String field,
             @RequestParam(required = false) String order,
             @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size){
-
-        int pageNumber = (page != null) ? page : appProperties.getDefaultpPageNumber();
-        int pageSize = (size != null) ? size : appProperties.getDefaultPageSize();
-
-        List<PublicacionDetailsDTO> listPublicacion = publicacionService.getPublicacionesDetails(field, order, pageNumber, pageSize);
-        return new ResponseEntity<>(new ResponseDTO(true, "List of sorted publicaciones founded", listPublicacion), HttpStatus.OK);
+            @RequestParam(required = false) Integer size
+    ){
+        Page<PublicacionDetailsDTO> pagePublicacion =  publicacionService.getPublicacionesDetails(field, order, page, size);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of publicaciones founded", pagePublicacion), HttpStatus.OK);
     }
+
 
     @GetMapping("/public/post/{id}")
     public ResponseEntity<ResponseDTO> getPublicacion(@PathVariable("id") long id){

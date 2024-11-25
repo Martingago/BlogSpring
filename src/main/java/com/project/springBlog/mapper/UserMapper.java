@@ -1,6 +1,7 @@
 package com.project.springBlog.mapper;
 
 import com.project.springBlog.dtos.UserDTO;
+import com.project.springBlog.dtos.user.UserResponseDTO;
 import com.project.springBlog.models.UserModel;
 
 public class UserMapper {
@@ -16,8 +17,11 @@ public class UserMapper {
         dto.setUsername(usuario.getUsername());
         dto.setName(usuario.getName());
         dto.setUserRoles(usuario.getRoles());
-
         return dto;
+    }
+
+    public static UserResponseDTO toUserResponseDTO(UserModel usuario){
+        return new UserResponseDTO(usuario.getId(), usuario.getUsername(), usuario.getName(), usuario.getRoles());
     }
 
     public static UserDTO toDetailDTO(UserModel usuario){

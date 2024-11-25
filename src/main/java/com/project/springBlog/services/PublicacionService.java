@@ -39,65 +39,97 @@ public class PublicacionService {
      * @param order orden | asc - desc | puede ser null y se ordenará por defecto desc
      * @param page  int pagina | obligatorio|
      * @param size  tamaño contenidos página | obligatorio | Su valor máximo será de 50
-     * @return
+     * @return Page<PublicacionDetailsDTO>
      */
-    public List<PublicacionDetailsDTO> getPublicacionesDetails(String field, String order, int page, int size) {
-        //Lista datos a devolver
-        List<PublicacionDetailsDTO> listPublicacionOrdered = new ArrayList<>(); //Lista datos a devolver
+    public Page<PublicacionDetailsDTO> getPublicacionesDetails(String field, String order, int page, int size) {
+        // VALIDACIONES
+        Sort.Direction sortOrder = sortUtils.directionPageContent(order); // Si el order no es válido establece "asc"
+        String sortField = (field != null && !field.isEmpty()) ? field : "id"; // Si field es null o vacío, por defecto id
+        int limitSize = sortUtils.maxLimitsizePage(size); // Comprueba valor límite permitido
 
-        //VALIDACIONES
-        Sort.Direction sortOrder = sortUtils.directionPageContent(order);
-        String sortField = (field != null && !field.isEmpty()) ? field : "id"; //Si field es null o vacio se pone por default id
-        int limitSize = sortUtils.maxLimitsizePage(size); //Comprueba valor limite de pagina admitido por el servidor
+        // Crea un objeto de paginación
+        PageRequest pageRequest = PageRequest.of(page, limitSize, Sort.by(sortOrder, sortField));
 
-        //Se crea un objeto con la página a mostrar:
-        PageRequest pageRequest = PageRequest.of(page, limitSize, Sort.by(sortOrder, sortField)); //Nº pagina, tamaño, y orden
+        // Determina si el campo pertenece a PostModel o PostDetailsModel
         try {
-            if (ReflectionUtils.hasField(PostModel.class, field)) { //Filtra por atributos de postModel
-                //Se obtiene una pagina de PostModels ordenada.
+            if (ReflectionUtils.hasField(PostModel.class, field)) {
+                // Filtra por PostModel
                 Page<PostModel> postsPage = postService.getPostSorting(sortField, sortOrder, pageRequest);
-                //Se convierte en un PublicacionDetails filtro por atributos de PostModel
-                for (PostModel post : postsPage) {
-                    try {
-                        listPublicacionOrdered.add(getPublicacionDetails(post));
-                    } catch (EntityNotFoundException ex) {
-                        System.out.println(ex + " skipping that one");
-                    }
-                }
-            } else if (ReflectionUtils.hasField(PostDetailsModel.class, field)) { //Filtra por atributos de postDetails
+
+                // Convierte a PublicacionDetailsDTO
+                return postsPage.map(this::getPublicacionDetails);
+
+            } else if (ReflectionUtils.hasField(PostDetailsModel.class, field)) {
+                // Filtra por PostDetailsModel
                 Page<PostDetailsModel> detailsPage = detailsService.getPostSorting(sortField, sortOrder, pageRequest);
-                //Se convierte en un PublicacionDetails filtrado por atriburos de PostDetailsModel
-                for (PostDetailsModel details : detailsPage) {
-                    listPublicacionOrdered.add(getPublicacionDetails(details));
-                }
+
+                // Convierte a PublicacionDetailsDTO
+                return detailsPage.map(this::getPublicacionDetails);
             }
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred while fetching sorted posts " + e.getMessage());
+            throw new RuntimeException("An error occurred while fetching sorted posts: " + e.getMessage());
         }
-        return listPublicacionOrdered;
+        // Si el campo no pertenece a ninguno, realiza la consulta por "id"
+        PageRequest fallbackRequest = PageRequest.of(page, limitSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<PostModel> fallbackPage = postService.getPostSorting("id", Sort.Direction.DESC, fallbackRequest);
+        return fallbackPage.map(this::getPublicacionDetails);
     }
-
 
     /**
-     * Obtiene la informacion de una publicación en especifico
+     * Obtiene la información de una publicación específica
      *
-     * @param id
-     * @return PublicacionDetails => DTO que contiene Post + PostDetails
+     * @param id El ID de la publicación
+     * @return PublicacionDetailsDTO que contiene Post y PostDetails; valores nulos si no se encuentran.
      */
     public PublicacionDetailsDTO getPublicacionDetails(long id) {
-        PostModel post = postService.getPost(id);
-        PostDetailsModel details = detailsService.getPostDetails(id);
+        PostModel post = new PostModel();
+        PostDetailsModel details = new PostDetailsModel();
+
+        try {
+            // Intentar obtener el PostModel
+            post = postService.getPost(id);
+        } catch (EntityNotFoundException ex) {
+            System.err.println("Post not found for ID: " + id + " - Returning null for Post.");
+        }
+        try {
+            // Intentar obtener el PostDetailsModel
+            details = detailsService.getPostDetails(id);
+        } catch (EntityNotFoundException ex) {
+            System.err.println("PostDetails not found for ID: " + id + " - Returning null for PostDetails.");
+        }
+
+        // Retornar el DTO con valores que pueden ser nulos
         return new PublicacionDetailsDTO(post, details);
     }
 
-    public PublicacionDetailsDTO getPublicacionDetails(PostModel post) {
-        PostDetailsModel details = detailsService.getPostDetails(post.getId());
-        return new PublicacionDetailsDTO(post, details);
+    /**
+     * Maneja la conversión segura de un PostModel a PublicacionDetailsDTO, retornando nulos si no encuentra datos relacionados.
+     * @param post El PostModel a convertir.
+     * @return PublicacionDetailsDTO con valores nulos en caso de error.
+     */
+    private PublicacionDetailsDTO getPublicacionDetails(PostModel post) {
+        try {
+            PostDetailsModel details = detailsService.getPostDetails(post.getId());
+            return new PublicacionDetailsDTO(post, details);
+        } catch (EntityNotFoundException ex) {
+            System.err.println("PostDetails not found for Post ID: " + post.getId() + " - Returning null values.");
+            return new PublicacionDetailsDTO(post, new PostDetailsModel());
+        }
     }
 
-    public PublicacionDetailsDTO getPublicacionDetails(PostDetailsModel details) {
-        PostModel post = postService.getPost(details.getId());
-        return new PublicacionDetailsDTO(post, details);
+    /**
+     * Maneja la conversión segura de un PostDetailsModel a PublicacionDetailsDTO, retornando nulos si no encuentra datos relacionados.
+     * @param details El PostDetailsModel a convertir.
+     * @return PublicacionDetailsDTO con valores nulos en caso de error.
+     */
+    private PublicacionDetailsDTO getPublicacionDetails(PostDetailsModel details) {
+        try {
+            PostModel post = postService.getPost(details.getId());
+            return new PublicacionDetailsDTO(post, details);
+        } catch (EntityNotFoundException ex) {
+            System.err.println("Post not found for PostDetails ID: " + details.getId() + " - Returning null values.");
+            return new PublicacionDetailsDTO(new PostModel(), details);
+        }
     }
 
     @Transactional

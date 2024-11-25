@@ -32,10 +32,12 @@ public class TagController {
      */
     @GetMapping("public/tags")
     public ResponseEntity<ResponseDTO> getTags(
+            @RequestParam(required = false, defaultValue = "id") String field,
+            @RequestParam(required = false, defaultValue = "desc") String order,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "12") int size
     ) {
-        Page<TagDTO> tagsDTO =  tagService.getTagsPaginated(null, null, page, size);
+        Page<TagDTO> tagsDTO =  tagService.getTagsPaginated(field, order, page, size);
         return new ResponseEntity<>(new ResponseDTO(true, "List of tags", tagsDTO), HttpStatus.OK);
     }
 
@@ -57,7 +59,7 @@ public class TagController {
      * @param result
      * @return
      */
-    @PostMapping("/admin/tags")
+    @PostMapping("admin/tags")
     public ResponseEntity<ResponseDTO> addTag(@Valid @RequestBody TagModel tag, BindingResult result) {
         if ((result.hasErrors())) {
             String err = ValidationErrorUtil.processValidationErrors(result);

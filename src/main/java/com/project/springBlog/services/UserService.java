@@ -3,18 +3,25 @@ package com.project.springBlog.services;
 import com.project.springBlog.config.AppProperties;
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.dtos.UserDTO;
+import com.project.springBlog.dtos.user.UserResponseDTO;
 import com.project.springBlog.mapper.CommentMapper;
 import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.PostDetailsModel;
 import com.project.springBlog.models.RoleModel;
+import com.project.springBlog.models.TagModel;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.repositories.PostDetailsRepository;
 import com.project.springBlog.repositories.RoleRepository;
 import com.project.springBlog.repositories.UserRepository;
+import com.project.springBlog.utils.SortUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -49,6 +56,9 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    SortUtils sortUtils;
+
     /**
      * Funcion que obtiene los datos de un usuario pasando como parametro su nombre
      * @param username
@@ -76,6 +86,41 @@ public class UserService {
         }
         return user.get();
     }
+
+    /**
+     * Función que obtiene un listado de usuarios paginados ordenados
+     * @param field
+     * @param order
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<UserResponseDTO> getUsersPaginated(String field, String order, int page, int size){
+        // Validaciones de filtro
+        Sort.Direction sortOrder = sortUtils.directionPageContent(order);
+        String sortField = (field != null && !field.isEmpty()) ? field : "id";
+        int limitSize = sortUtils.maxLimitsizePage(size); //limita el tamaño maximo de paginacion
+
+        // Creación de la página a mostrar
+        PageRequest pageRequest = PageRequest.of(page, limitSize, Sort.by(sortOrder, sortField));
+        Page<UserModel> usersPage = getUsersSorting(sortField, sortOrder, pageRequest);
+
+        //Convertir el UserModel en un UserResponseDTO
+        return usersPage.map(UserMapper::toUserResponseDTO);
+    }
+
+
+    /**
+     * Obtiene un objeto Page de usuarios ordenados
+     * @param field
+     * @param direction
+     * @param pageable
+     * @return
+     */
+    public Page<UserModel> getUsersSorting(String field, Sort.Direction direction, Pageable pageable){
+        return userRepository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize() ,Sort.by(direction,field)));
+    }
+
 
     /**
      * Busca en la base de datos a un usuario tanto por su identificador(id) tanto como por su username

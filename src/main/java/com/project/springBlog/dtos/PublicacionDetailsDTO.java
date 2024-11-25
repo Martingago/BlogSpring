@@ -13,8 +13,8 @@ public class PublicacionDetailsDTO {
     //Añadir los que serán los comentarios que tiene la publicación.
 
     public PublicacionDetailsDTO(PostModel post, PostDetailsModel details) {
-        this.post = PostMapper.toDTO(post);
-        this.postDetails = PostDetailsMapper.toDTO(details);
+        this.post =  (post != null) ? PostMapper.toDTO(post) : new PostDTO();
+        this.postDetails = (details != null) ? PostDetailsMapper.toDTO(details) : new PostDetailsDTO();
     }
 
     public PublicacionDetailsDTO(PostDTO post, PostDetailsDTO postDetails) {

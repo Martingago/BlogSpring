@@ -4,11 +4,14 @@ import com.project.springBlog.config.CustomUserDetails;
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.dtos.UserDTO;
+import com.project.springBlog.dtos.user.UserResponseDTO;
 import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.services.UserService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -58,7 +61,6 @@ public class UserController {
         }
     }
 
-
     /**
      * Obtiene los datos de un usuario tanto a través de su ID, como de su username
      * @return map de userDTO con la informacion de un usuario
@@ -75,6 +77,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("admin/users")
+    public ResponseEntity<ResponseDTO> getUsersPaginated(
+            @RequestParam(required = false, defaultValue = "id") String field,
+            @RequestParam(required = false, defaultValue = "desc") String order,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "12") int size
+    ){
+        Page<UserResponseDTO> usersDTO = userService.getUsersPaginated(field,order,page,size);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of Users", usersDTO), HttpStatus.OK);
+    }
     /**
      * Encuentra y devuelve un listado de comentarios escritos por un usuario especificado
      * Para poder acceder al listado de comentarios de un usuario se debe estar authenticado como el propio

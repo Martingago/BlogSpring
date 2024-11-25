@@ -11,7 +11,7 @@ public class PostDetailsDTO {
 
     public PostDetailsDTO(Date fechaCreacion, UserModel creador) {
         this.fechaCreacion = fechaCreacion;
-        this.creador = UserMapper.toDTO(creador);
+        this.creador = (creador != null) ? UserMapper.toDTO(creador) : new UserDTO();
     }
 
     public PostDetailsDTO(Date fechaCreacion, UserDTO creador) {

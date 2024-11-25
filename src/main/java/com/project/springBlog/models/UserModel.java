@@ -1,15 +1,8 @@
 package com.project.springBlog.models;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.project.springBlog.dtos.RoleDTO;
-import com.project.springBlog.mapper.RoleMapper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-
-import javax.management.relation.Role;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
