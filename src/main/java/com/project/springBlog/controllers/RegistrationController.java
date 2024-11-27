@@ -4,6 +4,7 @@ import com.project.springBlog.config.CustomUserDetails;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.dtos.UserDTO;
 import com.project.springBlog.dtos.user.UserRequestDTO;
+import com.project.springBlog.dtos.user.UserResponseDTO;
 import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.services.RoleService;
@@ -41,8 +42,8 @@ public class RegistrationController {
         }
         try {
             UserModel newUser = userService.createUser(userRequestDTO); //Crea un usuario con permisos básicos
-            UserDTO userDTO = UserMapper.toDTO(newUser);
-            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userDTO), HttpStatus.OK);
+            UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(newUser);
+            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userResponseDTO), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
         }
@@ -68,8 +69,8 @@ public class RegistrationController {
         }
         try{
             UserModel newUser = userService.createUser(userRequestDTO, true); //Crea un usuario normal
-            UserDTO userDTO = UserMapper.toDTO(newUser);
-            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userDTO), HttpStatus.OK);
+            UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(newUser);
+            return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userResponseDTO), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "The username already exists", null), HttpStatus.CONFLICT);
         }
@@ -101,8 +102,8 @@ public class RegistrationController {
     @PutMapping("/user/profile/{id}/roles")
     public ResponseEntity<ResponseDTO> updateUserRoles(@PathVariable Long id, @RequestBody UserDTO userDTO){
         UserModel userModel =  userService.findUserById(id);
-        UserDTO userUpdatedRolesDTO = userService.updateUserRoles(userModel, userDTO.getRoles());
-        return new ResponseEntity<>(new ResponseDTO(true, "Roles to user succesfully updated", userUpdatedRolesDTO), HttpStatus.OK);
+        UserResponseDTO userUpdatedRolesDTO = userService.updateUserRoles(userModel, userDTO.getRoles());
+        return new ResponseEntity<>(new ResponseDTO(true, "Roles to user successfully updated", userUpdatedRolesDTO), HttpStatus.OK);
     }
 
     /**
@@ -115,7 +116,7 @@ public class RegistrationController {
     @PreAuthorize("#id == principal.id")
     public ResponseEntity<ResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
         UserModel oldUser = userService.findUserById(id);
-        UserDTO updatedDTO = userService.updateUser(oldUser,userDTO);
-        return new ResponseEntity<>(new ResponseDTO(true, "Changes succesfully saves", updatedDTO), HttpStatus.OK);
+        UserResponseDTO updatedDTO = userService.updateUser(oldUser,userDTO);
+        return new ResponseEntity<>(new ResponseDTO(true, "Changes successfully save", updatedDTO), HttpStatus.OK);
     }
 }

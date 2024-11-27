@@ -52,10 +52,10 @@ public class UserController {
             //Obtener detalles del usuario authenticado
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             UserModel usuario = userService.findUserById(customUserDetails.getId());
-            UserDTO loginDTO = UserMapper.toDTO(usuario);
+            UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(usuario);
 
             //Respuesta del login
-            return new ResponseEntity<>(new ResponseDTO(true, "Login successfully", loginDTO ), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDTO(true, "Login successfully", userResponseDTO), HttpStatus.OK);
         }catch (AuthenticationException ex){
             return new ResponseEntity<>(new ResponseDTO(false, "Username and password are invalid", false), HttpStatus.UNAUTHORIZED);
         }

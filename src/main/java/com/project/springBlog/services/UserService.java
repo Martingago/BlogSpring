@@ -217,13 +217,13 @@ public class UserService {
      * @param updatedData
      * @return
      */
-    public UserDTO updateUser(UserModel oldData, UserDTO updatedData){
+    public UserResponseDTO updateUser(UserModel oldData, UserDTO updatedData){
         if(updatedData.getPassword() != null){ //Actualiza contraseña
             oldData.setPassword(passwordEncoder.encode(updatedData.getPassword())); //Actualiza password
         }
         oldData.setName(updatedData.getName()); //Actualiza nombre
         userRepository.save(oldData);
-        return UserMapper.toDTO(oldData);
+        return UserMapper.toUserResponseDTO(oldData);
     }
 
     /**
@@ -232,13 +232,13 @@ public class UserService {
      * @param basicRoles
      * @return
      */
-    public UserDTO updateUserRoles(UserModel user , List<Long> basicRoles){
+    public UserResponseDTO updateUserRoles(UserModel user , List<Long> basicRoles){
         if(!basicRoles.contains(1L)) basicRoles.add(1L); //Añade rol de User si no está incluido por defecto
         List<RoleModel> roles = roleRepository.findAllById(basicRoles);
         Set<RoleModel> rolesSet = new HashSet<>(roles);
         user.setRolesList(rolesSet); //Actualiza roles de usuario
         userRepository.save(user);
-        return UserMapper.toDTO(user);
+        return UserMapper.toUserResponseDTO(user);
     }
 
     /**
