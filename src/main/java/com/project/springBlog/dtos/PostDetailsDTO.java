@@ -1,5 +1,6 @@
 package com.project.springBlog.dtos;
 
+import com.project.springBlog.dtos.user.UserResponseDTO;
 import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.UserModel;
 
@@ -7,14 +8,14 @@ import java.util.Date;
 
 public class PostDetailsDTO {
     private Date fechaCreacion;
-    private UserDTO creador;
+    private UserResponseDTO creador;
 
     public PostDetailsDTO(Date fechaCreacion, UserModel creador) {
         this.fechaCreacion = fechaCreacion;
-        this.creador = (creador != null) ? UserMapper.toDTO(creador) : new UserDTO();
+        this.creador = (creador != null) ? UserMapper.toUserResponseDTO(creador) : new UserResponseDTO();
     }
 
-    public PostDetailsDTO(Date fechaCreacion, UserDTO creador) {
+    public PostDetailsDTO(Date fechaCreacion, UserResponseDTO creador) {
         this.fechaCreacion = fechaCreacion;
         this.creador = creador;
     }
@@ -30,15 +31,15 @@ public class PostDetailsDTO {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public UserDTO getCreador() {
+    public UserResponseDTO getCreador() {
         return creador;
     }
 
-    public void setCreador(UserDTO creador) {
+    public void setCreador(UserResponseDTO creador) {
         this.creador = creador;
     }
 
     public void setCreador(UserModel creador){
-        this.creador = UserMapper.toDTO(creador);
+        this.creador = UserMapper.toUserResponseDTO(creador);
     }
 }
