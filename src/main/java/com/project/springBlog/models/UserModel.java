@@ -1,7 +1,6 @@
 package com.project.springBlog.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,7 +16,6 @@ public class UserModel {
     private String username;
 
     @Column(nullable = false)
-    @NotEmpty(message = "password cannot be empty")
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST })
@@ -33,7 +31,6 @@ public class UserModel {
     private Set<CommentModel> comentariosList = new HashSet<>();
 
     @Column(nullable = false)
-    @NotEmpty(message = "Name cannot be empty")
     private String name;
 
     //Listado de post creados por un usuario

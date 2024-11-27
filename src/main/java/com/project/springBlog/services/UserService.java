@@ -3,6 +3,7 @@ package com.project.springBlog.services;
 import com.project.springBlog.config.AppProperties;
 import com.project.springBlog.dtos.CommentDTO;
 import com.project.springBlog.dtos.UserDTO;
+import com.project.springBlog.dtos.user.UserRequestDTO;
 import com.project.springBlog.dtos.user.UserResponseDTO;
 import com.project.springBlog.mapper.CommentMapper;
 import com.project.springBlog.mapper.UserMapper;
@@ -156,7 +157,7 @@ public class UserService {
      * @param newUser datos del usuario a crear
      * @return objeto creado en la BBDD con el roll fijado en USER
      */
-    public UserModel createUser(UserDTO newUser){
+    public UserModel createUser(UserRequestDTO newUser){
         return createUser(newUser, false);
     }
 
@@ -167,7 +168,7 @@ public class UserService {
      * @param isAdmin boolean indicando si es ADMINISTRADOR o no
      * @return objeto creado en la BBDD con el roll recibido
      */
-    public UserModel createUser(UserDTO newUserDTO, boolean isAdmin){
+    public UserModel createUser(UserRequestDTO newUserDTO, boolean isAdmin){
         //Comprueba que el usuario no exista en la BBDD
         Optional<UserModel> existingUser =  userRepository.findByUsername(newUserDTO.getUsername());
         if(existingUser.isPresent()){

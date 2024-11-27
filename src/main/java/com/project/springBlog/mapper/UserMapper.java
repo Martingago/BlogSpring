@@ -20,6 +20,11 @@ public class UserMapper {
         return dto;
     }
 
+    /**
+     * Convierte un UserModel en un UserResponseDTO para enviar al front con los datos de un usuario del servidor
+     * @param usuario
+     * @return UserResponseDTO
+     */
     public static UserResponseDTO toUserResponseDTO(UserModel usuario){
         return new UserResponseDTO(usuario.getId(), usuario.getUsername(), usuario.getName(), usuario.getRoles());
     }

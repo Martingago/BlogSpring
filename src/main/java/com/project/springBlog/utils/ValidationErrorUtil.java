@@ -13,7 +13,7 @@ public class ValidationErrorUtil {
      */
     public static String processValidationErrors(BindingResult result){
         StringBuilder errorMesagge = new StringBuilder();
-        result.getAllErrors().forEach(error -> errorMesagge.append(error.getDefaultMessage()).append("\n"));
+        result.getAllErrors().forEach(error -> errorMesagge.append(error.getDefaultMessage()).append(System.lineSeparator()));
         return errorMesagge.toString();
     }
 }

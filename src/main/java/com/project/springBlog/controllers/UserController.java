@@ -63,15 +63,15 @@ public class UserController {
 
     /**
      * Obtiene los datos de un usuario tanto a través de su ID, como de su username
-     * @return map de userDTO con la informacion de un usuario
+     * @return map de userResponseDTO con la información de un usuario genérica.
      */
     @GetMapping("public/profile/{id}")
     public ResponseEntity<ResponseDTO> getUser(@PathVariable("id") String id){
         UserModel userModel = userService.findUserByIdOrUsername(id);
 
         if(userModel != null){
-            UserDTO userDTO = UserMapper.toDTO(userModel);
-            return new ResponseEntity<>(new ResponseDTO(true, "User succesfully founded", userDTO), HttpStatus.OK);
+            UserResponseDTO userResponseDTO = UserMapper.toUserResponseDTO(userModel);
+            return new ResponseEntity<>(new ResponseDTO(true, "User successfully founded", userResponseDTO), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(new ResponseDTO(false, "User not found", null), HttpStatus.NOT_FOUND);
         }
@@ -108,7 +108,7 @@ public class UserController {
         }
 
         Set<CommentDTO> setComments = userService.getUserComments(usuario);
-        return new ResponseEntity<>(new ResponseDTO(true, "List of user comments found succesfully", setComments), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDTO(true, "List of user comments found successfully", setComments), HttpStatus.OK);
     }
 
 

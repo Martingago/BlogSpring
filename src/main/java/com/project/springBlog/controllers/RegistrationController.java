@@ -3,6 +3,7 @@ package com.project.springBlog.controllers;
 import com.project.springBlog.config.CustomUserDetails;
 import com.project.springBlog.dtos.ResponseDTO;
 import com.project.springBlog.dtos.UserDTO;
+import com.project.springBlog.dtos.user.UserRequestDTO;
 import com.project.springBlog.mapper.UserMapper;
 import com.project.springBlog.models.UserModel;
 import com.project.springBlog.services.RoleService;
@@ -28,18 +29,18 @@ public class RegistrationController {
 
     /**
      * Crea un usuario sin privilegios en la base de datos
-     * @param usuarioDTO
+     * @param userRequestDTO
      * @return
      */
     @PostMapping("/register/user")
     @Transactional
-    public ResponseEntity<ResponseDTO> registerUser(@Valid @RequestBody UserDTO usuarioDTO, BindingResult result){
+    public ResponseEntity<ResponseDTO> registerUser(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result){
         if(result.hasErrors()){
             String err = ValidationErrorUtil.processValidationErrors(result);
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         try {
-            UserModel newUser = userService.createUser(usuarioDTO); //Crea un usuario con permisos básicos
+            UserModel newUser = userService.createUser(userRequestDTO); //Crea un usuario con permisos básicos
             UserDTO userDTO = UserMapper.toDTO(newUser);
             return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userDTO), HttpStatus.OK);
         }catch (DuplicateKeyException ex){
@@ -54,19 +55,19 @@ public class RegistrationController {
     /**
      * Crea un usuario administrador en la base de datos
      * Los roles de un ADMIN pueden ser: USUARIO, ADMIN, EDITOR
-     * @param usuarioDTO DTO recibido desde el front-end del usuario que se quiere registrar
+     * @param userRequestDTO DTO recibido desde el front-end del usuario que se quiere registrar
      * @param result
      * @return ResponseEntity con un booleano de exito, mensaje y userDTO
      */
     @PostMapping("/register/admin")
     @Transactional
-    public ResponseEntity<ResponseDTO> registerAdmin(@Valid @RequestBody UserDTO usuarioDTO, BindingResult result){
+    public ResponseEntity<ResponseDTO> registerAdmin(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result){
         if(result.hasErrors()){
             String err = ValidationErrorUtil.processValidationErrors(result);
             return new ResponseEntity<>(new ResponseDTO(false, err, null), HttpStatus.BAD_REQUEST);
         }
         try{
-            UserModel newUser = userService.createUser(usuarioDTO, true); //Crea un usuario normal
+            UserModel newUser = userService.createUser(userRequestDTO, true); //Crea un usuario normal
             UserDTO userDTO = UserMapper.toDTO(newUser);
             return new ResponseEntity<>(new ResponseDTO(true, "User was successfully created", userDTO), HttpStatus.OK);
         }catch (DuplicateKeyException ex){

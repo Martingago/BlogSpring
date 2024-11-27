@@ -4,10 +4,12 @@ import com.project.springBlog.dtos.ResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.naming.NoPermissionException;
 import java.nio.file.AccessDeniedException;
@@ -21,18 +23,28 @@ public class GlobalExceptionHandler {
      * @return responseEntity
      */
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ResponseDTO> hanldleEntityNotFound(EntityNotFoundException exception) {
+    public ResponseEntity<ResponseDTO> handleEntityNotFound(EntityNotFoundException exception) {
         return new ResponseEntity<>(createResponseDTO(false,exception.getMessage(), null), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseDTO> handleValidationExceptions(MethodArgumentNotValidException exception) {
+        return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(), null), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ResponseDTO> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
+        return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(), null), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ResponseDTO> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(), null), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EntityException.class)
     public ResponseEntity<ResponseDTO> handleEntityException(EntityException exception){
         return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(),null), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResponseDTO> handleEntityArguments(MethodArgumentNotValidException exception){
-        return new ResponseEntity<>(createResponseDTO(false, exception.getMessage(), null), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(SecurityException.class)
