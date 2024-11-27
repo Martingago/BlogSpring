@@ -14,7 +14,6 @@ public class UserModel {
     private Long id;
 
     @Column(name="username", unique = true, nullable = false)
-    @NotEmpty(message = "Username cannot be empty")
     private String username;
 
     @Column(nullable = false)

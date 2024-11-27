@@ -1,2 +1,4 @@
-package com.project.springBlog.dtos.user;public class UserRequestDTO {
+package com.project.springBlog.dtos.user;
+
+public class UserRequestDTO {
 }

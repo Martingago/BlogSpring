@@ -1,12 +1,17 @@
 package com.project.springBlog.dtos.user;
 
+import jakarta.validation.constraints.NotEmpty;
+
 import java.util.Set;
 
 public class UserResponseDTO {
 
     private Long id;
+    @NotEmpty(message = "Username cannot be empty")
     private String username;
+    @NotEmpty(message = "Name cannot be empty")
     private String name;
+    @NotEmpty(message = "User must have at least one role")
     private Set<String> roles;
 
     public UserResponseDTO() {
