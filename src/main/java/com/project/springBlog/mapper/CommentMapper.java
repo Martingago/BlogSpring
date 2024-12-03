@@ -1,6 +1,7 @@
 package com.project.springBlog.mapper;
 
 import com.project.springBlog.dtos.CommentDTO;
+import com.project.springBlog.dtos.comment.CommentResponseDTO;
 import com.project.springBlog.models.CommentModel;
 
 public class CommentMapper {
@@ -27,5 +28,19 @@ public class CommentMapper {
             dto.setReplyId(comment.getComentarioPadre().getId());
         }
         return dto;
+    }
+
+    public static CommentResponseDTO toResponseDTO(CommentModel commentModel) {
+        return new CommentResponseDTO(
+                commentModel.getId(),
+                commentModel.getContenido(),
+                commentModel.getFechaComentario(),
+                commentModel.getPostDetail().getId(),
+                commentModel.getUsuario().getId(),
+                commentModel.getUsuario().getUsername(),
+                commentModel.getComentarioPadre() != null ? commentModel.getComentarioPadre().getId() : null,
+                commentModel.getComentarioOrigen() != null ? commentModel.getComentarioOrigen().getId() : null,
+                commentModel.getRespuestasTotales() != null ? commentModel.getRespuestasTotales().size() : 0
+        );
     }
 }

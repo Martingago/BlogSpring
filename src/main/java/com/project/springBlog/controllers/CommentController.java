@@ -136,8 +136,8 @@ public class CommentController {
         CommentModel newComment = commentService.addComentario(details, usuario, comentario.getContenido(), comentario.getReplyId());
 
         //Se envía un DTO con la información del comentario
-        CommentDTO commentDTO  = CommentMapper.toDTO(newComment);
-        return new ResponseEntity<>(new ResponseDTO(true, "Comment added successfully", commentDTO), HttpStatus.OK);
+        CommentResponseDTO commentResponseDTO = CommentMapper.toResponseDTO(newComment);
+        return new ResponseEntity<>(new ResponseDTO(true, "Comment added successfully", commentResponseDTO), HttpStatus.OK);
     }
 
     /**
