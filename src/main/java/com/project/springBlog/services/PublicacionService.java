@@ -89,13 +89,14 @@ public class PublicacionService {
             // Intentar obtener el PostModel
             post = postService.getPost(id);
         } catch (EntityNotFoundException ex) {
-            System.err.println("Post not found for ID: " + id + " - Returning null for Post.");
+            throw new EntityNotFoundException("Post with ID:" + id + " was not founded");
+
         }
         try {
             // Intentar obtener el PostDetailsModel
             details = detailsService.getPostDetails(id);
         } catch (EntityNotFoundException ex) {
-            System.err.println("PostDetails not found for ID: " + id + " - Returning null for PostDetails.");
+            throw  new EntityNotFoundException("PostDetails with id " + id + " was not founded");
         }
 
         // Retornar el DTO con valores que pueden ser nulos
